@@ -12,23 +12,16 @@ const images = [
      {
           id: 1,
           src: essentialharvest,
-          alt: 'Essential Harvest',
-          description: 'Full-stack E-commerce Application',
-          slug: "essential-harvest-ecommerce-application"
+          alt: 'INMOBIVN',
+          description: 'Full-stack Engineer',
+          slug: "full-stack-software-engineer-built-for-inmobivn"
      },
      {
           id: 2,
-          src: sinssflow,
-          alt: 'SINSSFLOW Project Management',
-          description: 'Full-stack Project Management Application',
-          slug: "project-management-application-built-for-sinss"
-     },
-     {
-          id: 3,
           src: kyte,
-          alt: 'Kyte Energy',
-          description: 'Design and developement of website',
-          slug: "kyte-energy-website-design-and-development"
+          alt: 'Suzu studio',
+          description: 'Full-stack Engineer',
+          slug: "full-stack-software-engineer-built-for-suzu-studio"
      },
 ]
 

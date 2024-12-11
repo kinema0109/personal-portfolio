@@ -47,14 +47,14 @@ export default function Hero() {
               className="space-y-8"
             >
               <div className="space-y-4">
-                <motion.div
+                {/* <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 }}
                   className="inline-block px-4 py-1.5 rounded-full bg-green-300/50 text-primary text-sm font-medium"
                 >
                   🎉 | Available for freelance work
-                </motion.div>
+                </motion.div> */}
 
 
                 <motion.h1
@@ -63,7 +63,7 @@ export default function Hero() {
                   transition={{ delay: 0.3 }}
                   className="text-4xl font-bold  text-primary sm:text-5xl lg:text-6xl "
                 >
-                  Hi, I&apos;m Durgesh Bachhav<span className="text-green-300">.</span>
+                  Hi, I&apos;m Hoàng Công Thọ<span className="text-green-300">.</span>
                 </motion.h1>
 
                 <motion.div

@@ -111,7 +111,7 @@ export function ResumeActionsToggle() {
 
      // Replace this with your resume text content
      const RESUME_TEXT = `
-          Hello, and welcome to my portfolio. My name is Durgesh, a passionate Full-Stack Developer based in Nashik, Maharashtra. You can reach me at 9607541611 or by email at durgesh.devwork@gmail.com. Feel free to explore my work further on my website, www.durgeshbacchhav.vercel.app.
+          Hello, and welcome to my portfolio. My name is Durgesh, a passionate Full-Stack Developer based in Nashik, Maharashtra. You can reach me at 9607541611 or by email at thoqb123456@gmail.com. Feel free to explore my work further on my website, www.durgeshbacchhav.vercel.app.
 
 I have over one year of experience in both front-end and back-end development, specializing in creating scalable, high-quality web applications. My expertise lies in the MERN stack—MongoDB, Express, React, and Node.js—along with Next.js for optimized front-end development. My work focuses on writing clean, maintainable code, implementing secure authentication systems, and optimizing database performance. I’m passionate about delivering user-friendly, responsive applications with a strong emphasis on UI and UX design.
 

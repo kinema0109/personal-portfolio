@@ -46,7 +46,7 @@ export const AboutsPage = () => {
       />
       <section className="relative grid min-h-screen w-full place-content-center overflow-hidden bg-[#fff]]">
         <h2 className="relative z-0 text-[14vw] font-black text-neutral-800 md:text-[200px]">
-          DURGESH<span className="text-orange-500">.</span>
+          Thọ<span className="text-orange-500">.</span>
         </h2>
         <Cards />
 
@@ -59,13 +59,13 @@ export const AboutsPage = () => {
             className="flex flex-col items-start"
           >
             <div className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-gray-900 p-8">
-              I&apos;m Durgesh,{' '}
+              I&apos;m Thọ,{' '}
               <FlipWords
                 className="bg-gradient-to-r from-green-600 to-green-400 text-white px-4 py-2 rounded-xl shadow-lg"
                 words={words}
               />{' '}
               <span className="block mt-4">
-                Developer living in Nashik & Focus on making digital experiences that are easy to use, enjoyable & get the job done.
+                Developer living in Viet Nam Ho Chi Minh City & Focus on making digital experiences that are easy to use, enjoyable & get the job done.
               </span>
             </div>
           </ScrollElement>

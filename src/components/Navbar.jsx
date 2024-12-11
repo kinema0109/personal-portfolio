@@ -77,7 +77,7 @@ export default function Navbar({ activeSection }) {
             </div>
           </div>
           <div className="flex items-center">
-            <Link to={'https://github.com/durgeshbachhav'} >
+            <Link to={'https://github.com/kinema0109'} >
               <Button variant="ghost" size="icon" className="mr-2 bg-green-400">
                 <Github className="h-5 w-5" />
               </Button>

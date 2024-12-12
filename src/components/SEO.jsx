@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 
 const SEO = ({ title, description, path }) => {
-  const baseUrl = 'https://durgeshbachhav.com';
+  const baseUrl = 'https://hoangcongtho-portfolio.vercel.app';
   
   return (
     <Helmet>

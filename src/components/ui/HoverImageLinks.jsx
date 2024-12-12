@@ -5,26 +5,26 @@ import React, { useRef } from "react";
 const navLinks = [
      { id: "01", name: "Home", href: "/" },
      { id: "02", name: "Projects", href: "/projects" },
-     { id: "03", name: "Blogs", href: "/blogs" },
-     { id: "04", name: "About", href: "/about" },
-     { id: "05", name: "Contact", href: "/contact" }
+     { id: "03", name: "About", href: "/about" },
+     { id: "04", name: "Contact", href: "/contact" },
+     { id: "05", name: "Hobby", href: "/hobby" }
 ];
 
-export const HoverImageLinks = ({ 
-     isFullScreen = false 
+export const HoverImageLinks = ({
+     isFullScreen = false
 }) => {
      return (
           <section
                className={`
-                    ${isFullScreen 
-                         ? 'fixed top-0 left-0 w-full h-full bg-black/90 z-50 flex flex-col justify-center' 
+                    ${isFullScreen
+                         ? 'fixed top-0 left-0 w-full h-full bg-black/90 z-50 flex flex-col justify-center'
                          : 'bg-green-500/10 backdrop-blur-md'}
                     transition-all duration-500 ease-in-out
                `}
           >
                <div className={`
-                    ${isFullScreen 
-                         ? 'w-full px-4 md:px-20' 
+                    ${isFullScreen
+                         ? 'w-full px-4 md:px-20'
                          : 'w-full px-4 md:px-20'}
                `}
                >
@@ -43,12 +43,12 @@ export const HoverImageLinks = ({
      );
 };
 
-const Link = ({ 
-     heading, 
-     imgSrc, 
-     subheading, 
-     href, 
-     isFullScreen = false 
+const Link = ({
+     heading,
+     imgSrc,
+     subheading,
+     href,
+     isFullScreen = false
 }) => {
      const ref = useRef(null);
 

@@ -10,7 +10,7 @@ import ProjectDetails from "./pages/ProjectDetails";
 import BlogDetails from "./pages/BlogDetails";
 import { ResumeActions } from "./components/common/ResumeActions";
 import { useEffect, useState } from "react";
-
+import HobbyPage from "./pages/HobbyPage";
 export default function App() {
 
   useEffect(() => {
@@ -19,10 +19,9 @@ export default function App() {
       smooth: true,
     });
 
-    return () => scroll.destroy(); 
+    return () => scroll.destroy();
   }, []);
   const [activeSection, setActiveSection] = useState('');
-  console.log('')
   return (
     <>
       <Navbar activeSection={activeSection} />
@@ -30,12 +29,13 @@ export default function App() {
         <Route path="/" element={<HomePage setActiveSection={setActiveSection} />} />
         <Route path="/projects" element={<ProjectPage />} />
         <Route path="/projects/:slug" element={<ProjectDetails />} />
-        <Route path="/blogs" element={<BlogPage />} />
-        <Route path="/blogs/:slug" element={<BlogDetails />} />
+        {/* <Route path="/blogs" element={<BlogPage />} /> */}
+        {/* <Route path="/blogs/:slug" element={<BlogDetails />} /> */}
         <Route path="/about" element={<AboutsPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/hobby" emement={<HobbyPage />} />
       </Routes>
-      <ResumeActions />
+      {/* <ResumeActions /> */}
     </>
   )
 }

@@ -16,9 +16,9 @@ import { Link } from "react-router-dom"
 const navLinks = [
   { id: "01", name: "Home", href: "/" },
   { id: "02", name: "Projects", href: "/projects" },
-  { id: "03", name: "Blogs", href: "/blogs" },
-  { id: "04", name: "About", href: "/about" },
-  { id: "06", name: "Contact", href: "/contact" },
+  { id: "03", name: "About", href: "/about" },
+  { id: "04", name: "Contact", href: "/contact" },
+  { id: "05", name: "Hobby", href: "/hobby" }
 ]
 
 export default function Navbar({ activeSection }) {

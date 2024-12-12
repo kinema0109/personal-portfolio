@@ -9,7 +9,6 @@ import express from '../../assets/skills/express.svg'
 import figma from '../../assets/skills/figma.svg'
 import framer from '../../assets/skills/framer.svg'
 import github from '../../assets/skills/github.svg'
-import mongo from '../../assets/skills/mongo.svg'
 import mysql from '../../assets/skills/mysql.svg'
 import next from '../../assets/skills/next.svg'
 import node from '../../assets/skills/node.svg'
@@ -19,7 +18,9 @@ import postman from '../../assets/skills/postman.svg'
 import redux from '../../assets/skills/redux.svg'
 import tailwind from '../../assets/skills/tailwind.svg'
 import typescript from '../../assets/skills/typescript.svg'
-
+import supabase from '../../assets/skills/supabase.svg'
+import firebase from '../../assets/skills/firebase.svg'
+import flutter from '../../assets/skills/flutterio.svg'
 const logos = [
      {
           name: 'HTML',
@@ -52,10 +53,6 @@ const logos = [
      {
           name: 'Github',
           url: github,
-     },
-     {
-          name: 'Mongo',
-          url: mongo,
      },
      {
           name: 'MySQL',
@@ -93,6 +90,14 @@ const logos = [
           name: 'Typescript',
           url: typescript,
      },
+     {
+          name: 'supabase',
+          url: supabase
+     },
+     {
+          name: 'firebase',
+          url: firebase
+     }
 ]
 
 export default function Skills() {

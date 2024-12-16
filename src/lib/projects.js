@@ -44,7 +44,7 @@ export const projects = [
           "techStack": ["Java Servlet", "ReactJS", "Firebase", "Google APIs", "Google App Engine", "Tailwind CSS"],
           "liveLink": "Yokara.com",
           "image": essentialharvest,
-
+          "type": "website"
      },
      {
           "name": "Yokara Karaoke App",
@@ -67,6 +67,7 @@ export const projects = [
           ],
           "liveLink": "play.google.com/store/apps/details?id=com.yokara.v3&hl=vi",
           "image": sinssflow,
+          "type": "app"
      },
      {
           "name": "Yokara Xúc xắc may mắn",
@@ -79,7 +80,8 @@ export const projects = [
           ],
           "techStack": ["Firebase", "Unity"],
           "liveLink": "play.google.com/store/apps/details?id=com.yokara.v3&hl=vi",
-          "image": kyte
+          "image": kyte,
+          "type": "app"
      },
      {
           "name": "Suzu social website",
@@ -92,6 +94,7 @@ export const projects = [
           ],
           "techStack": ["Tailwind CSS", "Next.js", "Supabase", "PostgreSQL"],
           "liveLink": "dev.suzu.net",
-          "image": ljs
+          "image": ljs,
+          "type":"website"
      }
 ]

@@ -53,7 +53,7 @@ const ProjectDetails = () => {
           transition={{ duration: 0.6 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16"
         >
-          {[
+          {/* {[
             { value: "5520", label: "Elements created" },
             { value: "4688", label: "Lines of code" },
             { value: "TBA", label: "Awards & Mentions" },
@@ -63,7 +63,7 @@ const ProjectDetails = () => {
               <h3 className="text-2xl font-bold text-orange-500">{stat.value}</h3>
               <p className="text-gray-600">{stat.label}</p>
             </div>
-          ))}
+          ))} */}
         </motion.div>
 
         <div className="flex flex-col md:flex-row gap-16">
@@ -83,7 +83,7 @@ const ProjectDetails = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold">TYPE</h4>
-                  <p>Website</p>
+                  <p>{project.type}</p>
                 </div>
                 <div>
                   <h4 className="font-semibold">TECHNOLOGY</h4>
@@ -136,7 +136,7 @@ const ProjectDetails = () => {
                 rel="noopener noreferrer" 
                 className="inline-block bg-orange-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-orange-600 transition-colors"
               >
-                Visit Website
+                Visit {project.type}
               </a>
             </div>
           </motion.div>

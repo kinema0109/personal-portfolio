@@ -3,29 +3,31 @@
 import { motion } from 'framer-motion'
 import starIcon from '../../assets/skills/star.svg'
 import reactIcon from '../../assets/skills/react.svg'
+import suzu from '../../assets/images/suzu.png'
+import inmobi from '../../assets/images/inmobi.png'
 
 const experiences = [
   {
     title: "FullStack Developer",
     company: "Suzu Studio",
     description: "Currently working as a full-stack developer at INMOBIVN since March 2024. Developed e-commerce, CRM, and project management applications using the MERN stack, Next.js, PostgreSQL, and MySQL. Developed and maintained the Suzu social website and internal websites.",
-    icon: starIcon,
-    technologies: ["Express", "NextJs", "Supabase", "PostgreSQL"],
+    icon: suzu,
+    technologies: ["Express", "Next.js", "Supabase", "PostgreSQL"],
     duration: "March 2024 - present"
   },
   {
     title: "FullStack Developer",
     company: "INMOBIVN",
     description: "Currently working as a full-stack developer at INMOBIVN since March 2023. Developed e-commerce, CRM, and project management applications using the MERN stack, Next.js, PostgreSQL, and MySQL. Developed and maintained the Yokara-Ikara website and application.",
-    icon: starIcon,
+    icon: inmobi,
     technologies: ["Express", "Java", "Flutter ", "Firebase", "PostgreSQL", "MySQL"],
     duration: "March 2023 - March 2024"
   },
   {
     title: "Developer Intern",
     company: "INMOBIVN",
-    description: "Worked as a Backend developer INMOBIVN for 3 months from December 2022 to March 2023. Contributed to the development of a website built with Express and React.Js.",
-    icon: reactIcon,
+    description: "Worked as a Backend developer INMOBIVN for 3 months from December 2022 to March 2023. Contributed to the development of a website built with Express and React.js.",
+    icon: inmobi,
     technologies: ["Express", "React.js", "PostgreSQL", "Firebase"],
     duration: "December 2022 - March 2023"
   }

@@ -1,26 +1,33 @@
 'use client'
 
-import { Monitor, BriefcaseIcon } from 'lucide-react'
 import { motion } from 'framer-motion'
 import starIcon from '../../assets/skills/star.svg'
 import reactIcon from '../../assets/skills/react.svg'
 
 const experiences = [
   {
-    title: "Full Stack Developer",
-    company: "Sinss Digital Marketing Studio",
-    description: "Currently working as a full-stack developer at Sinss Digital Marketing Studio since March 2023. Developed e-commerce, CRM, and project management applications using the MERN stack, Next.js, PostgreSQL, and MySQL. Designed and developed over 8 websites as the sole developer.",
+    title: "FullStack Developer",
+    company: "Suzu Studio",
+    description: "Currently working as a full-stack developer at INMOBIVN since March 2024. Developed e-commerce, CRM, and project management applications using the MERN stack, Next.js, PostgreSQL, and MySQL. Developed and maintained the Suzu social website and internal websites.",
     icon: starIcon,
-    technologies: ["MERN", "PostgreSQL", "MySQL"],
-    duration: "March 2023 - Present"
+    technologies: ["Express", "NextJs", "Supabase", "PostgreSQL"],
+    duration: "March 2024 - present"
   },
   {
-    title: "React Developer Intern",
-    company: "Sinss Digital Marketing Studio",
-    description: "Worked as a React.js developer intern at Sinss Digital Marketing Studio for 3 months from December 2023 to March 2024. Contributed to the development of a website built with React.js.",
+    title: "FullStack Developer",
+    company: "INMOBIVN",
+    description: "Currently working as a full-stack developer at INMOBIVN since March 2023. Developed e-commerce, CRM, and project management applications using the MERN stack, Next.js, PostgreSQL, and MySQL. Developed and maintained the Yokara-Ikara website and application.",
+    icon: starIcon,
+    technologies: ["Express", "Java", "Flutter ", "Firebase", "PostgreSQL", "MySQL"],
+    duration: "March 2023 - March 2024"
+  },
+  {
+    title: "Developer Intern",
+    company: "INMOBIVN",
+    description: "Worked as a Backend developer INMOBIVN for 3 months from December 2022 to March 2023. Contributed to the development of a website built with Express and React.Js.",
     icon: reactIcon,
-    technologies: ["React.js"],
-    duration: "December 2023 - March 2024"
+    technologies: ["Express", "React.js", "PostgreSQL", "Firebase"],
+    duration: "December 2022 - March 2023"
   }
 ]
 

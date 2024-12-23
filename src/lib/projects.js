@@ -2,32 +2,15 @@ import essentialharvest from '../assets/projects/mockups/eh1.png'
 import sinssflow from '../assets/projects/mockups/sf.png'
 import kyte from '../assets/projects/mockups/kyte1.png'
 import ljs from '../assets/projects/mockups/ljs1.png'
-import fi1 from '../assets/projects/mockups/fi1.png'
+import suzu from '../assets/projects/mockups/suzu.png'
 import qualityDigital from '../assets/projects/mockups/qd1.png'
 import sp from '../assets/projects/mockups/sp.png'
 import vk from '../assets/projects/mockups/vk.png'
-import cp from '../assets/projects/mockups/cp.png'
+import yokara from '../assets/projects/mockups/yokara.png'
 import cursify from '../assets/projects/mockups/cursify.png'
-
+// import suzu from '../assets/images/suzu.png'
+// import inmobi from '../assets/images/inmobi.png'
 export const projects = [
-     {
-          "name": "Workcare",
-          "slug": "essential-harvest-ecommerce-application",
-          "description": "A robust ecommerce application developed using the MERN stack with advanced features such as inventory management, email marketing, RBAC, and third-party integrations like Razorpay for payments and Google APIs for authentication and data handling.",
-          "features": [
-               "Manual and Google Authentication",
-               "Role-Based Access Control (RBAC) for Admin and Users",
-               "Inventory management system for product tracking",
-               "Dashboard analysis and email marketing based on reports",
-               "Third-party payment integration using Razorpay",
-               "Excel data integration using Google APIs",
-               "Responsive and user-friendly design"
-          ],
-          "techStack": ["MERN (MongoDB, Express, React.js, Node.js)", "Nodemailer", "Google APIs"],
-          "liveLink": "worldcare.vn",
-          "image": essentialharvest,
-
-     },
      {
           "name": "Yokara website",
           "slug": "yokara-website",
@@ -43,7 +26,7 @@ export const projects = [
           ],
           "techStack": ["Java Servlet", "ReactJS", "Firebase", "Google APIs", "Google App Engine", "Tailwind CSS"],
           "liveLink": "Yokara.com",
-          "image": essentialharvest,
+          "image": yokara,
           "type": "website"
      },
      {
@@ -66,7 +49,7 @@ export const projects = [
                "Firebase authentication",
           ],
           "liveLink": "play.google.com/store/apps/details?id=com.yokara.v3&hl=vi",
-          "image": sinssflow,
+          "image": yokara,
           "type": "app"
      },
      {
@@ -80,7 +63,7 @@ export const projects = [
           ],
           "techStack": ["Firebase", "Unity"],
           "liveLink": "play.google.com/store/apps/details?id=com.yokara.v3&hl=vi",
-          "image": kyte,
+          "image": yokara,
           "type": "app"
      },
      {
@@ -94,7 +77,7 @@ export const projects = [
           ],
           "techStack": ["Tailwind CSS", "Next.js", "Supabase", "PostgreSQL"],
           "liveLink": "dev.suzu.net",
-          "image": ljs,
+          "image": suzu,
           "type":"website"
      }
 ]

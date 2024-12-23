@@ -5,10 +5,8 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const socialLinks = [
-    { icon: <Github className="w-5 h-5" />, label: 'GitHub', href: '#' },
-    { icon: <Twitter className="w-5 h-5" />, label: 'Twitter', href: '#' },
-    { icon: <Linkedin className="w-5 h-5" />, label: 'LinkedIn', href: '#' },
-    { icon: <Mail className="w-5 h-5" />, label: 'Email', href: 'mailto:hello@example.com' }
+    { icon: <Linkedin className="w-5 h-5" />, label: 'LinkedIn', href: 'https://www.linkedin.com/in/th%E1%BB%8D-ho%C3%A0ng-c%C3%B4ng-12322b260/' },
+    { icon: <Mail className="w-5 h-5" />, label: 'Email', href: 'mailto:thoqb123456@gmail.com' }
   ];
 
   const quickLinks = [
@@ -33,7 +31,7 @@ const Footer = () => {
               Feel free to reach out if you want to create something amazing.
             </p>
             <a
-              href="mailto:hello@example.com"
+              href="mailto:thoqb13456@gmail.com"
               className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors duration-300"
             >
               Get in Touch

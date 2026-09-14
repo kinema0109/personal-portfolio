@@ -15,7 +15,7 @@ export function MemoryPanel({ slot }: { slot: MemorySlot }) {
           {slot.entries.map((entry) => (
             <li key={entry.title} className="memory-card">
               <h3>{entry.title}</h3>
-              {entry.platform && <p className="archive-meta">{entry.platform}</p>}
+              {entry.platform && <p className="meta">{entry.platform}</p>}
               {entry.note && <p>{entry.note}</p>}
             </li>
           ))}

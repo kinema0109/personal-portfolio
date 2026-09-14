@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
-import { ArchiveList } from './components/ArchiveList'
 import { CvPanel } from './components/CvPanel'
 import { DialogueBox } from './components/DialogueBox'
 import { MemoryPanel } from './components/MemoryPanel'
@@ -9,8 +8,9 @@ import { getMemorySlot } from './content/memories'
 import { getProject } from './content/projects'
 import { site } from './content/site'
 import { story } from './content/story'
-import type { Choice, ProjectId, Target } from './content/types'
+import type { ProjectId, Target } from './content/types'
 import { useBlip } from './hooks/useBlip'
+import { useFreeRegion } from './hooks/useFreeRegion'
 import {
   canGoBack,
   current,
@@ -29,12 +29,19 @@ export default function App() {
   const [nav, dispatch] = useReducer(reducer, initialNav)
   const [soundOn, setSoundOn] = useState(false)
   const blip = useBlip(soundOn)
+
+  const appRef = useRef<HTMLDivElement>(null)
+  const topRef = useRef<HTMLElement>(null)
+  const dialogueRef = useRef<HTMLElement>(null)
+  const docRef = useRef<HTMLElement>(null)
   const linesRef = useRef<HTMLDivElement>(null)
 
   const here = current(nav)
   const view = buildView(here)
   const key = locationKey(here)
   const backAllowed = canGoBack(nav)
+
+  const region = useFreeRegion({ app: appRef, top: topRef, dialogue: dialogueRef, doc: docRef }, [key])
 
   const act = useCallback(
     (action: NavAction) => {
@@ -53,7 +60,7 @@ export default function App() {
       firstRender.current = false
       return
     }
-    linesRef.current?.focus()
+    linesRef.current?.focus({ preventScroll: true })
   }, [key])
 
   // Shortcuts: 1–9 pick a choice, Esc goes back.
@@ -75,12 +82,21 @@ export default function App() {
   }, [act, go, view.choices])
 
   return (
-    <div className="app">
+    <div className="app" ref={appRef}>
       <a className="skip-link" href="#dialogue">
         Bỏ qua tới hội thoại
       </a>
 
-      <header className="topbar">
+      <Scene
+        scene={view.scene}
+        screen={view.screen}
+        speaker={view.step.speaker}
+        posterEnabled={view.posterEnabled}
+        onPoster={() => go({ kind: 'node', id: 'rat' })}
+        region={region}
+      />
+
+      <header className="topbar" ref={topRef}>
         <button type="button" className="brand" onClick={() => act({ type: 'home' })}>
           <span className="brand-name">{site.name}</span>
           <span className="brand-role">{site.role}</span>
@@ -106,35 +122,33 @@ export default function App() {
             type="button"
             className="nav-btn nav-sound"
             aria-pressed={soundOn}
+            aria-label="Âm thanh"
             onClick={() => setSoundOn((on) => !on)}
           >
-            <span className="sound-long">Âm thanh: </span>
-            <span className="sound-short" aria-hidden="true">♪ </span>
+            <span aria-hidden="true">♪ </span>
             {soundOn ? 'Bật' : 'Tắt'}
           </button>
         </nav>
       </header>
 
-      <main className="stage">
-        <Scene
-          scene={view.scene}
-          posterEnabled={view.posterEnabled}
-          onPoster={() => go({ kind: 'node', id: 'rat' })}
+      <div className={`hud${view.panel ? ' has-panel' : ''}`}>
+        {view.panel && (
+          <aside className="doc" ref={docRef} key={key} aria-label="Chi tiết">
+            <Panel panel={view.panel} onOpenProject={openProject} />
+          </aside>
+        )}
+        <DialogueBox
+          view={view}
+          canGoBack={backAllowed}
+          boxRef={dialogueRef}
+          linesRef={linesRef}
+          onChoice={(choice) => go(choice.target)}
+          onNext={() => act({ type: 'next' })}
+          onBack={() => act({ type: 'back' })}
+          onHome={() => act({ type: 'home' })}
+          onProjects={() => go({ kind: 'node', id: 'work' })}
         />
-        <div className="hud">
-          <DialogueBox
-            ref={linesRef}
-            view={view}
-            panel={view.panel && <Panel panel={view.panel} onOpenProject={openProject} />}
-            canGoBack={backAllowed}
-            onChoice={(choice: Choice) => go(choice.target)}
-            onNext={() => act({ type: 'next' })}
-            onBack={() => act({ type: 'back' })}
-            onHome={() => act({ type: 'home' })}
-            onProjects={() => go({ kind: 'node', id: 'work' })}
-          />
-        </div>
-      </main>
+      </div>
     </div>
   )
 }
@@ -143,8 +157,6 @@ function Panel({ panel, onOpenProject }: { panel: PanelView; onOpenProject: (id:
   switch (panel.kind) {
     case 'project':
       return <ProjectDetail project={getProject(panel.projectId)} />
-    case 'archive':
-      return <ArchiveList onOpen={onOpenProject} />
     case 'memory':
       return <MemoryPanel slot={getMemorySlot(panel.slotId)} />
     case 'cv':

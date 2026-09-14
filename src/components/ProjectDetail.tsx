@@ -44,7 +44,7 @@ export function ProjectDetail({ project }: { project: Project }) {
       </dl>
 
       {site.review.showContentStatus && (
-        <p className="review-note">Nguồn: CV. Chưa có ảnh chụp màn hình, link demo hay số liệu kết quả.</p>
+        <p className="review-note">Nguồn: CV. Chưa có ảnh chụp, link demo hay số liệu kết quả.</p>
       )}
     </article>
   )

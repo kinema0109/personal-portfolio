@@ -1,29 +1,33 @@
+import type { ScreenMode } from '../art/ApartmentScene'
 import { getMemorySlot, memorySlots } from '../content/memories'
-import { archivedProjects, getProject } from '../content/projects'
+import { getProject, projects } from '../content/projects'
 import { posterChoice, story } from '../content/story'
-import type { Choice, DialogueStep, NodeId, SceneId } from '../content/types'
+import type { Choice, DialogueStep, MemorySlotId, NodeId, ProjectId, SceneId } from '../content/types'
 import type { Location } from './navigation'
 
 export type PanelView =
-  | { kind: 'project'; projectId: Parameters<typeof getProject>[0] }
-  | { kind: 'archive' }
-  | { kind: 'memory'; slotId: Parameters<typeof getMemorySlot>[0] }
+  | { kind: 'project'; projectId: ProjectId }
+  | { kind: 'memory'; slotId: MemorySlotId }
   | { kind: 'cv' }
+
+type Section = 'home' | 'projects' | 'how' | 'outside' | 'cv'
 
 /** Everything the screen needs for one location. */
 export interface View {
   scene: SceneId
+  /** What the laptop in the scene shows. */
+  screen: ScreenMode
   posterEnabled: boolean
   step: DialogueStep
   stepIndex: number
   stepCount: number
   choices: readonly Choice[]
   panel: PanelView | null
-  /** Which top-level section is active, for aria-current in the nav. */
-  section: 'home' | 'projects' | 'how' | 'outside' | 'cv'
+  /** Active top-level section, for aria-current in the nav. */
+  section: Section
 }
 
-const SECTION_BY_NODE: Record<NodeId, View['section']> = {
+const SECTION_BY_NODE: Record<NodeId, Section> = {
   intro: 'home',
   work: 'projects',
   how: 'how',
@@ -34,7 +38,20 @@ const SECTION_BY_NODE: Record<NodeId, View['section']> = {
   rat: 'outside',
 }
 
+const SCREEN_BY_SECTION: Record<Section, ScreenMode> = {
+  home: 'code',
+  projects: 'docs',
+  how: 'diagram',
+  outside: 'game',
+  cv: 'docs',
+}
+
 export function buildView(loc: Location): View {
+  const base = buildBase(loc)
+  return { ...base, screen: SCREEN_BY_SECTION[base.section] }
+}
+
+function buildBase(loc: Location): Omit<View, 'screen'> {
   switch (loc.kind) {
     case 'node': {
       const node = story[loc.id]
@@ -78,12 +95,12 @@ export function buildView(loc: Location): View {
           lines: ['Đây là toàn bộ dự án có trong CV của mình.', 'Chọn một dự án để xem chi tiết.'],
           status: 'ready',
         }),
-        choices: archivedProjects.map((p) => ({
+        choices: projects.map((p) => ({
           label: p.name,
           hint: `${p.company} · ${p.role}`,
           target: { kind: 'project', id: p.id },
         })),
-        panel: { kind: 'archive' },
+        panel: null,
         section: 'projects',
       }
 
@@ -96,11 +113,7 @@ export function buildView(loc: Location): View {
               lines: ['Ô ký ức này chưa có tên game hay kỷ niệm thật.', 'Thọ sẽ bổ sung sau.'],
               status: 'placeholder',
             }
-          : (slot.confirmed ?? {
-              speaker: 'THỌ',
-              lines: ['Đây là vài game mình nhớ.'],
-              status: 'ready',
-            })
+          : (slot.confirmed ?? { speaker: 'THỌ', lines: ['Đây là vài game mình nhớ.'], status: 'ready' })
       return {
         ...single(step),
         choices: [

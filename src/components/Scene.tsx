@@ -1,13 +1,18 @@
-import { ApartmentScene, POSTER_BOX } from '../art/ApartmentScene'
-import { WorkshopScene } from '../art/WorkshopScene'
-import { H, W } from '../art/palette'
+import { useLayoutEffect, useRef, useState } from 'react'
+import { APARTMENT_FOCUS, ApartmentScene, POSTER_BOX, type ScreenMode } from '../art/ApartmentScene'
+import { frameCamera, type Region } from '../art/camera'
+import { WORKSHOP_FOCUS, WorkshopScene } from '../art/WorkshopScene'
 import { site } from '../content/site'
 import type { SceneId } from '../content/types'
 
 interface SceneProps {
   scene: SceneId
+  screen: ScreenMode
+  speaker: string
   posterEnabled: boolean
   onPoster: () => void
+  /** Screen area not covered by the UI; the camera keeps the focus inside it. */
+  region: Region | null
 }
 
 const DESCRIPTIONS: Record<SceneId, string> = {
@@ -17,37 +22,63 @@ const DESCRIPTIONS: Record<SceneId, string> = {
     'Tranh pixel: xưởng máy tưởng tượng. Một thợ máy chuột hư cấu mặc quần yếm, đeo kính bảo hộ, cầm cờ lê, đứng cạnh bàn máy.',
 }
 
-const pct = (v: number, total: number) => `${(v / total) * 100}%`
+export function Scene({ scene, screen, speaker, posterEnabled, onPoster, region }: SceneProps) {
+  const layerRef = useRef<HTMLDivElement>(null)
+  const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight })
 
-export function Scene({ scene, posterEnabled, onPoster }: SceneProps) {
+  useLayoutEffect(() => {
+    const el = layerRef.current
+    if (!el) return
+    const ro = new ResizeObserver(([entry]) => {
+      setSize({ w: entry.contentRect.width, h: entry.contentRect.height })
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  const free = region ?? { left: 0, top: 0, width: size.w, height: size.h }
+  const cam = frameCamera(size.w, size.h, free, scene === 'apartment' ? APARTMENT_FOCUS : WORKSHOP_FOCUS)
+  const viewBox = `${cam.x} ${cam.y} ${cam.w} ${cam.h}`
+
+  // Poster hotspot in CSS px; only shown when it is not hidden behind the UI.
+  const poster = {
+    left: (POSTER_BOX.x - cam.x) * cam.scale,
+    top: (POSTER_BOX.y - cam.y) * cam.scale,
+    width: POSTER_BOX.w * cam.scale,
+    height: POSTER_BOX.h * cam.scale,
+  }
+  const posterVisible =
+    poster.left >= free.left &&
+    poster.top >= free.top &&
+    poster.left + poster.width <= free.left + free.width &&
+    poster.top + poster.height <= free.top + free.height
+
   return (
-    <figure className="scene" role="img" aria-label={DESCRIPTIONS[scene]}>
-      {scene === 'apartment' ? <ApartmentScene /> : <WorkshopScene />}
+    <div className="scene-layer" ref={layerRef}>
+      <figure className="scene" role="img" aria-label={DESCRIPTIONS[scene]}>
+        <div className="scene-art" key={scene}>
+          {scene === 'apartment' ? (
+            <ApartmentScene viewBox={viewBox} screen={screen} speaking={speaker === 'THỌ'} />
+          ) : (
+            <WorkshopScene viewBox={viewBox} speaking={speaker === 'THỢ MÁY'} />
+          )}
+        </div>
+      </figure>
 
       {site.review.showArtworkNotice && (
-        <figcaption className="art-notice">
-          Minh hoạ tạm (placeholder)
+        <p className="art-notice">
+          Minh hoạ tạm
           <span className="art-notice-detail">
             {scene === 'apartment' ? ' · nhân vật chưa phải chân dung thật' : ' · nhân vật hư cấu'}
           </span>
-        </figcaption>
+        </p>
       )}
 
-      {scene === 'apartment' && posterEnabled && (
-        <button
-          type="button"
-          className="poster-hotspot"
-          style={{
-            left: pct(POSTER_BOX.x, W),
-            top: pct(POSTER_BOX.y, H),
-            width: pct(POSTER_BOX.w, W),
-            height: pct(POSTER_BOX.h, H),
-          }}
-          onClick={onPoster}
-        >
+      {scene === 'apartment' && posterEnabled && posterVisible && (
+        <button type="button" className="poster-hotspot" style={poster} onClick={onPoster}>
           <span className="poster-hotspot-label">Xem poster</span>
         </button>
       )}
-    </figure>
+    </div>
   )
 }

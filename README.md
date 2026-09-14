@@ -39,10 +39,13 @@ npm run preview    # serve dist/ on http://localhost:4173
 
 Controls: click or tap anything. Keyboard: `Tab` to move, `Enter`/`Space` to activate, `1`–`9` to pick a choice, `Esc` to go back (one dialogue step, then one place).
 
-Layout:
-- **Desktop** (≥ 900 × 600): one 16:9 scene, with the dialogue box over its bottom edge. Project, CV and memory panels open inside the dialogue box and scroll there.
-- **Mobile**: scene on top, dialogue and stacked buttons below, and the page scrolls. The Back/Home bar sticks to the bottom while you read long panels.
-- `prefers-reduced-motion` turns off the fan/cursor/hotspot animation. Dialogue never uses a typewriter effect.
+Layout (fullscreen, the page never scrolls):
+- The pixel scene fills the whole screen at any size. A camera (`src/art/camera.ts`) reframes it so the desk, person and poster stay in the area not covered by the UI, at whole-number pixel scales when possible.
+- **Desktop / tablet**: compact dialogue box along the bottom with a portrait, a speaker tag, Back/Home/Dự án controls and choices in columns. Project, CV and memory panels open as a card on the right, and the room shifts left.
+- **Phone (portrait)**: the dialogue sits at the bottom, choices stack, and panels sit above the dialogue.
+- **Phone (landscape)**: the panel gets its own column next to the dialogue.
+- The scene reacts to the conversation: the laptop shows code, a diagram, a small game or documents depending on the branch, and a speech bubble appears when Thọ or the mechanic is speaking.
+- `prefers-reduced-motion` stops all idle animation (fan, typing, breathing, stars, city lights, speech dots). Dialogue never uses a typewriter effect.
 
 ## Editing content
 
@@ -72,11 +75,12 @@ Put the PDF at `public/cv/hoang-cong-tho-cv.pdf`. The app checks at runtime that
 
 ### Replacing the artwork
 
-- `src/art/ApartmentScene.tsx`: main room (320×180 pixel grid, drawn as SVG rects)
+- `src/art/ApartmentScene.tsx`: main room. The core is 320×180 pixels, and wall and floor extend in every direction so wide or tall screens never show empty space.
 - `src/art/WorkshopScene.tsx`: optional rat-mechanic workshop
+- `src/art/Portrait.tsx`: 16×16 dialogue portraits (placeholders)
 - `src/art/palette.ts`: shared palette
 
-To use a finished PNG instead, render it in `src/components/Scene.tsx` with `image-rendering: pixelated` at 16:9. If the poster moves, update `POSTER_BOX` so the clickable hotspot still lines up.
+Each scene exports a `primary` focus rect (must stay visible) and a `secondary` one (shown whole when there is room). To use a finished PNG instead, draw it as an SVG `<image>` in scene coordinates so the camera keeps working, and give it extra background around the edges for wide and tall screens. If the poster moves, update `POSTER_BOX` so the clickable hotspot still lines up.
 
 ## Missing content and artwork
 
@@ -105,10 +109,10 @@ To use a finished PNG instead, render it in `src/components/Scene.tsx` with `ima
 
 ```
 src/
-  art/          pixel-art scenes (placeholder) + palette
-  components/   Scene, DialogueBox, ProjectDetail, ArchiveList, MemoryPanel, CvPanel, StatusTag
+  art/          pixel-art scenes + portraits (placeholder), palette, camera framing
+  components/   Scene, DialogueBox, ProjectDetail, MemoryPanel, CvPanel, StatusTag
   content/      typed, editable content (see above)
-  hooks/        useCvFile (PDF presence check), useBlip (optional sound)
+  hooks/        useCvFile (PDF presence check), useBlip (optional sound), useFreeRegion (uncovered screen area)
   state/        navigation reducer (history, back/home) + view builder
   App.tsx       wiring, keyboard shortcuts, focus management
   styles.css    all styles (tokens, desktop/mobile, reduced motion)

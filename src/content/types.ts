@@ -10,8 +10,8 @@
  */
 export type ContentStatus = 'ready' | 'draft' | 'placeholder'
 
-/** A dialogue step holds at most two short sentences. */
-export type DialogueLines = readonly [string] | readonly [string, string]
+/** A dialogue step holds one to three lines, each one or two sentences. */
+export type DialogueLines = readonly [string] | readonly [string, string] | readonly [string, string, string]
 
 export interface DialogueStep {
   speaker: string
@@ -29,7 +29,6 @@ export type NodeId =
   | 'how-events'
   | 'how-roles'
   | 'outside'
-  | 'rat'
 
 export type ProjectId =
   | 'cbpo'
@@ -40,17 +39,13 @@ export type ProjectId =
   | 'ikara-admin'
   | 'yokara'
 
-export type MemorySlotId = 'early' | 'return' | 'now'
-
-export type SceneId = 'apartment' | 'workshop'
-
 /** Where a choice leads. */
 export type Target =
   | { kind: 'node'; id: NodeId }
   | { kind: 'project'; id: ProjectId }
   | { kind: 'archive' }
-  | { kind: 'memory'; id: MemorySlotId }
   | { kind: 'cv' }
+  | { kind: 'gallery' }
 
 export interface Choice {
   label: string
@@ -61,9 +56,8 @@ export interface Choice {
 
 export interface StoryNode {
   id: NodeId
-  scene: SceneId
-  /** Makes the poster in the apartment scene clickable. */
-  posterEnabled?: boolean
+  /** Makes the album on the desk clickable on this node. */
+  albumEnabled?: boolean
   steps: readonly [DialogueStep, ...DialogueStep[]]
   choices: readonly Choice[]
 }
@@ -74,7 +68,7 @@ export interface Project {
   company: string
   period: string
   featured: boolean
-  /** null = the CV has no context description for this project. */
+  /** null = no context description available yet. */
   context: string | null
   role: string
   contributions: readonly string[]
@@ -83,19 +77,14 @@ export interface Project {
   relatedNode?: NodeId
 }
 
-export interface MemoryEntry {
+export interface GalleryItem {
+  /** Path relative to /public, e.g. 'gallery/rooftop.png'. */
+  file: string
   title: string
-  platform?: string
-  note?: string
-}
-
-export interface MemorySlot {
-  id: MemorySlotId
-  label: string
-  /** Confirmed statement for this slot, if any. */
-  confirmed: DialogueStep | null
-  /** Specific titles and memories. Empty = not supplied yet. */
-  entries: readonly MemoryEntry[]
+  /** Describes the picture for screen readers. */
+  alt: string
+  /** Optional credit line shown under the picture. */
+  credit?: string
 }
 
 export interface ContactItem {

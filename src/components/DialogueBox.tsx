@@ -1,4 +1,4 @@
-import type { Ref } from 'react'
+import type { CSSProperties, Ref } from 'react'
 import { hasPortrait, Portrait } from '../art/Portrait'
 import type { Choice } from '../content/types'
 import type { View } from '../state/view'
@@ -6,6 +6,10 @@ import { StatusTag } from './StatusTag'
 
 interface DialogueBoxProps {
   view: View
+  /** Changes on every dialogue step; lines re-enter when it changes. */
+  revealKey: string
+  /** Changes on every new place; choices re-enter when it changes. */
+  choicesKey: string
   canGoBack: boolean
   boxRef: Ref<HTMLElement>
   linesRef: Ref<HTMLDivElement>
@@ -18,6 +22,8 @@ interface DialogueBoxProps {
 
 export function DialogueBox({
   view,
+  revealKey,
+  choicesKey,
   canGoBack,
   boxRef,
   linesRef,
@@ -36,38 +42,45 @@ export function DialogueBox({
       ref={boxRef}
       className={`dialogue${withPortrait ? '' : ' no-portrait'}`}
       id="dialogue"
-      aria-label="Hội thoại"
+      aria-label="Dialogue"
     >
       <div className="dlg-head">
         <span className="speaker">{step.speaker}</span>
         <StatusTag status={step.status} source={step.source} />
         {stepCount > 1 && (
-          <span className="step-count" aria-label={`Câu ${stepIndex + 1} trên ${stepCount}`}>
+          <span className="step-count" aria-label={`Line ${stepIndex + 1} of ${stepCount}`}>
             {stepIndex + 1}/{stepCount}
           </span>
         )}
       </div>
 
-      {withPortrait && <Portrait speaker={step.speaker} />}
+      {withPortrait && <Portrait speaker={step.speaker} talkKey={revealKey} talkFlaps={step.lines.length * 2} />}
 
       <div className="dlg-main">
         <div className="lines-row">
           <div ref={linesRef} className={`lines status-${step.status}`} tabIndex={-1} aria-live="polite">
-            {step.lines.map((line) => (
-              <p key={line}>{line}</p>
+            {step.lines.map((line, i) => (
+              <p key={`${revealKey}:${i}`} style={{ '--i': i } as CSSProperties}>
+                {line}
+              </p>
             ))}
           </div>
           {hasNext && (
             <button type="button" className="btn btn-next" onClick={onNext}>
-              Tiếp <span className="next-arrow" aria-hidden="true">▸</span>
+              Next <span className="next-arrow" aria-hidden="true">▸</span>
             </button>
           )}
         </div>
 
         {choices.length > 0 && (
-          <ol className="choices" aria-label="Lựa chọn">
+          <ol
+            key={choicesKey}
+            className="choices"
+            aria-label="Choices"
+            style={{ '--delay': `${step.lines.length * 40}ms` } as CSSProperties}
+          >
             {choices.map((choice, i) => (
-              <li key={`${choice.label}-${i}`}>
+              <li key={`${choice.label}-${i}`} style={{ '--i': i } as CSSProperties}>
                 <button
                   type="button"
                   className="choice"
@@ -76,7 +89,7 @@ export function DialogueBox({
                 >
                   {i < 9 && (
                     <span className="choice-key" aria-hidden="true">
-                      {i + 1}
+                      {i === 0 ? '▶' : i + 1}
                     </span>
                   )}
                   <span className="choice-text">
@@ -90,15 +103,15 @@ export function DialogueBox({
         )}
       </div>
 
-      <div className="controls" role="group" aria-label="Điều hướng hội thoại">
+      <div className="controls" role="group" aria-label="Dialogue navigation">
         <button type="button" className="btn" onClick={onBack} disabled={!canGoBack} aria-keyshortcuts="Escape">
-          <span aria-hidden="true">←</span> Quay lại
+          <span aria-hidden="true">←</span> Back
         </button>
         <button type="button" className="btn" onClick={onHome} disabled={!canGoBack && view.section === 'home'}>
-          <span aria-hidden="true">⌂</span> Về đầu
+          <span aria-hidden="true">⌂</span> Home
         </button>
         <button type="button" className="btn" onClick={onProjects}>
-          Dự án
+          Projects
         </button>
       </div>
     </section>

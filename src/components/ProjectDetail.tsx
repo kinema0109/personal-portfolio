@@ -14,15 +14,15 @@ export function ProjectDetail({ project }: { project: Project }) {
 
       <dl className="detail-list">
         <div>
-          <dt>Bối cảnh</dt>
-          <dd>{project.context ?? <Missing>CV chưa có mô tả bối cảnh cho dự án này.</Missing>}</dd>
+          <dt>Context</dt>
+          <dd>{project.context ?? <Missing>The CV has no context description for this project.</Missing>}</dd>
         </div>
         <div>
-          <dt>Vai trò của mình</dt>
+          <dt>My role</dt>
           <dd>{project.role}</dd>
         </div>
         <div>
-          <dt>Đóng góp</dt>
+          <dt>Contributions</dt>
           <dd>
             <ul className="bullets">
               {project.contributions.map((c) => (
@@ -32,9 +32,9 @@ export function ProjectDetail({ project }: { project: Project }) {
           </dd>
         </div>
         <div>
-          <dt>Công nghệ</dt>
+          <dt>Technologies</dt>
           <dd>
-            <ul className="chips" aria-label="Công nghệ">
+            <ul className="chips" aria-label="Technologies">
               {project.technologies.map((t) => (
                 <li key={t}>{t}</li>
               ))}
@@ -44,7 +44,7 @@ export function ProjectDetail({ project }: { project: Project }) {
       </dl>
 
       {site.review.showContentStatus && (
-        <p className="review-note">Nguồn: CV. Chưa có ảnh chụp, link demo hay số liệu kết quả.</p>
+        <p className="review-note">Source: CV, plus the product’s public page for context where the CV has none.</p>
       )}
     </article>
   )

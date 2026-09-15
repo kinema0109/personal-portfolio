@@ -1,12 +1,12 @@
-import type { MemorySlotId, NodeId, ProjectId, Target } from '../content/types'
+import type { NodeId, ProjectId, Target } from '../content/types'
 
 /** A place the visitor can be. `step` only applies to story nodes. */
 export type Location =
   | { kind: 'node'; id: NodeId; step: number }
   | { kind: 'project'; id: ProjectId }
   | { kind: 'archive' }
-  | { kind: 'memory'; id: MemorySlotId }
   | { kind: 'cv' }
+  | { kind: 'gallery' }
 
 export interface NavState {
   /** Never empty; the last entry is the current location. */
@@ -76,7 +76,6 @@ export function locationKey(loc: Location): string {
     case 'node':
       return `node:${loc.id}:${loc.step}`
     case 'project':
-    case 'memory':
       return `${loc.kind}:${loc.id}`
     default:
       return loc.kind

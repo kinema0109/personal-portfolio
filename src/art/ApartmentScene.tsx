@@ -1,11 +1,12 @@
 import type { SceneFocus } from './camera'
 import { C, type Px } from './palette'
 import { PixelRects } from './PixelRects'
+import { AmbicionReference, GranCenturioReference, LockedWallSwordSet } from './LockedReferences'
 
 /**
  * PLACEHOLDER ARTWORK, drawn in code. Scene pixels: the room core spans 0–320 × 0–180,
  * and wall/floor extend in every direction so the scene can fill any screen.
- * The developer figure is a generic placeholder, not Thọ's likeness.
+ * The developer figure is a generic placeholder.
  */
 
 export type ScreenMode = 'code' | 'diagram' | 'game' | 'docs'
@@ -15,8 +16,9 @@ export const APARTMENT_FOCUS: SceneFocus = {
   secondary: { x: -6, y: 6, w: 332, h: 142 },
 }
 
-/** Poster bounds, used to place the HTML hotspot button. */
-export const POSTER_BOX = { x: 236, y: 22, w: 36, h: 52 } as const
+/** Album bounds on the desk, used to place the gallery hotspot button. */
+// LOCKED: See docs/DESIGN_CONTRACT.md before changing this album hotspot.
+export const ALBUM_BOX = { x: 118, y: 84, w: 34, h: 21 } as const
 
 const X0 = -800
 const XW = 1920
@@ -66,21 +68,6 @@ const windowFront: Px[] = [
   [104, 12, 9, 84, C.red], [107, 12, 1, 84, C.redDark],
 ]
 
-/** Poster with an original symbol: cog, wrench and curled tail. */
-const posterPx: Px[] = [
-  [238, 24, 36, 52, C.wallDark],
-  [236, 22, 36, 52, C.creamDim],
-  [239, 25, 30, 46, C.red],
-  [248, 36, 12, 12, C.ochre],
-  [252, 33, 4, 3, C.ochre], [252, 48, 4, 3, C.ochre], [245, 40, 3, 4, C.ochre], [260, 40, 3, 4, C.ochre],
-  [246, 34, 3, 3, C.ochre], [259, 34, 3, 3, C.ochre], [246, 47, 3, 3, C.ochre], [259, 47, 3, 3, C.ochre],
-  [252, 40, 4, 4, C.red],
-  [242, 52, 2, 2, C.cream], [244, 50, 2, 2, C.cream], [246, 48, 2, 2, C.cream],
-  [248, 58, 14, 1, C.cream], [262, 56, 1, 2, C.cream], [260, 54, 2, 2, C.cream], [258, 55, 2, 1, C.cream],
-  [243, 63, 22, 2, C.cream], [247, 67, 14, 1, C.creamDim],
-  [253, 23, 2, 2, C.mist],
-]
-
 /** Left of the room (wide screens): low shelf with a generic retro console. */
 const shelf: Px[] = [
   [-80, 56, 72, 3, C.wood],
@@ -101,22 +88,31 @@ const shelf: Px[] = [
   [-72, 114, 20, 12, C.slate], [-48, 114, 20, 12, C.redDark], [-24, 116, 10, 10, C.ochreDark],
 ]
 
-/** Right of the room (wide screens): door and light switch. */
-const door: Px[] = [
-  [312, 70, 4, 6, C.creamDim],
-  [322, 28, 48, 102, C.slate],
-  [326, 32, 40, 98, C.woodDark],
-  [330, 38, 32, 36, C.wood], [330, 80, 32, 44, C.wood],
-  [358, 78, 3, 3, C.ochre],
+/** The right-hand display shelf echoes the reference composition. */
+const rightShelf: Px[] = [
+  [270, 20, 50, 3, C.woodDark], [272, 23, 46, 107, C.woodDark],
+  [276, 27, 38, 28, C.night], [276, 59, 38, 3, C.wood],
+  [276, 62, 38, 28, C.night], [276, 94, 38, 3, C.wood],
+  [276, 97, 38, 29, C.night], [276, 126, 38, 3, C.wood],
+  [274, 24, 3, 103, C.wood], [316, 24, 3, 103, C.wood],
+  [280, 31, 3, 16, C.slateLight], [284, 30, 3, 17, C.ochreDark],
+  [288, 33, 3, 14, C.mist], [302, 31, 4, 16, C.redDark],
+  // headphones and cartridges in the middle cubby
+  [281, 70, 18, 2, C.slate], [280, 72, 2, 9, C.slate], [298, 72, 2, 9, C.slate],
+  [282, 81, 5, 7, C.slateLight], [295, 81, 5, 7, C.slateLight],
+  [306, 73, 5, 12, C.tealDark], [307, 74, 3, 4, C.teal],
+  // lower shelf books and a tiny map
+  [279, 102, 5, 19, C.redDark], [285, 105, 4, 16, C.ochreDark],
+  [291, 103, 4, 18, C.slateLight], [298, 107, 11, 12, C.wood],
 ]
 
 const desk: Px[] = [
-  [118, 104, 188, 5, C.wood], [118, 104, 188, 1, C.ochreDark],
-  [118, 109, 188, 3, C.woodDark],
+  [118, 104, 150, 5, C.wood], [118, 104, 150, 1, C.ochreDark],
+  [118, 109, 150, 3, C.woodDark],
   [122, 112, 5, 30, C.woodDark], [298, 112, 5, 30, C.woodDark],
-  [262, 112, 36, 26, C.wood], [262, 112, 36, 1, C.woodDark], [262, 124, 36, 1, C.woodDark],
-  [277, 117, 6, 1, C.ochre], [277, 130, 6, 1, C.ochre],
-  [118, 140, 190, 3, C.night],
+  [248, 112, 20, 26, C.wood], [248, 112, 20, 1, C.woodDark], [248, 124, 20, 1, C.woodDark],
+  [254, 117, 6, 1, C.ochre], [254, 130, 6, 1, C.ochre],
+  [118, 140, 150, 3, C.night],
 ]
 
 const laptopFrame: Px[] = [
@@ -220,21 +216,57 @@ const chair: Px[] = [
 
 const deskItems: Px[] = [
   // game cartridge
-  [134, 97, 14, 7, C.mist], [136, 98, 10, 4, C.red], [137, 99, 8, 1, C.cream], [134, 103, 14, 1, C.slate],
+  [257, 98, 10, 6, C.mist], [258, 99, 8, 3, C.red], [259, 100, 6, 1, C.cream], [257, 103, 10, 1, C.slate],
   // glass of water
   [248, 90, 1, 14, C.mist], [255, 90, 1, 14, C.mist], [248, 103, 8, 1, C.mist],
   [249, 95, 6, 8, C.water], [250, 96, 1, 5, C.cream],
-  // fan
-  [268, 100, 18, 4, C.night], [276, 90, 3, 10, C.slate],
-  [271, 72, 12, 1, C.slate], [269, 73, 16, 1, C.slate], [268, 74, 18, 15, C.slate],
-  [269, 89, 16, 1, C.slate], [271, 90, 12, 1, C.slate],
-  [270, 75, 14, 13, C.night],
-  // headphones
-  [292, 88, 10, 2, C.night], [290, 90, 2, 7, C.night], [302, 90, 2, 7, C.night],
-  [288, 96, 6, 8, C.slateLight], [300, 96, 6, 8, C.slateLight],
-  [293, 97, 1, 6, C.cream], [300, 97, 1, 6, C.cream],
+  // desk fan, kept inside the shortened desk
+  [242, 100, 18, 4, C.night], [250, 90, 3, 10, C.slate],
+  [245, 72, 12, 1, C.slate], [243, 73, 16, 1, C.slate], [242, 74, 18, 15, C.slate],
+  [243, 89, 16, 1, C.slate], [245, 90, 12, 1, C.slate], [244, 75, 14, 13, C.night],
 ]
-const fanBladesA: Px[] = [[271, 81, 13, 1, C.mist], [277, 76, 1, 11, C.mist]]
+
+/** Original pixel easter eggs: two painted miniatures on real surfaces. */
+// LOCKED PERSONAL REFERENCES: see docs/DESIGN_CONTRACT.md before editing.
+const miniaturePixels: Px[] = [
+  // Grey Seer on the desktop: base, ragged robe, hood, face, staff and warpstone.
+  [224, 101, 14, 2, C.night], [226, 99, 10, 2, C.slate],
+  [228, 91, 8, 8, C.furDark], [226, 94, 12, 5, C.fur], [230, 87, 5, 5, C.furDark],
+  [231, 88, 4, 3, C.skinShade], [234, 90, 3, 2, C.ink], [228, 86, 2, 5, C.slate],
+  [226, 84, 2, 5, C.slate], [232, 83, 2, 5, C.slate],
+  [236, 88, 2, 13, C.woodDark], [237, 84, 2, 5, C.ochreDark],
+  [238, 82, 4, 4, C.teal], [239, 81, 2, 2, C.tealLight],
+  // Alpha Legion on the lower shelf: original teal armored collectible.
+  [302, 121, 12, 2, C.night], [304, 118, 8, 3, C.tealDark],
+  [304, 108, 8, 10, C.teal], [302, 111, 12, 8, C.tealDark],
+  [305, 105, 6, 5, C.slate], [306, 104, 4, 3, C.creamDim],
+  [301, 110, 3, 5, C.slateLight], [311, 110, 3, 5, C.slateLight],
+  [306, 112, 4, 2, C.gold], [307, 112, 2, 1, C.creamDim],
+  [305, 118, 2, 3, C.night], [309, 118, 2, 3, C.night],
+]
+
+// LOCKED SWORD REFERENCES: see docs/DESIGN_CONTRACT.md before editing.
+const wallReferencePx: Px[] = [
+  // Framed background for the locked sword set. The blades are in LockedReferences.tsx.
+  [238, 24, 36, 52, C.wallDark], [236, 22, 36, 52, C.creamDim], [239, 25, 30, 46, C.night],
+]
+/** Open photo album standing on the desk; clicking it opens the gallery. Original placeholder art. */
+// LOCKED SINGLE ALBUM: see docs/DESIGN_CONTRACT.md before editing.
+const albumPx: Px[] = [
+  [120, 86, 30, 18, C.redDark], // cover
+  [122, 88, 12, 15, C.cream], // left page
+  [136, 88, 12, 15, C.creamDim], // right page
+  [134, 87, 2, 17, C.red], // spine
+  [124, 90, 8, 6, C.water], [126, 91, 2, 2, C.cream], [124, 94, 8, 2, C.slate],
+  [138, 90, 8, 6, C.ochre], [140, 92, 3, 3, C.red],
+  [124, 98, 7, 1, C.slateLight], [124, 100, 5, 1, C.slateLight],
+  [138, 98, 6, 1, C.slateLight], [138, 100, 7, 1, C.slateLight],
+]
+
+/** Small cross-shaped glint on the album's top corner. */
+const glintPx: Px[] = [[150, 82, 1, 5, C.cream], [148, 84, 5, 1, C.cream]]
+
+const fanBladesA: Px[] =[[271, 81, 13, 1, C.mist], [277, 76, 1, 11, C.mist]]
 const fanBladesB: Px[] = [
   [272, 77, 2, 2, C.mist], [274, 79, 2, 2, C.mist], [279, 83, 2, 2, C.mist], [281, 85, 2, 2, C.mist],
   [281, 77, 2, 2, C.mist], [279, 79, 2, 2, C.mist], [274, 83, 2, 2, C.mist], [272, 85, 2, 2, C.mist],
@@ -255,9 +287,11 @@ interface ApartmentSceneProps {
   viewBox: string
   screen: ScreenMode
   speaking: boolean
+  /** Glint on the album. */
+  sparkle: boolean
 }
 
-export function ApartmentScene({ viewBox, screen, speaking }: ApartmentSceneProps) {
+export function ApartmentScene({ viewBox, screen, speaking, sparkle }: ApartmentSceneProps) {
   return (
     <svg
       className="pixel-svg"
@@ -292,9 +326,11 @@ export function ApartmentScene({ viewBox, screen, speaking }: ApartmentSceneProp
       <PixelRects px={cityLightsB} className="f-city" />
       <PixelRects px={windowFront} />
 
-      <PixelRects px={posterPx} />
+      <PixelRects px={wallReferencePx} />
+      <LockedWallSwordSet />
       <PixelRects px={shelf} />
-      <PixelRects px={door} />
+      <PixelRects px={rightShelf} />
+      <GranCenturioReference />
 
       <PixelRects px={desk} />
       <PixelRects px={laptopFrame} />
@@ -307,6 +343,10 @@ export function ApartmentScene({ viewBox, screen, speaking }: ApartmentSceneProp
 
       <PixelRects px={chair} />
       <PixelRects px={deskItems} />
+      <AmbicionReference />
+      <PixelRects px={miniaturePixels} />
+      <PixelRects px={albumPx} />
+      {sparkle && <PixelRects px={glintPx} className="f-glint" />}
       <PixelRects px={fanBladesA} className="f-fan-a" />
       <PixelRects px={fanBladesB} className="f-fan-b" />
       <rect x={276} y={80} width={3} height={3} fill={C.cream} />

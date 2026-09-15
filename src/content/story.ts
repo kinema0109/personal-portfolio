@@ -1,13 +1,11 @@
 import { archivedProjects, featuredProjects } from './projects'
-import { memorySlots } from './memories'
 import type { Choice, NodeId, StoryNode } from './types'
 
 /**
  * Conversation graph.
- * - Each step holds at most two short sentences.
- * - status 'draft' = proposed first-person reasoning that Thọ has not confirmed.
- *   The CV says what he worked on, not how he thought about it.
- * - Back, Home and "Dự án" are always available, so they are not listed as choices.
+ * - Each step holds one to three lines; keep each line to one or two sentences.
+ * - Facts come from Thọ's CV. status 'draft' = wording Thọ has not confirmed yet.
+ * - Back, Home and "Projects" are always available, so they are not listed as choices.
  */
 
 const projectChoices: Choice[] = featuredProjects.map((p) => ({
@@ -16,176 +14,263 @@ const projectChoices: Choice[] = featuredProjects.map((p) => ({
   target: { kind: 'project', id: p.id },
 }))
 
-const memoryChoices: Choice[] = memorySlots.map((slot) => ({
-  label: slot.label,
-  hint: slot.entries.length === 0 ? 'Chờ nội dung' : `${slot.entries.length} ký ức`,
-  target: { kind: 'memory', id: slot.id },
-}))
-
-export const posterChoice: Choice = {
-  label: 'Tấm poster trên tường',
-  hint: 'Cảnh phụ, có thể bỏ qua',
-  target: { kind: 'node', id: 'rat' },
+const galleryChoice: Choice = {
+  label: 'The album on the desk',
+  hint: 'Pixel art gallery',
+  target: { kind: 'gallery' },
 }
 
 const nodes: readonly StoryNode[] = [
   {
     id: 'intro',
-    scene: 'apartment',
+    albumEnabled: true,
     steps: [
       {
         speaker: 'THỌ',
-        lines: ['Mình chơi game từ thời Famicom.', 'Còn đi làm, mình làm cả giao diện lẫn hệ thống phía sau.'],
+        lines: [
+          "Hi, I'm Thọ, a Middle Fullstack Developer with three years of experience building web applications.",
+          'I work across the whole stack: the interface people use, the APIs behind it, and the databases underneath.',
+          "I've worked on systems serving more than 100,000 active users.",
+        ],
         status: 'ready',
+        source: 'CV',
+      },
+      {
+        speaker: 'THỌ',
+        lines: [
+          'I currently work at HDWEBSOFT in Ho Chi Minh City, on platforms for e-commerce, logistics, corporate training and property leasing.',
+          "Ask me what I've built, how I work, or what I do away from the keyboard.",
+        ],
+        status: 'ready',
+        source: 'CV',
       },
     ],
     choices: [
-      { label: 'Bạn đã làm gì?', target: { kind: 'node', id: 'work' } },
-      { label: 'Bạn làm việc thế nào?', target: { kind: 'node', id: 'how' } },
-      { label: 'Ngoài giờ làm thì sao?', target: { kind: 'node', id: 'outside' } },
+      { label: 'What have you worked on?', target: { kind: 'node', id: 'work' } },
+      { label: 'How do you work?', target: { kind: 'node', id: 'how' } },
+      { label: 'What about outside work?', target: { kind: 'node', id: 'outside' } },
     ],
   },
 
   // ── Branch 1: work ────────────────────────────────────────────
   {
     id: 'work',
-    scene: 'apartment',
     steps: [
       {
         speaker: 'THỌ',
-        lines: ['Mình là Middle Fullstack Developer, hiện làm ở HDWEBSOFT từ tháng 3/2025.', 'Trước đó mình làm ở Suzu Group và InmobiVN.'],
+        lines: [
+          "I've been a Fullstack Developer at HDWEBSOFT since March 2025.",
+          'Before that I built a community social network at Suzu Group (2024–2025), and worked on karaoke and social music apps at InmobiVN (2022–2024).',
+        ],
         status: 'ready',
         source: 'CV',
       },
       {
         speaker: 'THỌ',
-        lines: ['Đây là ba dự án mình muốn kể trước.', 'Các dự án còn lại nằm trong kho.'],
+        lines: [
+          'I mostly write TypeScript and JavaScript: React, Next.js and Vue.js on the frontend, NestJS, Express and Django on the backend.',
+          'For data I use PostgreSQL, MongoDB, Supabase and MySQL, and I ship with Docker, GCP and Vercel.',
+        ],
+        status: 'ready',
+        source: 'CV',
+      },
+      {
+        speaker: 'THỌ',
+        lines: [
+          'Three projects show my day-to-day work best: CBPO, CA2T and TheAvoTree.',
+          `The other ${archivedProjects.length} are in the project archive.`,
+        ],
         status: 'ready',
       },
     ],
     choices: [
       ...projectChoices,
-      { label: 'Kho dự án', hint: `${archivedProjects.length} dự án khác`, target: { kind: 'archive' } },
+      { label: 'Project archive', hint: `${archivedProjects.length} more projects`, target: { kind: 'archive' } },
     ],
   },
 
   // ── Branch 2: how I work ──────────────────────────────────────
   {
     id: 'how',
-    scene: 'apartment',
     steps: [
       {
         speaker: 'THỌ',
-        lines: ['Mình kể qua vài việc cụ thể có trong CV.', 'Bạn muốn nghe về việc nào?'],
+        lines: [
+          'One habit runs through all my work: I use AI-assisted coding tools to move faster.',
+          'Then I review, debug and refine the result myself until it is production quality.',
+        ],
+        status: 'ready',
+        source: 'CV',
+      },
+      {
+        speaker: 'THỌ',
+        lines: [
+          'I can also go deeper into three pieces of work from my CV.',
+          'Pick one: moving production MongoDB from Atlas to self-hosted GCP, a real-time webhook pipeline, or role-based access control.',
+        ],
         status: 'ready',
       },
     ],
     choices: [
-      { label: 'Migration MongoDB trên production', hint: 'CBPO', target: { kind: 'node', id: 'how-migration' } },
-      { label: 'Webhook và tích hợp sự kiện', hint: 'TheAvoTree', target: { kind: 'node', id: 'how-events' } },
-      { label: 'Phân quyền theo vai trò', hint: 'CA2T', target: { kind: 'node', id: 'how-roles' } },
+      { label: 'MongoDB: Atlas → self-hosted GCP', hint: 'CBPO', target: { kind: 'node', id: 'how-migration' } },
+      { label: 'Real-time webhooks', hint: 'TheAvoTree', target: { kind: 'node', id: 'how-events' } },
+      { label: 'Role-based access control', hint: 'CA2T', target: { kind: 'node', id: 'how-roles' } },
     ],
   },
   {
     id: 'how-migration',
-    scene: 'apartment',
     steps: [
       {
         speaker: 'THỌ',
-        lines: ['Ở CBPO, một phần việc của mình là migration MongoDB trên production.', 'Dự án có kiến trúc cơ sở dữ liệu hybrid, dùng cả PostgreSQL và MongoDB.'],
+        lines: [
+          'CBPO is an e-commerce data orchestration and logistics platform, built as Django and Vue.js microservices on GCP.',
+          'It centralizes order processing, pulls in Amazon marketplace data like BuyBox and competitor tracking, protects brand pricing and optimizes shipping.',
+        ],
         status: 'ready',
         source: 'CV · CBPO',
       },
       {
         speaker: 'THỌ',
-        lines: ['Với dữ liệu đang chạy thật, mình muốn có cách kiểm tra kết quả trước khi chuyển hẳn.', 'Mình cũng muốn biết cách quay lại nếu có vấn đề.'],
-        status: 'draft',
+        lines: [
+          'Its data tier is hybrid.',
+          'PostgreSQL holds relational order transactions, and MongoDB holds high-velocity marketplace metrics and analytics logs.',
+        ],
+        status: 'ready',
+        source: 'CV · CBPO',
+      },
+      {
+        speaker: 'THỌ',
+        lines: [
+          'My biggest piece there was moving the production MongoDB databases off MongoDB Atlas.',
+          'I built a self-hosted setup of six VMs on GCP, then migrated databases ranging from 100GB up to 1.6TB onto it.',
+        ],
+        status: 'ready',
+        source: 'Thọ · CBPO',
+      },
+      {
+        speaker: 'THỌ',
+        lines: [
+          'To keep the platform online, I designed a zero-downtime replication and parallel restore pipeline with Docker Compose.',
+          "The move also cut the platform's dependence on third-party licensing.",
+        ],
+        status: 'ready',
+        source: 'CV · CBPO',
       },
     ],
     choices: [
-      { label: 'Xem chi tiết CBPO', target: { kind: 'project', id: 'cbpo' } },
-      { label: 'Hỏi về việc khác', target: { kind: 'node', id: 'how' } },
+      { label: 'See CBPO details', target: { kind: 'project', id: 'cbpo' } },
+      { label: 'Ask about something else', target: { kind: 'node', id: 'how' } },
     ],
   },
   {
     id: 'how-events',
-    scene: 'apartment',
     steps: [
       {
         speaker: 'THỌ',
-        lines: ['Ở TheAvoTree, mình làm backend cho hệ sinh thái kết nối với WooCommerce.', 'Việc của mình gồm mô hình hoá dữ liệu, tích hợp sự kiện qua webhook, báo cáo và test.'],
+        lines: [
+          'TheAvoTree is a large e-commerce platform that bridges WordPress/WooCommerce with a modern JavaScript management system.',
+          'I worked on the backend with NestJS and MongoDB.',
+        ],
         status: 'ready',
         source: 'CV · TheAvoTree',
       },
       {
         speaker: 'THỌ',
-        lines: ['Một sự kiện từ hệ thống khác có thể đến nhiều lần.', 'Nên mình muốn xử lý sao cho nhận lại vẫn không làm sai dữ liệu.'],
-        status: 'draft',
+        lines: [
+          "I designed a MongoDB schema that mirrors WooCommerce's complex data structure.",
+          'That keeps the data consistent across both platforms.',
+        ],
+        status: 'ready',
+        source: 'CV · TheAvoTree',
+      },
+      {
+        speaker: 'THỌ',
+        lines: [
+          'Orders and inventory updates arrive as WooCommerce webhooks.',
+          'I built a secure webhook listener that handles thousands of real-time events without losing data.',
+        ],
+        status: 'ready',
+        source: 'CV · TheAvoTree',
+      },
+      {
+        speaker: 'THỌ',
+        lines: [
+          'On top of that data I built an admin dashboard with Chart.js for sales, user behavior and content performance.',
+          'I also wrote unit and integration tests for the core business logic.',
+        ],
+        status: 'ready',
+        source: 'CV · TheAvoTree',
       },
     ],
     choices: [
-      { label: 'Xem chi tiết TheAvoTree', target: { kind: 'project', id: 'theavotree' } },
-      { label: 'Hỏi về việc khác', target: { kind: 'node', id: 'how' } },
+      { label: 'See TheAvoTree details', target: { kind: 'project', id: 'theavotree' } },
+      { label: 'Ask about something else', target: { kind: 'node', id: 'how' } },
     ],
   },
   {
     id: 'how-roles',
-    scene: 'apartment',
     steps: [
       {
         speaker: 'THỌ',
-        lines: ['Ở CA2T, mình là Team Lead kiêm Fullstack Developer, dẫn dắt nhóm năm người.', 'Mình làm phân quyền theo vai trò cho quản trị viên và học viên.'],
+        lines: [
+          'CA2T is a learning platform for corporate training, built with React, Django, PostgreSQL and Tailwind.',
+          'I was Team Lead and Fullstack Developer there.',
+        ],
         status: 'ready',
         source: 'CV · CA2T',
       },
       {
         speaker: 'THỌ',
-        lines: ['Mình muốn quyền được kiểm tra ở phía server, không chỉ ẩn nút trên giao diện.', 'Như vậy mỗi vai trò chỉ làm được đúng phần của mình.'],
-        status: 'draft',
+        lines: [
+          'I designed its role-based access control.',
+          'Admins and learners each get their own dashboard and learning interface.',
+        ],
+        status: 'ready',
+        source: 'CV · CA2T',
+      },
+      {
+        speaker: 'THỌ',
+        lines: [
+          'I also led a cross-functional team of five.',
+          'I kept the timelines and technical decisions aligned.',
+        ],
+        status: 'ready',
+        source: 'CV · CA2T',
+      },
+      {
+        speaker: 'THỌ',
+        lines: ['On the frontend I tuned React and Tailwind components so the platform stays fast and interactive for employees.'],
+        status: 'ready',
+        source: 'CV · CA2T',
       },
     ],
     choices: [
-      { label: 'Xem chi tiết CA2T', target: { kind: 'project', id: 'ca2t' } },
-      { label: 'Hỏi về việc khác', target: { kind: 'node', id: 'how' } },
+      { label: 'See CA2T details', target: { kind: 'project', id: 'ca2t' } },
+      { label: 'Ask about something else', target: { kind: 'node', id: 'how' } },
     ],
   },
 
   // ── Branch 3: outside work ────────────────────────────────────
   {
     id: 'outside',
-    scene: 'apartment',
-    posterEnabled: true,
+    albumEnabled: true,
     steps: [
       {
         speaker: 'THỌ',
-        lines: ['Mình đã chơi khá nhiều game, từ Famicom/NES đến game hiện đại.', 'Có cả game gacha nữa.'],
+        lines: [
+          'Outside work, I play a lot of games.',
+          'I started back on the Famicom/NES and still play modern games today, gacha games included.',
+        ],
         status: 'ready',
-        source: 'Thông tin Thọ cung cấp',
+        source: 'Provided by Thọ',
+      },
+      {
+        speaker: 'THỌ',
+        lines: ['See the album on my desk?', 'Open it for a small pixel-art gallery.'],
+        status: 'ready',
       },
     ],
-    choices: [...memoryChoices, posterChoice],
-  },
-  {
-    id: 'rat',
-    scene: 'workshop',
-    steps: [
-      {
-        speaker: 'NGƯỜI KỂ',
-        lines: ['Tấm poster dẫn tới một xưởng máy tưởng tượng.', 'Đây là nhân vật hư cấu, không phải Thọ.'],
-        status: 'ready',
-      },
-      {
-        speaker: 'THỢ MÁY',
-        lines: ['Bánh răng này kêu hơi to, nhưng máy vẫn chạy.', 'Bạn cứ đi lúc nào cũng được.'],
-        status: 'ready',
-      },
-      {
-        speaker: 'NGƯỜI KỂ',
-        lines: ['Lý do cảnh này có mặt ở đây: chờ Thọ bổ sung.'],
-        status: 'placeholder',
-      },
-    ],
-    choices: [{ label: 'Rời xưởng', hint: 'Về căn phòng', target: { kind: 'node', id: 'outside' } }],
+    choices: [galleryChoice],
   },
 ]
 

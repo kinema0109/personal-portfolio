@@ -3,8 +3,8 @@ import { site } from '../content/site'
 import type { ContentStatus } from '../content/types'
 
 const LABELS: Record<Exclude<ContentStatus, 'ready'>, string> = {
-  draft: 'Bản nháp · cần Thọ xác nhận',
-  placeholder: 'Chờ nội dung thật',
+  draft: 'Draft · needs Thọ to confirm',
+  placeholder: 'Waiting for real content',
 }
 
 export function StatusTag({ status, source }: { status: ContentStatus; source?: string }) {
@@ -12,7 +12,7 @@ export function StatusTag({ status, source }: { status: ContentStatus; source?: 
   return (
     <>
       {status !== 'ready' && <span className={`tag tag-${status}`}>{LABELS[status]}</span>}
-      {source && status === 'ready' && <span className="tag tag-source">Nguồn: {source}</span>}
+      {source && status === 'ready' && <span className="tag tag-source">Source: {source}</span>}
     </>
   )
 }

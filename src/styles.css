@@ -16,6 +16,8 @@
   --red: #a3524a;
   --red-dark: #723a36;
 
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+
   --topbar-h: 44px;
   --px: 3px;
 
@@ -110,7 +112,8 @@ p {
 .scene-art {
   width: 100%;
   height: 100%;
-  animation: scene-in 360ms linear;
+  /* Stepped iris: opens from the middle of the uncovered area on first load. */
+  animation: iris-in 420ms steps(7, jump-none);
 }
 .pixel-svg {
   display: block;
@@ -118,11 +121,9 @@ p {
   height: 100%;
 }
 
-@keyframes scene-in {
-  0%, 24.99% { filter: brightness(0); }
-  25%, 49.99% { filter: brightness(0.35); }
-  50%, 74.99% { filter: brightness(0.7); }
-  75%, 100% { filter: brightness(1); }
+@keyframes iris-in {
+  from { clip-path: circle(0 at var(--iris-x, 50%) var(--iris-y, 50%)); }
+  to { clip-path: circle(150% at var(--iris-x, 50%) var(--iris-y, 50%)); }
 }
 
 .art-notice {
@@ -136,7 +137,7 @@ p {
   font-size: 0.7rem;
 }
 
-.poster-hotspot {
+.hotspot {
   position: absolute;
   z-index: 1;
   padding: 0;
@@ -145,12 +146,12 @@ p {
   cursor: pointer;
   animation: hotspot 1.6s linear infinite;
 }
-.poster-hotspot:hover,
-.poster-hotspot:focus-visible {
+.hotspot:hover,
+.hotspot:focus-visible {
   border-style: solid;
   animation: none;
 }
-.poster-hotspot-label {
+.hotspot-label {
   position: absolute;
   left: 50%;
   bottom: 100%;
@@ -199,10 +200,13 @@ p {
 .f-dot-1 { animation: dot 1.2s linear infinite; }
 .f-dot-2 { animation: dot 1.2s linear 0.3s infinite; }
 .f-dot-3 { animation: dot 1.2s linear 0.6s infinite; }
-.f-tail-a { animation: show-first-half 1.4s linear infinite; }
-.f-tail-b { opacity: 0; animation: show-second-half 1.4s linear infinite; }
-.f-needle-a { animation: show-first-half 0.6s linear infinite; }
-.f-needle-b { opacity: 0; animation: show-second-half 0.6s linear infinite; }
+
+/* Portrait mouth flaps a few times while a new line appears, then rests closed. */
+.f-talk { opacity: 0; animation: show-second-half 180ms linear; animation-iteration-count: var(--talk, 4); }
+
+/* Album glint: a brief flash every few seconds. */
+@keyframes glint { 0%, 87.99% { opacity: 0; } 88%, 93.99% { opacity: 1; } 94%, 100% { opacity: 0; } }
+.f-glint { opacity: 0; animation: glint 3.2s linear 1s infinite; }
 
 /* ── Top bar ────────────────────────────────────────────────── */
 .topbar {
@@ -480,6 +484,10 @@ p {
   font-size: 0.75rem;
   font-weight: 700;
 }
+.choice:first-child .choice-key {
+  background: var(--ink);
+  color: var(--cream);
+}
 .choice-text {
   display: flex;
   flex-direction: column;
@@ -643,25 +651,6 @@ p {
   border-bottom-color: var(--red);
 }
 
-.memory-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 8px;
-}
-.memory-card {
-  padding: 10px;
-  border: 2px solid var(--cream-dim);
-}
-.memory-card h3 {
-  margin: 0;
-  font-size: 0.95rem;
-}
-.memory-empty {
-  border-style: dashed;
-}
-
 .btn-paper {
   display: inline-block;
   padding: 3px 10px;
@@ -701,9 +690,185 @@ p {
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 }
 
+/* ── Gallery + lightbox ────────────────────────────────────── */
+.gallery-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.gallery-thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  padding: 0;
+  overflow: hidden;
+  background: var(--ink);
+  border: 2px solid var(--night);
+  cursor: pointer;
+}
+.gallery-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+@media (hover: hover) and (pointer: fine) {
+  .gallery-thumb:hover {
+    border-color: var(--red);
+  }
+}
+.gallery-empty {
+  aspect-ratio: 4 / 3;
+  border: 2px dashed var(--cream-dim);
+}
+.gallery-status {
+  margin-top: 8px;
+}
+
+.lightbox {
+  width: min(92vw, 960px);
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  background: var(--night);
+  color: var(--cream);
+  font-size: 0.9rem;
+  border: var(--px) solid var(--cream-dim);
+  box-shadow: 0 0 0 var(--px) var(--night);
+  opacity: 0;
+  transform: scale(0.96);
+  transition:
+    opacity 200ms var(--ease-out),
+    transform 200ms var(--ease-out),
+    overlay 200ms allow-discrete,
+    display 200ms allow-discrete;
+}
+.lightbox[open] {
+  opacity: 1;
+  transform: none;
+}
+@starting-style {
+  .lightbox[open] {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+.lightbox::backdrop {
+  background-color: rgb(22 26 43 / 0);
+  transition:
+    background-color 200ms var(--ease-out),
+    overlay 200ms allow-discrete,
+    display 200ms allow-discrete;
+}
+.lightbox[open]::backdrop {
+  background-color: rgb(22 26 43 / 0.9);
+}
+@starting-style {
+  .lightbox[open]::backdrop {
+    background-color: rgb(22 26 43 / 0);
+  }
+}
+.lightbox :focus-visible {
+  outline-color: var(--ochre-light);
+}
+.lightbox figure {
+  margin: 0;
+}
+.lightbox-img {
+  display: block;
+  width: 100%;
+  max-height: calc(100dvh - 32px - 64px);
+  object-fit: contain;
+  image-rendering: pixelated;
+  background: var(--navy);
+}
+.lightbox-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  padding: 8px 10px;
+  border-top: 2px solid var(--slate);
+}
+.lightbox-title {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.lightbox .meta {
+  color: var(--mist);
+}
+.lightbox-count {
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  color: var(--mist);
+}
+.lightbox-controls {
+  display: flex;
+  gap: 6px;
+}
+
+/* ── Reveal: new content steps in, one block after another ─────
+   Stepped like the pixel art. Short enough (< 0.5s total) that it never holds up reading,
+   and items stay clickable while they play. */
+@keyframes step-up {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--px) * 2));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes step-left {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--px) * 4));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.lines > p,
+.choices > li,
+.doc .detail-list > div,
+.doc .chips > li,
+.doc .cv-jobs > li,
+.doc .gallery-grid > li {
+  animation: step-up 150ms steps(3, jump-none) both;
+  animation-delay: calc(var(--delay, 0ms) + var(--i, 0) * 40ms);
+}
+.doc > .paper {
+  --delay: 80ms;
+  animation: step-left 160ms steps(4, jump-none) both;
+  animation-delay: 0ms;
+}
+.doc .chips {
+  --delay: 240ms;
+}
+:is(.doc .detail-list, .doc .chips, .doc .cv-jobs, .doc .gallery-grid) > :nth-child(2) { --i: 1; }
+:is(.doc .detail-list, .doc .chips, .doc .cv-jobs, .doc .gallery-grid) > :nth-child(3) { --i: 2; }
+:is(.doc .detail-list, .doc .chips, .doc .cv-jobs, .doc .gallery-grid) > :nth-child(4) { --i: 3; }
+:is(.doc .detail-list, .doc .chips, .doc .cv-jobs, .doc .gallery-grid) > :nth-child(5) { --i: 4; }
+:is(.doc .detail-list, .doc .chips, .doc .cv-jobs, .doc .gallery-grid) > :nth-child(n + 6) { --i: 5; }
+
 /* ── Small phones ──────────────────────────────────────────── */
 @media (max-width: 599px) {
   .brand-role,
+  .nav-sound-text,
   .art-notice-detail {
     display: none;
   }
@@ -808,15 +973,6 @@ p {
   .dlg-main {
     gap: 6px;
   }
-  .memory-empty {
-    padding: 6px 8px;
-  }
-  .memory-empty .detail-list > div {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0 8px;
-  }
 }
 
 /* Phones held sideways: panel in its own column next to the dialogue. */
@@ -873,7 +1029,153 @@ p {
     animation: none !important;
     transition: none !important;
   }
-  .poster-hotspot {
+  .hotspot {
     border-color: var(--ochre-light);
   }
+  /* Keep a short fade so new content still reads as new, without movement or stagger. */
+  .lines > p,
+  .choices > li,
+  .doc > .paper {
+    animation: fade-in 150ms ease both !important;
+  }
+  .lightbox,
+  .lightbox::backdrop {
+    transition:
+      opacity 150ms ease,
+      background-color 150ms ease,
+      overlay 150ms allow-discrete,
+      display 150ms allow-discrete !important;
+  }
+  .lightbox,
+  .lightbox[open] {
+    transform: none;
+  }
+}
+
+/* ── Reference scene UI: quiet 8-bit visual-novel frame ────── */
+.topbar {
+  height: 42px;
+  padding: 4px 10px;
+  background: linear-gradient(180deg, rgb(13 20 34 / 0.95), rgb(18 27 45 / 0.78));
+  border-bottom: 2px solid rgb(82 101 138 / 0.55);
+}
+.brand {
+  gap: 7px;
+  padding: 0 4px;
+}
+.brand-name,
+.brand-role,
+.nav-btn,
+.dialogue,
+.speaker,
+.choice,
+.btn {
+  font-family: var(--font-label);
+}
+.brand-name {
+  color: var(--cream);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.brand-role {
+  color: var(--mist);
+  letter-spacing: 0.02em;
+}
+.topnav {
+  gap: 5px;
+}
+.nav-btn {
+  min-height: 28px;
+  padding: 1px 10px;
+  background: rgb(22 29 47 / 0.78);
+  border-color: var(--cream-dim);
+  color: var(--cream);
+  font-size: 0.75rem;
+}
+.nav-btn[aria-current='page'] {
+  background: var(--cream);
+  border-color: var(--cream);
+  color: var(--night);
+}
+.hud {
+  top: 0;
+  padding: 8px;
+}
+.dialogue {
+  gap: 7px;
+  padding: 8px 10px 9px;
+  background: rgb(12 20 33 / 0.94);
+  border: 2px solid var(--cream-dim);
+  box-shadow: 0 0 0 2px var(--night), inset 0 0 0 1px var(--slate);
+}
+.speaker {
+  padding: 0;
+  background: transparent;
+  color: var(--ochre-light);
+  font-size: 0.78rem;
+}
+.step-count,
+.tag {
+  color: var(--mist);
+}
+.lines {
+  color: var(--cream);
+  font-size: 0.9rem;
+  line-height: 1.42;
+}
+.lines > p {
+  text-shadow: 1px 1px 0 rgb(5 8 15 / 0.65);
+}
+.choices {
+  gap: 5px;
+}
+.choice {
+  min-height: 32px;
+  justify-content: center;
+  padding: 4px 8px;
+  background: rgb(19 28 46 / 0.95);
+  border: 1px solid var(--cream-dim);
+  color: var(--cream);
+  text-align: center;
+}
+.choice:first-child {
+  background: var(--cream);
+  color: var(--night);
+}
+.choice:hover,
+.choice:focus-visible {
+  background: var(--ochre-light);
+  color: var(--night);
+}
+.choice-text {
+  align-items: center;
+}
+.choice-label {
+  font-size: 0.78rem;
+}
+.choice-hint {
+  color: var(--ink-soft);
+}
+.choice-key {
+  width: 15px;
+  height: 15px;
+  background: transparent;
+  color: var(--cream-dim);
+  font-size: 0.65rem;
+}
+.choice:first-child .choice-key {
+  background: transparent;
+  color: var(--night);
+}
+.controls {
+  gap: 5px;
+}
+.controls .btn {
+  min-height: 24px;
+  border-color: var(--slate);
+  color: var(--mist);
+  font-size: 0.68rem;
+}
+.controls .btn:hover:not(:disabled) {
+  color: var(--cream);
 }

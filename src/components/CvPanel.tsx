@@ -9,9 +9,9 @@ import { Missing } from './StatusTag'
 type Tab = 'experience' | 'education' | 'contact'
 
 const TABS: { id: Tab; label: string }[] = [
-  { id: 'experience', label: 'Kinh nghiệm' },
-  { id: 'education', label: 'Học vấn' },
-  { id: 'contact', label: 'Liên hệ' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'education', label: 'Education' },
+  { id: 'contact', label: 'Contact' },
 ]
 
 export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => void }) {
@@ -30,15 +30,15 @@ export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => v
         <div className="cv-file">
           {cv.state === 'available' && (
             <a className="btn-paper" href={cv.url} target="_blank" rel="noopener">
-              Mở CV (PDF)
+              Open CV (PDF)
             </a>
           )}
-          {cv.state === 'missing' && <Missing>CV chưa được thêm</Missing>}
-          {cv.state === 'checking' && <span className="meta">Đang kiểm tra…</span>}
+          {cv.state === 'missing' && <Missing>CV not added yet</Missing>}
+          {cv.state === 'checking' && <span className="meta">Checking…</span>}
         </div>
       </div>
 
-      <div className="tabs" role="group" aria-label="Phần của CV">
+      <div className="tabs" role="group" aria-label="CV sections">
         {TABS.map((t) => (
           <button
             key={t.id}
@@ -80,7 +80,7 @@ export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => v
       {tab === 'education' && (
         <dl className="detail-list">
           <div>
-            <dt>Học vấn</dt>
+            <dt>Education</dt>
             <dd>
               {cvSummary.education.school}: {cvSummary.education.major}
               <br />
@@ -90,7 +90,7 @@ export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => v
             </dd>
           </div>
           <div>
-            <dt>Ngôn ngữ</dt>
+            <dt>Languages</dt>
             <dd>
               <ul className="bullets">
                 {cvSummary.languages.map((l) => (
@@ -109,7 +109,7 @@ export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => v
               <dt>{item.label}</dt>
               <dd>
                 {item.value === null ? (
-                  <Missing>Chưa bổ sung</Missing>
+                  <Missing>Not provided yet</Missing>
                 ) : (
                   <a href={item.kind === 'email' ? `mailto:${item.value}` : item.value} rel="noopener">
                     {item.value}

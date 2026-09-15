@@ -5,15 +5,15 @@ export const site: SiteConfig = {
   role: 'Middle Fullstack Developer',
 
   cv: {
-    // Drop the PDF into public/cv/ with this name. Missing file → "CV chưa được thêm".
+    // Drop the PDF into public/cv/ with this name. Missing file → "CV not added yet".
     file: 'cv/hoang-cong-tho-cv.pdf',
   },
 
-  // MISSING: fill in real values. null renders as "Chưa bổ sung".
+  // Email from the CV; GitHub and LinkedIn from Thọ's previous portfolio. null renders as "Not provided yet".
   contact: [
-    { label: 'Email', kind: 'email', value: null },
-    { label: 'GitHub', kind: 'url', value: null },
-    { label: 'LinkedIn', kind: 'url', value: null },
+    { label: 'Email', kind: 'email', value: 'thoqb123456@gmail.com' },
+    { label: 'GitHub', kind: 'url', value: 'https://github.com/kinema0109' },
+    { label: 'LinkedIn', kind: 'url', value: 'https://www.linkedin.com/in/th%E1%BB%8D-ho%C3%A0ng-c%C3%B4ng-12322b260/' },
   ],
 
   review: {

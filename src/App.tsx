@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { CvPanel } from './components/CvPanel'
 import { DialogueBox } from './components/DialogueBox'
-import { MemoryPanel } from './components/MemoryPanel'
+import { GalleryPanel } from './components/GalleryPanel'
 import { ProjectDetail } from './components/ProjectDetail'
 import { Scene } from './components/Scene'
-import { getMemorySlot } from './content/memories'
+import { galleryItems } from './content/gallery'
 import { getProject } from './content/projects'
 import { site } from './content/site'
 import { story } from './content/story'
@@ -25,10 +25,23 @@ import { buildView, type PanelView } from './state/view'
 const reducer = (state: NavState, action: NavAction) =>
   navReducer(state, action, (id) => story[id].steps.length)
 
+/** Per browser: which version of the album (its picture count) the visitor has opened. */
+const GALLERY_SEEN_KEY = 'tho-vn:gallery-seen'
+const galleryVersion = String(galleryItems.length)
+
+function readGallerySeen(): boolean {
+  try {
+    return localStorage.getItem(GALLERY_SEEN_KEY) === galleryVersion
+  } catch {
+    return false
+  }
+}
+
 export default function App() {
   const [nav, dispatch] = useReducer(reducer, initialNav)
   const [soundOn, setSoundOn] = useState(false)
   const blip = useBlip(soundOn)
+  const [gallerySeen, setGallerySeen] = useState(readGallerySeen)
 
   const appRef = useRef<HTMLDivElement>(null)
   const topRef = useRef<HTMLElement>(null)
@@ -40,6 +53,8 @@ export default function App() {
   const view = buildView(here)
   const key = locationKey(here)
   const backAllowed = canGoBack(nav)
+  // Choices stay put while stepping through one node, so they only re-enter on a new place.
+  const choicesKey = here.kind === 'node' ? `node:${here.id}` : key
 
   const region = useFreeRegion({ app: appRef, top: topRef, dialogue: dialogueRef, doc: docRef }, [key])
 
@@ -52,6 +67,17 @@ export default function App() {
   )
   const go = useCallback((target: Target) => act({ type: 'go', target }), [act])
   const openProject = useCallback((id: ProjectId) => go({ kind: 'project', id }), [go])
+
+  // The album on the desk glints until the visitor opens it; new pictures bring the glint back.
+  useEffect(() => {
+    if (here.kind !== 'gallery' || gallerySeen) return
+    setGallerySeen(true)
+    try {
+      localStorage.setItem(GALLERY_SEEN_KEY, galleryVersion)
+    } catch {
+      // Storage unavailable: the glint simply returns on the next visit.
+    }
+  }, [here.kind, gallerySeen])
 
   // Move focus to the new dialogue so keyboard and screen-reader users follow along.
   const firstRender = useRef(true)
@@ -84,16 +110,17 @@ export default function App() {
   return (
     <div className="app" ref={appRef}>
       <a className="skip-link" href="#dialogue">
-        Bỏ qua tới hội thoại
+        Skip to dialogue
       </a>
 
       <Scene
-        scene={view.scene}
         screen={view.screen}
         speaker={view.step.speaker}
-        posterEnabled={view.posterEnabled}
-        onPoster={() => go({ kind: 'node', id: 'rat' })}
+        albumEnabled={view.albumEnabled}
+        onAlbum={() => go({ kind: 'gallery' })}
         region={region}
+        panelOpen={view.panel !== null}
+        sparkle={!gallerySeen}
       />
 
       <header className="topbar" ref={topRef}>
@@ -101,14 +128,22 @@ export default function App() {
           <span className="brand-name">{site.name}</span>
           <span className="brand-role">{site.role}</span>
         </button>
-        <nav className="topnav" aria-label="Điều hướng chính">
+        <nav className="topnav" aria-label="Main navigation">
           <button
             type="button"
             className="nav-btn"
             aria-current={view.section === 'projects' ? 'page' : undefined}
             onClick={() => go({ kind: 'node', id: 'work' })}
           >
-            Dự án
+            Projects
+          </button>
+          <button
+            type="button"
+            className="nav-btn"
+            aria-current={view.section === 'gallery' ? 'page' : undefined}
+            onClick={() => go({ kind: 'gallery' })}
+          >
+            Gallery
           </button>
           <button
             type="button"
@@ -122,23 +157,25 @@ export default function App() {
             type="button"
             className="nav-btn nav-sound"
             aria-pressed={soundOn}
-            aria-label="Âm thanh"
+            aria-label="Sound"
             onClick={() => setSoundOn((on) => !on)}
           >
             <span aria-hidden="true">♪ </span>
-            {soundOn ? 'Bật' : 'Tắt'}
+            <span className="nav-sound-text">{soundOn ? 'On' : 'Off'}</span>
           </button>
         </nav>
       </header>
 
       <div className={`hud${view.panel ? ' has-panel' : ''}`}>
         {view.panel && (
-          <aside className="doc" ref={docRef} key={key} aria-label="Chi tiết">
+          <aside className="doc" ref={docRef} key={key} aria-label="Details">
             <Panel panel={view.panel} onOpenProject={openProject} />
           </aside>
         )}
         <DialogueBox
           view={view}
+          revealKey={key}
+          choicesKey={choicesKey}
           canGoBack={backAllowed}
           boxRef={dialogueRef}
           linesRef={linesRef}
@@ -157,9 +194,9 @@ function Panel({ panel, onOpenProject }: { panel: PanelView; onOpenProject: (id:
   switch (panel.kind) {
     case 'project':
       return <ProjectDetail project={getProject(panel.projectId)} />
-    case 'memory':
-      return <MemoryPanel slot={getMemorySlot(panel.slotId)} />
     case 'cv':
       return <CvPanel onOpenProject={onOpenProject} />
+    case 'gallery':
+      return <GalleryPanel />
   }
 }

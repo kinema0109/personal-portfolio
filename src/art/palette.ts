@@ -23,6 +23,12 @@ export const C = {
   fur: '#7c6f6a',
   furDark: '#5a4f4d',
   pink: '#b98580',
+  teal: '#2f6f72',
+  tealLight: '#5e9a8b',
+  tealDark: '#204e5b',
+  gold: '#d49a3a',
+  goldLight: '#edc567',
+  ink: '#1b1b29',
 } as const
 
 /** [x, y, width, height, fill] on the 320×180 pixel grid. */

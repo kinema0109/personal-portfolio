@@ -1,7 +1,6 @@
 import type { ScreenMode } from '../art/ApartmentScene'
+import type { Content } from '../content'
 import { galleryItems } from '../content/gallery'
-import { getProject, projects } from '../content/projects'
-import { story } from '../content/story'
 import type { Choice, DialogueStep, NodeId, ProjectId } from '../content/types'
 import type { Location } from './navigation'
 
@@ -16,14 +15,12 @@ type Section = 'home' | 'projects' | 'how' | 'outside' | 'cv' | 'gallery'
 export interface View {
   /** What the laptop in the scene shows. */
   screen: ScreenMode
-  /** Whether the album on the desk is clickable. */
-  albumEnabled: boolean
   step: DialogueStep
   stepIndex: number
   stepCount: number
   choices: readonly Choice[]
   panel: PanelView | null
-  /** Active top-level section, for aria-current in the nav. */
+  /** Active top-level section. */
   section: Section
 }
 
@@ -46,46 +43,37 @@ const SCREEN_BY_SECTION: Record<Section, ScreenMode> = {
   gallery: 'docs',
 }
 
-export function buildView(loc: Location): View {
-  const base = buildBase(loc)
+export function buildView(loc: Location, content: Content): View {
+  const base = buildBase(loc, content)
   return { ...base, screen: SCREEN_BY_SECTION[base.section] }
 }
 
-function buildBase(loc: Location): Omit<View, 'screen'> {
+function buildBase(loc: Location, content: Content): Omit<View, 'screen'> {
+  const { text } = content
   switch (loc.kind) {
     case 'node': {
-      const node = story[loc.id]
+      const node = content.story[loc.id]
       const stepIndex = Math.min(loc.step, node.steps.length - 1)
       return {
-        albumEnabled: Boolean(node.albumEnabled),
         step: node.steps[stepIndex],
         stepIndex,
         stepCount: node.steps.length,
-        choices: node.choices,
+        // Visual-novel convention: the choice menu only appears once the last line has been read.
+        choices: stepIndex === node.steps.length - 1 ? node.choices : [],
         panel: null,
         section: SECTION_BY_NODE[node.id],
       }
     }
 
     case 'project': {
-      const p = getProject(loc.id)
+      const p = content.getProject(loc.id)
       const choices: Choice[] = []
       if (p.relatedNode) {
-        choices.push({ label: 'How did you approach it?', target: { kind: 'node', id: p.relatedNode } })
+        choices.push({ label: text.choices.approach, target: { kind: 'node', id: p.relatedNode } })
       }
-      choices.push({ label: 'Project archive', hint: 'Every project in the CV', target: { kind: 'archive' } })
+      choices.push({ label: text.choices.archive, hint: text.choices.archiveAll, target: { kind: 'archive' } })
       return {
-        ...single({
-          speaker: 'THỌ',
-          lines: [
-            `${p.name} is a project at ${p.company} (${p.period}), where I worked as ${p.role}.`,
-            p.relatedNode
-              ? 'The panel shows what I built and the stack. Ask me how I approached the hardest part.'
-              : 'The panel shows what I built and the stack I used.',
-          ],
-          status: 'ready',
-          source: 'CV',
-        }),
+        ...single({ speaker: 'tho', lines: text.views.project(p, Boolean(p.relatedNode)), status: 'ready', source: 'CV' }),
         choices,
         panel: { kind: 'project', projectId: p.id },
         section: 'projects',
@@ -94,15 +82,8 @@ function buildBase(loc: Location): Omit<View, 'screen'> {
 
     case 'archive':
       return {
-        ...single({
-          speaker: 'THỌ',
-          lines: [
-            'These are all the projects in my CV, newest first.',
-            'Pick one to see its context, my role, what I contributed and the stack.',
-          ],
-          status: 'ready',
-        }),
-        choices: projects.map((p) => ({
+        ...single({ speaker: 'tho', lines: text.views.archive, status: 'ready' }),
+        choices: content.projects.map((p) => ({
           label: p.name,
           hint: `${p.company} · ${p.role}`,
           target: { kind: 'project', id: p.id },
@@ -115,36 +96,18 @@ function buildBase(loc: Location): Omit<View, 'screen'> {
       return {
         ...single(
           galleryItems.length === 0
-            ? {
-                speaker: 'NOTE',
-                lines: ['The album is empty for now.', 'Thọ will add the pixel-art pictures soon.'],
-                status: 'placeholder',
-              }
-            : {
-                speaker: 'THỌ',
-                lines: [
-                  'This album collects pixel-art pictures.',
-                  'Pick one to see it full size, and use the arrow keys to flip through.',
-                ],
-                status: 'ready',
-              },
+            ? { speaker: 'note', lines: text.views.galleryEmpty, status: 'placeholder' }
+            : { speaker: 'tho', lines: text.views.gallery, status: 'ready' },
         ),
-        choices: [{ label: 'What about outside work?', target: { kind: 'node', id: 'outside' } }],
+        choices: [{ label: text.choices.outside, target: { kind: 'node', id: 'outside' } }],
         panel: { kind: 'gallery' },
         section: 'gallery',
       }
 
     case 'cv':
       return {
-        ...single({
-          speaker: 'THỌ',
-          lines: [
-            'Here is a summary of my CV: experience, education and contact details.',
-            'Click a project name to open its details.',
-          ],
-          status: 'ready',
-        }),
-        choices: [{ label: 'See featured projects', target: { kind: 'node', id: 'work' } }],
+        ...single({ speaker: 'tho', lines: text.views.cv, status: 'ready' }),
+        choices: [{ label: text.choices.seeFeatured, target: { kind: 'node', id: 'work' } }],
         panel: { kind: 'cv' },
         section: 'cv',
       }
@@ -152,5 +115,5 @@ function buildBase(loc: Location): Omit<View, 'screen'> {
 }
 
 function single(step: DialogueStep) {
-  return { albumEnabled: false, step, stepIndex: 0, stepCount: 1 }
+  return { step, stepIndex: 0, stepCount: 1 }
 }

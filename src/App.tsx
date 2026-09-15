@@ -1,16 +1,18 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
+import { ChoiceMenu } from './components/ChoiceMenu'
 import { CvPanel } from './components/CvPanel'
 import { DialogueBox } from './components/DialogueBox'
 import { GalleryPanel } from './components/GalleryPanel'
 import { ProjectDetail } from './components/ProjectDetail'
 import { Scene } from './components/Scene'
+import { CONTENT } from './content'
 import { galleryItems } from './content/gallery'
-import { getProject } from './content/projects'
 import { site } from './content/site'
-import { story } from './content/story'
-import type { ProjectId, Target } from './content/types'
+import type { HotspotId, ProjectId, Target } from './content/types'
 import { useBlip } from './hooks/useBlip'
 import { useFreeRegion } from './hooks/useFreeRegion'
+import { LOCALES } from './i18n/locale'
+import { useLocale } from './i18n/LocaleProvider'
 import {
   canGoBack,
   current,
@@ -22,8 +24,9 @@ import {
 } from './state/navigation'
 import { buildView, type PanelView } from './state/view'
 
+// Step counts are identical in every language (LocaleContent uses fixed-length tuples), so English drives navigation.
 const reducer = (state: NavState, action: NavAction) =>
-  navReducer(state, action, (id) => story[id].steps.length)
+  navReducer(state, action, (id) => CONTENT.en.story[id].steps.length)
 
 /** Per browser: which version of the album (its picture count) the visitor has opened. */
 const GALLERY_SEEN_KEY = 'tho-vn:gallery-seen'
@@ -37,7 +40,16 @@ function readGallerySeen(): boolean {
   }
 }
 
+/** Projects, CV and the album are found by clicking objects in the room. */
+const HOTSPOT_TARGETS: Record<HotspotId, Target> = {
+  laptop: { kind: 'node', id: 'work' },
+  album: { kind: 'gallery' },
+  drawer: { kind: 'cv' },
+}
+
 export default function App() {
+  const { locale, setLocale, content } = useLocale()
+  const ui = content.text.ui
   const [nav, dispatch] = useReducer(reducer, initialNav)
   const [soundOn, setSoundOn] = useState(false)
   const blip = useBlip(soundOn)
@@ -47,16 +59,20 @@ export default function App() {
   const topRef = useRef<HTMLElement>(null)
   const dialogueRef = useRef<HTMLElement>(null)
   const docRef = useRef<HTMLElement>(null)
+  const menuRef = useRef<HTMLElement>(null)
   const linesRef = useRef<HTMLDivElement>(null)
 
   const here = current(nav)
-  const view = buildView(here)
+  const view = buildView(here, content)
   const key = locationKey(here)
   const backAllowed = canGoBack(nav)
-  // Choices stay put while stepping through one node, so they only re-enter on a new place.
-  const choicesKey = here.kind === 'node' ? `node:${here.id}` : key
+  const hasNext = view.stepIndex < view.stepCount - 1
 
-  const region = useFreeRegion({ app: appRef, top: topRef, dialogue: dialogueRef, doc: docRef }, [key])
+  // Text length changes with the language, so the free region is re-measured on a switch too.
+  const region = useFreeRegion(
+    { app: appRef, top: topRef, dialogue: dialogueRef, doc: docRef, menu: menuRef },
+    [key, locale],
+  )
 
   const act = useCallback(
     (action: NavAction) => {
@@ -67,6 +83,7 @@ export default function App() {
   )
   const go = useCallback((target: Target) => act({ type: 'go', target }), [act])
   const openProject = useCallback((id: ProjectId) => go({ kind: 'project', id }), [go])
+  const onHotspot = useCallback((id: HotspotId) => go(HOTSPOT_TARGETS[id]), [go])
 
   // The album on the desk glints until the visitor opens it; new pictures bring the glint back.
   useEffect(() => {
@@ -89,12 +106,20 @@ export default function App() {
     linesRef.current?.focus({ preventScroll: true })
   }, [key])
 
-  // Shortcuts: 1–9 pick a choice, Esc goes back.
+  // Shortcuts: Enter/Space advance the dialogue, 1–9 pick a choice, Esc goes back.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
+      if (document.querySelector('dialog[open]')) return
       if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return
       if (e.key === 'Escape') {
         act({ type: 'back' })
+        return
+      }
+      if (e.key === 'Enter' || e.key === ' ') {
+        // A focused control keeps its own Enter/Space behaviour.
+        if (!hasNext || (e.target instanceof Element && e.target.closest('button, a, [role="button"]'))) return
+        e.preventDefault()
+        act({ type: 'next' })
         return
       }
       const n = Number(e.key)
@@ -105,19 +130,18 @@ export default function App() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [act, go, view.choices])
+  }, [act, go, view.choices, hasNext])
 
   return (
     <div className="app" ref={appRef}>
       <a className="skip-link" href="#dialogue">
-        Skip to dialogue
+        {ui.skipToDialogue}
       </a>
 
       <Scene
         screen={view.screen}
         speaker={view.step.speaker}
-        albumEnabled={view.albumEnabled}
-        onAlbum={() => go({ kind: 'gallery' })}
+        onHotspot={onHotspot}
         region={region}
         panelOpen={view.panel !== null}
         sparkle={!gallerySeen}
@@ -126,64 +150,60 @@ export default function App() {
       <header className="topbar" ref={topRef}>
         <button type="button" className="brand" onClick={() => act({ type: 'home' })}>
           <span className="brand-name">{site.name}</span>
-          <span className="brand-role">{site.role}</span>
+          <span className="brand-role">{content.text.role}</span>
         </button>
-        <nav className="topnav" aria-label="Main navigation">
-          <button
-            type="button"
-            className="nav-btn"
-            aria-current={view.section === 'projects' ? 'page' : undefined}
-            onClick={() => go({ kind: 'node', id: 'work' })}
-          >
-            Projects
-          </button>
-          <button
-            type="button"
-            className="nav-btn"
-            aria-current={view.section === 'gallery' ? 'page' : undefined}
-            onClick={() => go({ kind: 'gallery' })}
-          >
-            Gallery
-          </button>
-          <button
-            type="button"
-            className="nav-btn"
-            aria-current={view.section === 'cv' ? 'page' : undefined}
-            onClick={() => go({ kind: 'cv' })}
-          >
-            CV
-          </button>
+        <div className="topnav">
+          <div className="lang-switch" role="group" aria-label={ui.language}>
+            {LOCALES.map((l) => (
+              <button
+                key={l.id}
+                type="button"
+                className="nav-btn lang-btn"
+                lang={l.id}
+                aria-label={l.name}
+                aria-pressed={locale === l.id}
+                title={l.name}
+                onClick={() => setLocale(l.id)}
+              >
+                {l.short}
+              </button>
+            ))}
+          </div>
           <button
             type="button"
             className="nav-btn nav-sound"
             aria-pressed={soundOn}
-            aria-label="Sound"
+            aria-label={ui.sound}
             onClick={() => setSoundOn((on) => !on)}
           >
             <span aria-hidden="true">♪ </span>
-            <span className="nav-sound-text">{soundOn ? 'On' : 'Off'}</span>
+            <span className="nav-sound-text">{soundOn ? ui.soundOn : ui.soundOff}</span>
           </button>
-        </nav>
+        </div>
       </header>
 
       <div className={`hud${view.panel ? ' has-panel' : ''}`}>
         {view.panel && (
-          <aside className="doc" ref={docRef} key={key} aria-label="Details">
+          <aside className="doc" ref={docRef} key={key} aria-label={ui.details}>
             <Panel panel={view.panel} onOpenProject={openProject} />
           </aside>
         )}
+        {/* Own key namespace: sharing the panel's key made React keep a stale panel on screen. */}
+        <ChoiceMenu
+          key={`choices:${key}`}
+          menuRef={menuRef}
+          choices={view.choices}
+          onChoice={(choice) => go(choice.target)}
+        />
         <DialogueBox
           view={view}
           revealKey={key}
-          choicesKey={choicesKey}
           canGoBack={backAllowed}
           boxRef={dialogueRef}
           linesRef={linesRef}
-          onChoice={(choice) => go(choice.target)}
           onNext={() => act({ type: 'next' })}
           onBack={() => act({ type: 'back' })}
           onHome={() => act({ type: 'home' })}
-          onProjects={() => go({ kind: 'node', id: 'work' })}
         />
       </div>
     </div>
@@ -191,9 +211,10 @@ export default function App() {
 }
 
 function Panel({ panel, onOpenProject }: { panel: PanelView; onOpenProject: (id: ProjectId) => void }) {
+  const { content } = useLocale()
   switch (panel.kind) {
     case 'project':
-      return <ProjectDetail project={getProject(panel.projectId)} />
+      return <ProjectDetail project={content.getProject(panel.projectId)} />
     case 'cv':
       return <CvPanel onOpenProject={onOpenProject} />
     case 'gallery':

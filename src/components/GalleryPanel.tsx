@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { EMPTY_FRAME_COUNT, galleryItems, galleryUrl } from '../content/gallery'
 import { site } from '../content/site'
+import { useLocale } from '../i18n/LocaleProvider'
 import { Missing } from './StatusTag'
 
 export function GalleryPanel() {
+  const labels = useLocale().content.text.ui.gallery
   const count = galleryItems.length
   const [index, setIndex] = useState(0)
   const [open, setOpen] = useState(false)
@@ -33,9 +35,9 @@ export function GalleryPanel() {
 
   return (
     <section className="paper" aria-labelledby="gallery-title">
-      <p className="eyebrow">Gallery</p>
+      <p className="eyebrow">{labels.eyebrow}</p>
       <h2 id="gallery-title" className="paper-title">
-        Pixel art album
+        {labels.title}
       </h2>
 
       {count > 0 ? (
@@ -45,7 +47,7 @@ export function GalleryPanel() {
               <button
                 type="button"
                 className="gallery-thumb"
-                aria-label={`Open “${it.title}”`}
+                aria-label={labels.open(it.title)}
                 onClick={() => {
                   setIndex(i)
                   setOpen(true)
@@ -64,11 +66,9 @@ export function GalleryPanel() {
             ))}
           </ul>
           <p className="gallery-status">
-            <Missing>No pictures yet</Missing>
+            <Missing>{labels.noPictures}</Missing>
           </p>
-          {site.review.showContentStatus && (
-            <p className="review-note">Placeholder: Thọ will add the pixel-art pictures to public/gallery/.</p>
-          )}
+          {site.review.showContentStatus && <p className="review-note">{labels.placeholderNote}</p>}
         </>
       )}
 
@@ -97,15 +97,15 @@ export function GalleryPanel() {
                 {count > 1 && (
                   <>
                     <button type="button" className="btn" onClick={() => setIndex((index - 1 + count) % count)}>
-                      <span aria-hidden="true">←</span> Prev
+                      <span aria-hidden="true">←</span> {labels.prev}
                     </button>
                     <button type="button" className="btn" onClick={() => setIndex((index + 1) % count)}>
-                      Next <span aria-hidden="true">→</span>
+                      {labels.next} <span aria-hidden="true">→</span>
                     </button>
                   </>
                 )}
                 <button type="button" className="btn" onClick={() => setOpen(false)}>
-                  Close
+                  {labels.close}
                 </button>
               </span>
             </figcaption>

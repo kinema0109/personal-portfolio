@@ -1,5 +1,7 @@
 import type { CSSProperties } from 'react'
 import { site } from '../content/site'
+import type { SpeakerId } from '../content/types'
+import { useLocale } from '../i18n/LocaleProvider'
 import { C, type Px } from './palette'
 import { PixelRects } from './PixelRects'
 
@@ -15,16 +17,16 @@ const HUMAN: Px[] = [
 ]
 
 /** `mouth` is the open-mouth frame drawn over the portrait while a line appears. */
-const PORTRAITS: Record<string, { px: Px[]; mouth: Px[]; label: string }> = {
-  'THỌ': { px: HUMAN, mouth: [[7, 9, 2, 2, C.hair]], label: 'Developer portrait (placeholder)' },
+const PORTRAITS: Partial<Record<SpeakerId, { px: Px[]; mouth: Px[] }>> = {
+  tho: { px: HUMAN, mouth: [[7, 9, 2, 2, C.hair]] },
 }
 
-export function hasPortrait(speaker: string): boolean {
+export function hasPortrait(speaker: SpeakerId): boolean {
   return speaker in PORTRAITS
 }
 
 interface PortraitProps {
-  speaker: string
+  speaker: SpeakerId
   /** Changes on every new line, which restarts the mouth animation. */
   talkKey: string
   /** How many times the mouth opens. */
@@ -32,17 +34,18 @@ interface PortraitProps {
 }
 
 export function Portrait({ speaker, talkKey, talkFlaps }: PortraitProps) {
+  const ui = useLocale().content.text.ui
   const portrait = PORTRAITS[speaker]
   if (!portrait) return null
   return (
-    <div className="portrait" title={portrait.label}>
+    <div className="portrait" title={ui.portrait}>
       <svg viewBox="0 0 16 16" shapeRendering="crispEdges" aria-hidden="true" focusable="false">
         <PixelRects px={portrait.px} />
         <g key={talkKey} className="f-talk" style={{ '--talk': talkFlaps } as CSSProperties}>
           <PixelRects px={portrait.mouth} />
         </g>
       </svg>
-      {site.review.showArtworkNotice && <span className="portrait-tag">Temp</span>}
+      {site.review.showArtworkNotice && <span className="portrait-tag">{ui.portraitTemp}</span>}
     </div>
   )
 }

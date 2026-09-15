@@ -1,6 +1,7 @@
-import type { CSSProperties, Ref } from 'react'
+import type { CSSProperties, RefObject } from 'react'
 import { hasPortrait, Portrait } from '../art/Portrait'
-import type { Choice } from '../content/types'
+import { useStableTextHeight } from '../hooks/useStableTextHeight'
+import { useLocale } from '../i18n/LocaleProvider'
 import type { View } from '../state/view'
 import { StatusTag } from './StatusTag'
 
@@ -8,110 +9,89 @@ interface DialogueBoxProps {
   view: View
   /** Changes on every dialogue step; lines re-enter when it changes. */
   revealKey: string
-  /** Changes on every new place; choices re-enter when it changes. */
-  choicesKey: string
   canGoBack: boolean
-  boxRef: Ref<HTMLElement>
-  linesRef: Ref<HTMLDivElement>
-  onChoice: (choice: Choice) => void
+  boxRef: RefObject<HTMLElement | null>
+  linesRef: RefObject<HTMLDivElement | null>
   onNext: () => void
   onBack: () => void
   onHome: () => void
-  onProjects: () => void
 }
 
-export function DialogueBox({
-  view,
-  revealKey,
-  choicesKey,
-  canGoBack,
-  boxRef,
-  linesRef,
-  onChoice,
-  onNext,
-  onBack,
-  onHome,
-  onProjects,
-}: DialogueBoxProps) {
-  const { step, stepIndex, stepCount, choices } = view
+/**
+ * Fixed-size textbox: name row, portrait slot, text area sized to the longest step, and a reserved
+ * advance slot. Nothing inside changes size between steps; choices live in ChoiceMenu.
+ */
+export function DialogueBox({ view, revealKey, canGoBack, boxRef, linesRef, onNext, onBack, onHome }: DialogueBoxProps) {
+  const { text, allLines } = useLocale().content
+  const ui = text.ui
+  const { step, stepIndex, stepCount } = view
   const hasNext = stepIndex < stepCount - 1
-  const withPortrait = hasPortrait(step.speaker)
+  useStableTextHeight(linesRef, allLines)
 
   return (
-    <section
-      ref={boxRef}
-      className={`dialogue${withPortrait ? '' : ' no-portrait'}`}
-      id="dialogue"
-      aria-label="Dialogue"
-    >
+    <section ref={boxRef} className="dialogue" id="dialogue" aria-label={ui.dialogue}>
       <div className="dlg-head">
-        <span className="speaker">{step.speaker}</span>
-        <StatusTag status={step.status} source={step.source} />
+        <span className="speaker">{text.speakers[step.speaker]}</span>
         {stepCount > 1 && (
-          <span className="step-count" aria-label={`Line ${stepIndex + 1} of ${stepCount}`}>
+          <span className="step-count" aria-label={ui.lineOf(stepIndex + 1, stepCount)}>
             {stepIndex + 1}/{stepCount}
           </span>
         )}
+        <StatusTag status={step.status} source={step.source} />
       </div>
 
-      {withPortrait && <Portrait speaker={step.speaker} talkKey={revealKey} talkFlaps={step.lines.length * 2} />}
+      {hasPortrait(step.speaker) ? (
+        <Portrait speaker={step.speaker} talkKey={revealKey} talkFlaps={step.lines.length * 2} />
+      ) : (
+        <div className="portrait portrait-empty" aria-hidden="true" />
+      )}
 
       <div className="dlg-main">
         <div className="lines-row">
-          <div ref={linesRef} className={`lines status-${step.status}`} tabIndex={-1} aria-live="polite">
+          <div
+            ref={linesRef}
+            className={`lines status-${step.status}${hasNext ? ' can-advance' : ''}`}
+            tabIndex={-1}
+            aria-live="polite"
+            onClick={hasNext ? onNext : undefined}
+          >
             {step.lines.map((line, i) => (
               <p key={`${revealKey}:${i}`} style={{ '--i': i } as CSSProperties}>
                 {line}
               </p>
             ))}
           </div>
-          {hasNext && (
-            <button type="button" className="btn btn-next" onClick={onNext}>
-              Next <span className="next-arrow" aria-hidden="true">▸</span>
-            </button>
-          )}
+          <div className="next-slot">
+            {hasNext && (
+              <button type="button" className="btn btn-next" onClick={onNext}>
+                {ui.next} <span className="next-arrow" aria-hidden="true">▼</span>
+              </button>
+            )}
+          </div>
         </div>
-
-        {choices.length > 0 && (
-          <ol
-            key={choicesKey}
-            className="choices"
-            aria-label="Choices"
-            style={{ '--delay': `${step.lines.length * 40}ms` } as CSSProperties}
-          >
-            {choices.map((choice, i) => (
-              <li key={`${choice.label}-${i}`} style={{ '--i': i } as CSSProperties}>
-                <button
-                  type="button"
-                  className="choice"
-                  onClick={() => onChoice(choice)}
-                  aria-keyshortcuts={i < 9 ? String(i + 1) : undefined}
-                >
-                  {i < 9 && (
-                    <span className="choice-key" aria-hidden="true">
-                      {i === 0 ? '▶' : i + 1}
-                    </span>
-                  )}
-                  <span className="choice-text">
-                    <span className="choice-label">{choice.label}</span>
-                    {choice.hint && <span className="choice-hint">{choice.hint}</span>}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ol>
-        )}
       </div>
 
-      <div className="controls" role="group" aria-label="Dialogue navigation">
-        <button type="button" className="btn" onClick={onBack} disabled={!canGoBack} aria-keyshortcuts="Escape">
-          <span aria-hidden="true">←</span> Back
+      <div className="controls" role="group" aria-label={ui.dialogueNav}>
+        <button
+          type="button"
+          className="btn"
+          onClick={onBack}
+          disabled={!canGoBack}
+          aria-label={ui.back}
+          aria-keyshortcuts="Escape"
+        >
+          <span aria-hidden="true">←</span>
+          <span className="btn-label"> {ui.back}</span>
         </button>
-        <button type="button" className="btn" onClick={onHome} disabled={!canGoBack && view.section === 'home'}>
-          <span aria-hidden="true">⌂</span> Home
-        </button>
-        <button type="button" className="btn" onClick={onProjects}>
-          Projects
+        <button
+          type="button"
+          className="btn"
+          onClick={onHome}
+          disabled={!canGoBack && view.section === 'home'}
+          aria-label={ui.home}
+        >
+          <span aria-hidden="true">⌂</span>
+          <span className="btn-label"> {ui.home}</span>
         </button>
       </div>
     </section>

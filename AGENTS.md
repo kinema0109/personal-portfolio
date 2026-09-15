@@ -10,7 +10,7 @@ When a requested visual change would touch a locked reference, stop and ask for 
 
 ## Model policy
 
-Visual/reference work is approved only when the selected design model is `astra-light`. If `astra-light` is not selectable in the active environment, report that limitation and do not silently substitute a different image/design model. Text, code, and layout work may continue only when they do not modify locked references.
+Owner clarification (2026-09-15): `astra-light` means Astra with light reasoning effort, not an image-generation model named astra-light. The exposed model identifier is `gpt-6-astra`; its lowest exposed reasoning effort is `low`. Do not block visual work because no image model named astra-light exists. Do not claim to have changed the active model or effort without confirmation from the environment.
 
 ## Source of truth
 

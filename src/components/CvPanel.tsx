@@ -1,20 +1,20 @@
 import { useState } from 'react'
 import { cvSummary } from '../content/cv'
-import { getProject } from '../content/projects'
+import { formatPeriod } from '../content/projects'
 import { site } from '../content/site'
 import type { ProjectId } from '../content/types'
 import { useCvFile } from '../hooks/useCvFile'
-import { Missing } from './StatusTag'
+import { useLocale } from '../i18n/LocaleProvider'
+import { Missing, StatusTag } from './StatusTag'
 
 type Tab = 'experience' | 'education' | 'contact'
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'experience', label: 'Experience' },
-  { id: 'education', label: 'Education' },
-  { id: 'contact', label: 'Contact' },
-]
+const TABS: readonly Tab[] = ['experience', 'education', 'contact']
 
 export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => void }) {
+  const { content } = useLocale()
+  const { text } = content
+  const labels = text.ui.cv
   const cv = useCvFile()
   const [tab, setTab] = useState<Tab>('experience')
 
@@ -22,7 +22,9 @@ export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => v
     <section className="paper" aria-labelledby="cv-title">
       <div className="paper-head">
         <div>
-          <p className="eyebrow">{site.role}</p>
+          <p className="eyebrow">
+            {text.role} <StatusTag status="ready" />
+          </p>
           <h2 id="cv-title" className="paper-title">
             {site.name}
           </h2>
@@ -30,24 +32,18 @@ export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => v
         <div className="cv-file">
           {cv.state === 'available' && (
             <a className="btn-paper" href={cv.url} target="_blank" rel="noopener">
-              Open CV (PDF)
+              {labels.openPdf}
             </a>
           )}
-          {cv.state === 'missing' && <Missing>CV not added yet</Missing>}
-          {cv.state === 'checking' && <span className="meta">Checking…</span>}
+          {cv.state === 'missing' && <Missing>{labels.notAdded}</Missing>}
+          {cv.state === 'checking' && <span className="meta">{labels.checking}</span>}
         </div>
       </div>
 
-      <div className="tabs" role="group" aria-label="CV sections">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            className="tab"
-            aria-pressed={tab === t.id}
-            onClick={() => setTab(t.id)}
-          >
-            {t.label}
+      <div className="tabs" role="group" aria-label={labels.sections}>
+        {TABS.map((id) => (
+          <button key={id} type="button" className="tab" aria-pressed={tab === id} onClick={() => setTab(id)}>
+            {labels[id]}
           </button>
         ))}
       </div>
@@ -57,11 +53,12 @@ export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => v
           {cvSummary.experience.map((job) => (
             <li key={job.company}>
               <p className="cv-job-head">
-                <strong>{job.company}</strong> <span className="meta">{job.period}</span>
+                <strong>{job.company}</strong>{' '}
+                <span className="meta">{formatPeriod(job.start, job.end, text.present)}</span>
               </p>
               <ul className="cv-projects">
                 {job.projectIds.map((id) => {
-                  const p = getProject(id)
+                  const p = content.getProject(id)
                   return (
                     <li key={id}>
                       <button type="button" className="link-btn" onClick={() => onOpenProject(id)}>
@@ -80,20 +77,21 @@ export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => v
       {tab === 'education' && (
         <dl className="detail-list">
           <div>
-            <dt>Education</dt>
+            <dt>{labels.education}</dt>
             <dd>
-              {cvSummary.education.school}: {cvSummary.education.major}
+              {text.cv.school}: {text.cv.major}
               <br />
               <span className="meta">
-                {cvSummary.education.period} · GPA {cvSummary.education.gpa}
+                {formatPeriod(cvSummary.education.start, cvSummary.education.end, text.present)} ·{' '}
+                {labels.gpa(cvSummary.education.gpa)}
               </span>
             </dd>
           </div>
           <div>
-            <dt>Languages</dt>
+            <dt>{labels.languages}</dt>
             <dd>
               <ul className="bullets">
-                {cvSummary.languages.map((l) => (
+                {text.cv.languages.map((l) => (
                   <li key={l}>{l}</li>
                 ))}
               </ul>
@@ -105,11 +103,11 @@ export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => v
       {tab === 'contact' && (
         <dl className="detail-list contact-list">
           {site.contact.map((item) => (
-            <div key={item.label}>
-              <dt>{item.label}</dt>
+            <div key={item.id}>
+              <dt>{labels.contactLabels[item.id]}</dt>
               <dd>
                 {item.value === null ? (
-                  <Missing>Not provided yet</Missing>
+                  <Missing>{labels.notProvided}</Missing>
                 ) : (
                   <a href={item.kind === 'email' ? `mailto:${item.value}` : item.value} rel="noopener">
                     {item.value}

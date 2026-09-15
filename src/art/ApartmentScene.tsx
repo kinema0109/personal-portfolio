@@ -1,10 +1,10 @@
 import type { SceneFocus } from './camera'
 import { C, type Px } from './palette'
 import { PixelRects } from './PixelRects'
-import { AmbicionReference, GranCenturioReference, LockedWallSwordSet } from './LockedReferences'
+import { ReferenceDisplay } from './ReferenceDisplay'
 
 /**
- * PLACEHOLDER ARTWORK, drawn in code. Scene pixels: the room core spans 0–320 × 0–180,
+ * Room layout with separate work and display zones, drawn in code. Scene pixels: the room core spans 0–320 × 0–180,
  * and wall/floor extend in every direction so the scene can fill any screen.
  * The developer figure is a generic placeholder.
  */
@@ -12,13 +12,17 @@ import { AmbicionReference, GranCenturioReference, LockedWallSwordSet } from './
 export type ScreenMode = 'code' | 'diagram' | 'game' | 'docs'
 
 export const APARTMENT_FOCUS: SceneFocus = {
-  primary: { x: 112, y: 20, w: 198, h: 126 },
-  secondary: { x: -6, y: 6, w: 332, h: 142 },
+  primary: { x: 86, y: 8, w: 308, h: 146 },
+  secondary: { x: 8, y: 4, w: 390, h: 152 },
 }
 
 /** Album bounds on the desk, used to place the gallery hotspot button. */
 // LOCKED: See docs/DESIGN_CONTRACT.md before changing this album hotspot.
 export const ALBUM_BOX = { x: 118, y: 84, w: 34, h: 21 } as const
+
+/** Other objects the visitor can discover by clicking; Scene.tsx places a button over each. */
+export const LAPTOP_BOX = { x: 192, y: 72, w: 52, h: 32 } as const
+export const DRAWER_BOX = { x: 246, y: 112, w: 28, h: 31 } as const
 
 const X0 = -800
 const XW = 1920
@@ -40,8 +44,6 @@ const floorDetails: Px[] = [
   [48, 132, 50, 3, C.slate], [44, 135, 50, 3, C.slate], [40, 138, 50, 3, C.slate],
   // rug
   [132, 131, 168, 9, C.redDark], [132, 132, 168, 1, C.red], [132, 138, 168, 1, C.red],
-  // ceiling pendant (off)
-  [200, -36, 1, 18, C.night], [193, -18, 15, 5, C.slate], [195, -13, 11, 1, C.slateLight],
   // wall socket
   [110, 116, 5, 6, C.creamDim], [111, 118, 1, 2, C.night], [113, 118, 1, 2, C.night],
 ]
@@ -68,51 +70,29 @@ const windowFront: Px[] = [
   [104, 12, 9, 84, C.red], [107, 12, 1, 84, C.redDark],
 ]
 
-/** Left of the room (wide screens): low shelf with a generic retro console. */
-const shelf: Px[] = [
-  [-80, 56, 72, 3, C.wood],
-  [-78, 59, 68, 71, C.woodDark],
-  [-74, 62, 60, 20, C.night], [-74, 86, 60, 20, C.night], [-74, 110, 60, 16, C.night],
-  [-78, 82, 68, 4, C.wood], [-78, 106, 68, 4, C.wood],
-  // books + cartridges
-  [-72, 66, 4, 16, C.red], [-67, 64, 3, 18, C.slateLight], [-63, 68, 5, 14, C.ochreDark], [-57, 65, 4, 17, C.creamDim],
-  [-50, 78, 12, 4, C.slate],
-  [-36, 74, 6, 8, C.mist], [-35, 75, 4, 3, C.red],
-  [-29, 74, 6, 8, C.mist], [-28, 75, 4, 3, C.ochre],
-  [-22, 74, 6, 8, C.mist], [-21, 75, 4, 3, C.slateLight],
-  // console + controller
-  [-70, 96, 26, 10, C.creamDim], [-70, 96, 26, 2, C.cream], [-64, 98, 12, 2, C.night], [-48, 101, 3, 3, C.red],
-  [-40, 101, 10, 5, C.creamDim], [-38, 102, 2, 2, C.night], [-33, 103, 1, 1, C.red], [-31, 103, 1, 1, C.red],
-  [-20, 90, 8, 16, C.slate], [-19, 92, 6, 1, C.cream],
-  // boxes
-  [-72, 114, 20, 12, C.slate], [-48, 114, 20, 12, C.redDark], [-24, 116, 10, 10, C.ochreDark],
-]
-
-/** The right-hand display shelf echoes the reference composition. */
+/** Cabinet is independent of the desk; each collectible has its own bay. */
 const rightShelf: Px[] = [
-  [270, 20, 50, 3, C.woodDark], [272, 23, 46, 107, C.woodDark],
-  [276, 27, 38, 28, C.night], [276, 59, 38, 3, C.wood],
-  [276, 62, 38, 28, C.night], [276, 94, 38, 3, C.wood],
-  [276, 97, 38, 29, C.night], [276, 126, 38, 3, C.wood],
-  [274, 24, 3, 103, C.wood], [316, 24, 3, 103, C.wood],
-  [280, 31, 3, 16, C.slateLight], [284, 30, 3, 17, C.ochreDark],
-  [288, 33, 3, 14, C.mist], [302, 31, 4, 16, C.redDark],
-  // headphones and cartridges in the middle cubby
-  [281, 70, 18, 2, C.slate], [280, 72, 2, 9, C.slate], [298, 72, 2, 9, C.slate],
-  [282, 81, 5, 7, C.slateLight], [295, 81, 5, 7, C.slateLight],
-  [306, 73, 5, 12, C.tealDark], [307, 74, 3, 4, C.teal],
-  // lower shelf books and a tiny map
-  [279, 102, 5, 19, C.redDark], [285, 105, 4, 16, C.ochreDark],
-  [291, 103, 4, 18, C.slateLight], [298, 107, 11, 12, C.wood],
+  [302, 16, 86, 126, '#312b2a'], [307, 21, 76, 115, '#131f29'],
+  [302, 16, 86, 3, '#876a45'], [302, 19, 4, 122, '#654d36'],
+  [384, 19, 4, 122, '#493b2e'],
+  [307, 76, 76, 3, '#876a45'], [307, 79, 76, 2, '#392e28'],
+  [307, 108, 76, 3, '#876a45'], [307, 111, 76, 2, '#392e28'],
+  [343, 22, 3, 54, '#493b2e'],
+  [306, 136, 79, 5, '#654d36'], [307, 141, 5, 8, '#392e28'], [378, 141, 5, 8, '#392e28'],
+  // Low storage, separated from display bays.
+  [348, 119, 4, 17, C.redDark], [354, 116, 5, 20, C.slate],
+  [361, 120, 4, 16, C.ochreDark], [367, 118, 4, 18, C.creamDim],
+  [374, 122, 5, 14, C.tealDark],
 ]
 
 const desk: Px[] = [
-  [118, 104, 150, 5, C.wood], [118, 104, 150, 1, C.ochreDark],
-  [118, 109, 150, 3, C.woodDark],
-  [122, 112, 5, 30, C.woodDark], [298, 112, 5, 30, C.woodDark],
-  [248, 112, 20, 26, C.wood], [248, 112, 20, 1, C.woodDark], [248, 124, 20, 1, C.woodDark],
-  [254, 117, 6, 1, C.ochre], [254, 130, 6, 1, C.ochre],
-  [118, 140, 150, 3, C.night],
+  [90, 104, 196, 4, '#95734d'], [90, 108, 196, 3, '#4d3c30'],
+  [94, 111, 5, 35, '#493b2e'], [278, 111, 5, 35, '#493b2e'],
+  [246, 112, 28, 31, '#584631'], [248, 113, 24, 13, '#70573a'],
+  [248, 128, 24, 13, '#70573a'], [257, 118, 7, 1, '#c8a36e'],
+  [257, 133, 7, 1, '#c8a36e'],
+  // A sheet of the CV peeking out of the top drawer: a quiet hint that it opens.
+  [251, 126, 13, 2, C.cream], [253, 125, 7, 1, C.creamDim],
 ]
 
 const laptopFrame: Px[] = [
@@ -215,40 +195,19 @@ const chair: Px[] = [
 ]
 
 const deskItems: Px[] = [
-  // game cartridge
-  [257, 98, 10, 6, C.mist], [258, 99, 8, 3, C.red], [259, 100, 6, 1, C.cream], [257, 103, 10, 1, C.slate],
-  // glass of water
-  [248, 90, 1, 14, C.mist], [255, 90, 1, 14, C.mist], [248, 103, 8, 1, C.mist],
-  [249, 95, 6, 8, C.water], [250, 96, 1, 5, C.cream],
-  // desk fan, kept inside the shortened desk
-  [242, 100, 18, 4, C.night], [250, 90, 3, 10, C.slate],
-  [245, 72, 12, 1, C.slate], [243, 73, 16, 1, C.slate], [242, 74, 18, 15, C.slate],
-  [243, 89, 16, 1, C.slate], [245, 90, 12, 1, C.slate], [244, 75, 14, 13, C.night],
-]
-
-/** Original pixel easter eggs: two painted miniatures on real surfaces. */
-// LOCKED PERSONAL REFERENCES: see docs/DESIGN_CONTRACT.md before editing.
-const miniaturePixels: Px[] = [
-  // Grey Seer on the desktop: base, ragged robe, hood, face, staff and warpstone.
-  [224, 101, 14, 2, C.night], [226, 99, 10, 2, C.slate],
-  [228, 91, 8, 8, C.furDark], [226, 94, 12, 5, C.fur], [230, 87, 5, 5, C.furDark],
-  [231, 88, 4, 3, C.skinShade], [234, 90, 3, 2, C.ink], [228, 86, 2, 5, C.slate],
-  [226, 84, 2, 5, C.slate], [232, 83, 2, 5, C.slate],
-  [236, 88, 2, 13, C.woodDark], [237, 84, 2, 5, C.ochreDark],
-  [238, 82, 4, 4, C.teal], [239, 81, 2, 2, C.tealLight],
-  // Alpha Legion on the lower shelf: original teal armored collectible.
-  [302, 121, 12, 2, C.night], [304, 118, 8, 3, C.tealDark],
-  [304, 108, 8, 10, C.teal], [302, 111, 12, 8, C.tealDark],
-  [305, 105, 6, 5, C.slate], [306, 104, 4, 3, C.creamDim],
-  [301, 110, 3, 5, C.slateLight], [311, 110, 3, 5, C.slateLight],
-  [306, 112, 4, 2, C.gold], [307, 112, 2, 1, C.creamDim],
-  [305, 118, 2, 3, C.night], [309, 118, 2, 3, C.night],
+  // Water has its own gap between the laptop and the Grey Seer.
+  [248, 93, 1, 11, C.mist], [255, 93, 1, 11, C.mist],
+  [249, 98, 6, 5, C.water], [249, 103, 6, 1, C.mist], [250, 96, 1, 6, C.cream],
+  // Fan on the left end of the desk, clear of the album and laptop.
+  [95, 101, 18, 3, C.night], [103, 92, 2, 9, C.slate],
+  [98, 74, 12, 1, C.slate], [96, 75, 16, 1, C.slate], [95, 76, 18, 15, C.slate],
+  [96, 91, 16, 1, C.slate], [98, 92, 12, 1, C.slate], [97, 77, 14, 13, C.night],
 ]
 
 // LOCKED SWORD REFERENCES: see docs/DESIGN_CONTRACT.md before editing.
 const wallReferencePx: Px[] = [
-  // Framed background for the locked sword set. The blades are in LockedReferences.tsx.
-  [238, 24, 36, 52, C.wallDark], [236, 22, 36, 52, C.creamDim], [239, 25, 30, 46, C.night],
+  [245, 18, 44, 57, '#18222e'], [243, 16, 44, 57, '#80674c'],
+  [245, 18, 40, 53, '#101b27'],
 ]
 /** Open photo album standing on the desk; clicking it opens the gallery. Original placeholder art. */
 // LOCKED SINGLE ALBUM: see docs/DESIGN_CONTRACT.md before editing.
@@ -318,6 +277,14 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle }: Apartment
       <rect x={X0} y={130} width={XW} height={600} fill="url(#apt-floor)" />
       <PixelRects px={baseboard} />
       <PixelRects px={floorDetails} />
+      <ellipse cx={207} cy={143} rx={115} ry={6} fill="#0e1826" opacity={0.6} />
+      <path d="M154 -8H215L283 104H107Z" fill="#e7b568" opacity={0.055} />
+      <path d="M184 -36V-5" stroke="#17212d" strokeWidth={2} />
+      <path d="M180 -5H188L196 2H172Z" fill="#142330" />
+      <rect x={176} y={2} width={16} height={1} fill="#f2d29a" />
+      <g fill="#477367"><path d="M39 128Q12 103 19 96Q37 99 39 128ZM39 128Q58 97 65 100Q62 118 39 128ZM39 128Q31 90 37 85Q48 98 39 128Z" /></g>
+      <path d="M29 125H49L46 145H32Z" fill="#946b50" />
+      <rect x={28} y={124} width={22} height={3} fill="#b28b64" />
 
       <PixelRects px={windowPx} />
       <PixelRects px={starsA} className="f-twinkle-1" />
@@ -327,10 +294,17 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle }: Apartment
       <PixelRects px={windowFront} />
 
       <PixelRects px={wallReferencePx} />
-      <LockedWallSwordSet />
-      <PixelRects px={shelf} />
+      <ReferenceDisplay kind="swords" x={246} y={20} width={38} height={48} />
       <PixelRects px={rightShelf} />
-      <GranCenturioReference />
+      <ReferenceDisplay kind="gran" x={314} y={24} width={23} height={48} />
+      <ReferenceDisplay kind="alpha" x={352} y={46} width={22} height={28} />
+      <rect x={314} y={73} width={23} height={2} fill="#67553b" />
+      <rect x={351} y={74} width={24} height={2} fill="#67553b" />
+      <ReferenceDisplay kind="ambicion" x={317} y={91} width={57} height={14} />
+      <path d="M334 108V99M355 108V99" stroke="#806747" strokeWidth={1} />
+      <path d="M316 129V122Q325 111 334 122V129" fill="none" stroke="#62748a" strokeWidth={2} />
+      <rect x={315} y={126} width={5} height={8} rx={1} fill="#8090a3" />
+      <rect x={330} y={126} width={5} height={8} rx={1} fill="#8090a3" />
 
       <PixelRects px={desk} />
       <PixelRects px={laptopFrame} />
@@ -343,13 +317,14 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle }: Apartment
 
       <PixelRects px={chair} />
       <PixelRects px={deskItems} />
-      <AmbicionReference />
-      <PixelRects px={miniaturePixels} />
+      <ReferenceDisplay kind="seer" x={264} y={81} width={19} height={23} />
       <PixelRects px={albumPx} />
       {sparkle && <PixelRects px={glintPx} className="f-glint" />}
-      <PixelRects px={fanBladesA} className="f-fan-a" />
-      <PixelRects px={fanBladesB} className="f-fan-b" />
-      <rect x={276} y={80} width={3} height={3} fill={C.cream} />
+      <g transform="translate(-174 2)">
+        <PixelRects px={fanBladesA} className="f-fan-a" />
+        <PixelRects px={fanBladesB} className="f-fan-b" />
+        <rect x={276} y={80} width={3} height={3} fill={C.cream} />
+      </g>
 
       {speaking && <SpeechBubble x={186} y={40} />}
     </svg>

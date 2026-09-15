@@ -1,24 +1,32 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
-import { ALBUM_BOX, APARTMENT_FOCUS, ApartmentScene, type ScreenMode } from '../art/ApartmentScene'
-import { frameCamera, type Camera, type Region } from '../art/camera'
+import { ALBUM_BOX, APARTMENT_FOCUS, ApartmentScene, DRAWER_BOX, LAPTOP_BOX, type ScreenMode } from '../art/ApartmentScene'
+import { frameCamera, type Camera, type Rect } from '../art/camera'
 import { site } from '../content/site'
+import type { HotspotId, SpeakerId } from '../content/types'
+import type { FreeRegion } from '../hooks/useFreeRegion'
+import { useLocale } from '../i18n/LocaleProvider'
+
+/**
+ * Destinations live in the room itself; there are no shortcut buttons to find them.
+ * The sword frame and display cabinet are personal references only and stay non-interactive.
+ */
+const HOTSPOTS: readonly { id: HotspotId; box: Rect }[] = [
+  { id: 'laptop', box: LAPTOP_BOX },
+  { id: 'album', box: ALBUM_BOX },
+  { id: 'drawer', box: DRAWER_BOX },
+]
 
 interface SceneProps {
   screen: ScreenMode
-  speaker: string
-  /** Makes the album on the desk clickable. */
-  albumEnabled: boolean
-  onAlbum: () => void
+  speaker: SpeakerId
+  onHotspot: (id: HotspotId) => void
   /** Screen area not covered by the UI; the camera keeps the focus inside it. */
-  region: Region | null
+  region: FreeRegion | null
   /** Whether a detail panel is open. The camera glides only when this changes. */
   panelOpen: boolean
   /** Glint on the album until the visitor has opened the gallery. */
   sparkle: boolean
 }
-
-const DESCRIPTION =
-  'Pixel art: a small apartment at night. A developer sits at a desk with a laptop, an open photo album, a glass of water, a game cartridge, a desk fan and headphones. A poster hangs on the wall.'
 
 /** Camera glides play as a few whole frames, like the rest of the pixel art. */
 const PAN_FRAMES = 5
@@ -29,7 +37,8 @@ const PANEL_GLIDE_WINDOW_MS = 400
 const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2)
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-export function Scene({ screen, speaker, albumEnabled, onAlbum, region, panelOpen, sparkle }: SceneProps) {
+export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }: SceneProps) {
+  const ui = useLocale().content.text.ui
   const layerRef = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight })
 
@@ -43,7 +52,7 @@ export function Scene({ screen, speaker, albumEnabled, onAlbum, region, panelOpe
     return () => ro.disconnect()
   }, [])
 
-  const free = region ?? { left: 0, top: 0, width: size.w, height: size.h }
+  const free = region ?? { left: 0, top: 0, width: size.w, height: size.h, menu: null }
   const target = frameCamera(size.w, size.h, free, APARTMENT_FOCUS)
   const [pan, setPan] = useState<{ x: number; y: number } | null>(null)
   const cam: Camera = pan ? { ...target, ...pan } : target
@@ -60,7 +69,7 @@ export function Scene({ screen, speaker, albumEnabled, onAlbum, region, panelOpe
   }, [panelOpen])
 
   // When a panel opens or closes, glide the room over instead of jumping.
-  // Dialogue steps, zoom changes, resizes and the first measurement still snap.
+  // Zoom changes, resizes and the first measurement still snap. Dialogue steps and the choice menu never move the room.
   useLayoutEffect(() => {
     const from = shown.current
     const afterPanelChange = performance.now() - panelChangedAt.current < PANEL_GLIDE_WINDOW_MS
@@ -99,18 +108,23 @@ export function Scene({ screen, speaker, albumEnabled, onAlbum, region, panelOpe
     shown.current = { measured, cam }
   })
 
-  // Album hotspot in CSS px; only shown when it is not hidden behind the UI.
-  const album = {
-    left: (ALBUM_BOX.x - cam.x) * cam.scale,
-    top: (ALBUM_BOX.y - cam.y) * cam.scale,
-    width: ALBUM_BOX.w * cam.scale,
-    height: ALBUM_BOX.h * cam.scale,
-  }
-  const albumVisible =
-    album.left >= free.left &&
-    album.top >= free.top &&
-    album.left + album.width <= free.left + free.width &&
-    album.top + album.height <= free.top + free.height
+  // Hotspots in CSS px; each is only offered when no UI hides it, including the choice menu drawn over the room.
+  const menu = free.menu
+  const hotspots = HOTSPOTS.flatMap(({ id, box }) => {
+    const style = {
+      left: (box.x - cam.x) * cam.scale,
+      top: (box.y - cam.y) * cam.scale,
+      width: box.w * cam.scale,
+      height: box.h * cam.scale,
+    }
+    const right = style.left + style.width
+    const bottom = style.top + style.height
+    const inside =
+      style.left >= free.left && style.top >= free.top && right <= free.left + free.width && bottom <= free.top + free.height
+    const underMenu =
+      menu !== null && style.left < menu.right && right > menu.left && style.top < menu.bottom && bottom > menu.top
+    return inside && !underMenu ? [{ id, style }] : []
+  })
 
   // The scene opens with a pixel iris centred on the uncovered part of the screen.
   const irisOrigin = {
@@ -120,23 +134,24 @@ export function Scene({ screen, speaker, albumEnabled, onAlbum, region, panelOpe
 
   return (
     <div className="scene-layer" ref={layerRef}>
-      <figure className="scene" role="img" aria-label={DESCRIPTION}>
+      <figure className="scene" role="img" aria-label={ui.sceneDescription}>
         <div className="scene-art" style={irisOrigin}>
-          <ApartmentScene viewBox={viewBox} screen={screen} speaking={speaker === 'THỌ'} sparkle={sparkle} />
+          <ApartmentScene viewBox={viewBox} screen={screen} speaking={speaker === 'tho'} sparkle={sparkle} />
         </div>
       </figure>
 
       {site.review.showArtworkNotice && (
         <p className="art-notice">
-          Placeholder art<span className="art-notice-detail"> · final art coming later</span>
+          {ui.artNotice}
+          <span className="art-notice-detail">{ui.artNoticeDetail}</span>
         </p>
       )}
 
-      {albumEnabled && albumVisible && (
-        <button type="button" className="hotspot" style={album} onClick={onAlbum}>
-          <span className="hotspot-label">Open album</span>
+      {hotspots.map(({ id, style }) => (
+        <button key={id} type="button" className="hotspot" style={style} onClick={() => onHotspot(id)}>
+          <span className="hotspot-label">{ui.hotspots[id]}</span>
         </button>
-      )}
+      ))}
     </div>
   )
 }

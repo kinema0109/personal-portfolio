@@ -1,12 +1,15 @@
 import { site } from '../content/site'
 import type { Project } from '../content/types'
-import { Missing } from './StatusTag'
+import { useLocale } from '../i18n/LocaleProvider'
+import { Missing, StatusTag } from './StatusTag'
 
 export function ProjectDetail({ project }: { project: Project }) {
+  const labels = useLocale().content.text.ui.project
+
   return (
     <article className="paper" aria-labelledby="project-title">
       <p className="eyebrow">
-        {project.company} · {project.period}
+        {project.company} · {project.period} <StatusTag status="ready" />
       </p>
       <h2 id="project-title" className="paper-title">
         {project.name}
@@ -14,15 +17,15 @@ export function ProjectDetail({ project }: { project: Project }) {
 
       <dl className="detail-list">
         <div>
-          <dt>Context</dt>
-          <dd>{project.context ?? <Missing>The CV has no context description for this project.</Missing>}</dd>
+          <dt>{labels.context}</dt>
+          <dd>{project.context ?? <Missing>{labels.noContext}</Missing>}</dd>
         </div>
         <div>
-          <dt>My role</dt>
+          <dt>{labels.role}</dt>
           <dd>{project.role}</dd>
         </div>
         <div>
-          <dt>Contributions</dt>
+          <dt>{labels.contributions}</dt>
           <dd>
             <ul className="bullets">
               {project.contributions.map((c) => (
@@ -32,9 +35,9 @@ export function ProjectDetail({ project }: { project: Project }) {
           </dd>
         </div>
         <div>
-          <dt>Technologies</dt>
+          <dt>{labels.technologies}</dt>
           <dd>
-            <ul className="chips" aria-label="Technologies">
+            <ul className="chips" aria-label={labels.technologies}>
               {project.technologies.map((t) => (
                 <li key={t}>{t}</li>
               ))}
@@ -43,9 +46,7 @@ export function ProjectDetail({ project }: { project: Project }) {
         </div>
       </dl>
 
-      {site.review.showContentStatus && (
-        <p className="review-note">Source: CV, plus the product’s public page for context where the CV has none.</p>
-      )}
+      {site.review.showContentStatus && <p className="review-note">{labels.reviewNote}</p>}
     </article>
   )
 }

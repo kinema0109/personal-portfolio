@@ -20,8 +20,14 @@ The room is a portfolio interface, but it is also a personal game-history displa
 
 ## Rules for all agents
 
+2026-09-15 owner request: the top-bar shortcuts (Collection, Projects, Album, CV) and the dialogue "Projects" button are removed so visitors discover destinations in the room. Laptop opens projects, the album (same `ALBUM_BOX`) opens the gallery, the desk drawer opens the CV. The sword frame and display cabinet are references only and must stay non-interactive. Locked art is unchanged.
+
+2026-09-15 room redesign authorized by owner after overlap review: separate desk (x=90–286) and cabinet (x=302–388); Gran Centurio and Alpha Legion occupy separate upper bays, Ambicion sits on a stand in the middle bay, headphones/books use lower storage, and Grey Seer remains on the desktop. Screenshot references now use silhouette clip paths to avoid carrying rectangular background patches. These placements supersede the earlier placement exception below. Album position and interaction remain intact.
+
+2026-09-15 implementation exception explicitly authorized by the owner: reference placement updated for readability. Grey Seer sits on the extended right desktop, Alpha Legion on the middle shelf beside headphones, Ambicion horizontally on the right desktop. The single album and ALBUM_BOX remain unchanged. Runtime ReferenceDisplay uses non-destructive screenshot windows; it does not claim new exact source reconstructions. Full-size source viewing is available through the separate collection dialog.
+
 1. Read this file before editing `src/art/**`, `src/components/GalleryPanel.tsx`, `src/content/gallery.ts`, `public/gallery/**`, or any future scene-image asset.
-2. Use design model **`astra-light` only** for visual/reference generation. If it is unavailable, stop visual work and report it. Never silently fall back to another model.
+2. Owner clarification (2026-09-15): **Astra with light reasoning effort** is the requested agent configuration; `astra-light` is not a separate image-generation model. The exposed identifier is `gpt-6-astra`, with `low` as its lowest exposed reasoning effort. Do not infer that visual work is blocked by the absence of an image model named astra-light, or claim an unverified model/effort switch.
 3. Do not change a locked item's position, interaction, identity, silhouette, or signature colours without explicit owner approval in the current request.
 4. A theme or Pixiv-style change affects the *rendering layer* only. It does not authorize changing the locked concept-art layer.
 5. Any replacement scene asset must preserve the locked item bounds and the album click target. Update `ALBUM_BOX` only when the owner explicitly approves moving the album.
@@ -31,7 +37,7 @@ The room is a portfolio interface, but it is also a personal game-history displa
 
 ## Canon source asset procedure
 
-The exact reference images have not yet been added to this repository. When the owner supplies them:
+Owner sources were partially archived on 2026-09-15. See [REFERENCE_IMPLEMENTATION.md](REFERENCE_IMPLEMENTATION.md) for confirmed identities, remaining source gaps, and a proposed placement handoff. For additional originals:
 
 1. Save untouched originals in `public/references/locked/`; use clear immutable names such as `gran-centurio-concept.png` and `langrisser-reference.png`.
 2. Add each filename and SHA-256 checksum below.
@@ -40,10 +46,12 @@ The exact reference images have not yet been added to this repository. When the 
 
 | Asset ID | Canonical source filename | SHA-256 | Status |
 | --- | --- | --- | --- |
-| `wall-sword-set` | Not added | Not recorded | Waiting for owner source files |
-| `shelf-gran-centurio` | Not added | Not recorded | Waiting for owner source files |
-| `desk-ambicion` | Not added | Not recorded | Waiting for owner source files |
-| `approved-figures` | Not added | Not recorded | Waiting for owner source files |
+| `wall-sword-set` / Alhazard | `alhazard-reference.png` | `8AFA6145A580F182347217B6068D8B6E630ECC7235DFD4005CAEB7489C1AA3FB` | Original archived; Langrisser standalone source still missing |
+| `shelf-gran-centurio` / concept | `gran-centurio-concept.png` | `D7A52609902ACAA7DA8223476D3780639877BFCED8858E5F8C6154E8D5FB8AE7` | Original archived |
+| `shelf-gran-centurio` / colour | `gran-centurio-color.png` | `D2939470978F9A4B7FAD43815CFB945433107A715095D244C269B3BF55509F0E` | Original archived |
+| `desk-ambicion` / character | `ambicion-character-reference.png` | `C9B069D68FCDAAFED6500BD489AAF53D3B4A525F6C383A2286223792B6A394C9` | Original archived; contextual reference |
+| `desk-ambicion` / sprite | `ambicion-sprite.png` | `C8D3D623249A9EAC92E9F80E54906FF30B71449F28963C84705F98F865A03AC3` | Original archived; tiny source limits detail |
+| Overall approved room, figures | `approved-room-screenshot.png` | `CCB48ABCE42AC415EB5D7D5519B28B12DE25CA0C6E9A6B1DD3C1607F9555A7C2` | Composition reference; standalone figure sources missing |
 | `desk-album` | Not added | Not recorded | Waiting for owner source files |
 
 ## Unlocked design surface

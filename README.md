@@ -35,10 +35,15 @@ npm run preview    # serve dist/ on http://localhost:4173
 | Branch 1: Work | Career summary and stack, 3 featured projects (CBPO, CA2T, TheAvoTree), archive of all 7 projects, and a detail page for each (context, role, contributions, technologies) |
 | Branch 2: How I work | How Thọ uses AI-assisted tools, then three deep dives: moving production MongoDB from Atlas to 6 self-hosted GCP VMs (CBPO), the real-time webhook listener (TheAvoTree), role-based access control (CA2T) |
 | Branch 3: Outside work | Gaming background, then the album on the desk |
-| Gallery | Pixel-art album opened by clicking the photo album on the desk (on the intro and outside-work nodes), a top-bar button, or a choice. Thumbnails open a full-size lightbox (arrow keys / Prev / Next, Esc or backdrop to close) |
-| Always available | Top bar: **Projects**, **Gallery**, **CV**, sound toggle (off by default). Dialogue box: **Back**, **Home**, **Projects** |
+| Gallery | Pixel-art album opened by clicking the photo album on the desk, or a choice. Thumbnails open a full-size lightbox (arrow keys / Prev / Next, Esc or backdrop to close) |
+| Explore the room | There are no shortcut buttons: click the **laptop** for projects, the **album** for the gallery and the **desk drawer** (a CV sheet peeks out) for the CV. The sword frame and display cabinet are personal references and do not open. Hotspots show a label on hover/focus and are hidden while covered by the UI |
+| Always available | Top bar: name (goes home) and sound toggle (off by default). Dialogue box: **Back**, **Home** |
 
-Controls: click or tap anything. Keyboard: `Tab` to move, `Enter`/`Space` to activate, `1`–`9` to pick a choice, `Esc` to go back (one dialogue step, then one place).
+Controls: click or tap anything; click the dialogue text (or **Next ▼**) to advance. Keyboard: `Enter`/`Space` advance the dialogue (or activate the focused button), `Tab` to move, `1`–`9` to pick a choice, `Esc` to go back (one dialogue step, then one place).
+
+Visual-novel conventions (see `docs/ui/vn-dialogue-hud-audit.md`):
+- The textbox has **one fixed height** per layout: the text area is sized to the longest dialogue step in the current language, the portrait and advance slots are always reserved, so the box and the room never jump between lines.
+- **Choices appear only after the last line**, in a menu drawn over the room above the textbox. The room does not move or zoom when the menu appears; hotspots covered by the menu are not offered until it closes.
 
 Layout (fullscreen, the page never scrolls):
 - The pixel scene fills the whole screen at any size. A camera (`src/art/camera.ts`) reframes it so the desk and person stay in the area not covered by the UI, at whole-number pixel scales when possible.
@@ -60,12 +65,22 @@ Motion (all stepped, to match the pixel art):
 
 | File | Contains |
 | --- | --- |
-| `src/content/site.ts` | Name, role, CV file path, contact links, review flags |
-| `src/content/story.ts` | Conversation nodes, dialogue steps and choices |
-| `src/content/projects.ts` | All projects (featured flag, context, role, contributions, technologies) |
+| `src/content/i18n/{en,vi,ja}.ts` | **All visitor-facing text** per language: dialogue, choices, project text, CV text, UI labels |
+| `src/content/site.ts` | Name, CV file path, contact links, review flags |
+| `src/content/story.ts` | Conversation structure: nodes, step status/sources and choice targets |
+| `src/content/projects.ts` | Project facts (name, company, dates, featured flag, technologies) |
 | `src/content/gallery.ts` | Pixel-art album pictures (file, title, alt text, optional credit) |
-| `src/content/cv.ts` | HTML summary of the CV (experience, education, languages) |
-| `src/content/types.ts` | Types for all of the above |
+| `src/content/cv.ts` | CV structure (companies, dates, GPA) |
+| `src/content/types.ts` | Types for all of the above, including `LocaleContent` |
+
+### Languages
+
+Vietnamese, English and Japanese. The `VI · EN · JA` buttons in the top bar switch language without leaving the current place. The first visit follows the browser language (English otherwise); an explicit choice is remembered in `localStorage`.
+
+- English (`en.ts`) is the source text. Change a fact there first, then in `vi.ts` and `ja.ts`.
+- Story steps are fixed-length tuples in `LocaleContent`, so adding or removing a step fails `npm run typecheck` until every language has it.
+- `vi.ts` and `ja.ts` have `translationStatus: 'draft'`: in review mode every step shows a "draft translation" tag. Set it to `'ready'` once Thọ has checked the wording.
+- Proper nouns, technology names, dates, gallery titles and the CV PDF are not translated.
 
 Rules the data follows:
 - A dialogue step has **one to three lines**, each one or two sentences (`lines` is a 1-, 2- or 3-tuple).
@@ -73,7 +88,7 @@ Rules the data follows:
   - `ready`: fact from the CV (or from Thọ directly) or neutral framing text
   - `draft`: wording that **Thọ must confirm**. Shown with a red "Draft · needs Thọ to confirm" tag. (None at the moment.)
   - `placeholder`: real content not supplied yet
-- Project text comes from the CV, with the CBPO migration details (6 GCP VMs, 100GB–1.6TB databases) from Thọ directly. The one-line context for Suzu.net, iKara Admin CMS and Yokara also uses the products' public pages (suzu.net, the iKara App Store listing, inmobivn.com).
+- Project text comes from the CV (Full-Stack Developer edition), with the CBPO six-VM detail confirmed by Thọ directly. Older details that the current CV no longer lists (BuyBox/competitor tracking, Chart.js, Tailwind on CA2T and SingleKey, Django on SingleKey, BMAD, Flutter/Swift parity, iKara Android/iOS sync) were confirmed by Thọ to stay. The one-line context for Suzu.net, iKara Admin CMS and Yokara also uses the products' public pages (suzu.net, the iKara App Store listing, inmobivn.com).
 - Contact `value: null` shows "Not provided yet".
 
 Before going to production, set `review.showContentStatus` and `review.showArtworkNotice` to `false` in `site.ts`, once the artwork and gallery are in.
@@ -90,7 +105,7 @@ Pictures are drawn with `image-rendering: pixelated`, so export pixel art at its
 
 ### The CV
 
-The PDF lives at `public/cv/hoang-cong-tho-cv.pdf`. The app checks at runtime that the file exists and is a PDF, and shows **"CV not added yet"** otherwise. The PDF includes a phone number and date of birth, so anyone who opens the site can read them.
+The PDF lives at `public/cv/hoang-cong-tho-cv.pdf`. The app checks at runtime that the file exists and is a PDF, and shows **"CV not added yet"** otherwise. The current PDF (Full-Stack Developer edition) includes a phone number, so anyone who opens the site can read it.
 
 ### Replacing the artwork
 
@@ -109,9 +124,8 @@ The scene exports a `primary` focus rect (must stay visible) and a `secondary` o
 
 **To confirm**
 - [ ] GitHub and LinkedIn links in `site.ts` (taken from Thọ's previous portfolio; the CV shows the icons but not the URLs)
-- [ ] "03/2025 – present" for HDWEBSOFT is still current
 
-**Deliberately not included**: screenshots, client quotes, demo links, and the phone number and date of birth (these are only in the PDF).
+**Deliberately not included**: screenshots, client quotes, demo links, and the phone number (only in the PDF).
 
 ## Project structure
 

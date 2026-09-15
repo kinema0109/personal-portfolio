@@ -215,7 +215,7 @@ function ReferenceDisplays() {
       <WallFrame x={207} y={12} w={44} h={57} backing="#1b1e31" />
       <ReferenceDisplay kind="swords" x={210.25} y={16.75} width={38} height={48} />
       <WallFrame x={257} y={12} w={30} h={57} backing="#10161f" />
-      <ReferenceDisplay kind="gran" x={261.4} y={16.8} width={24} height={48} />
+      <ReferenceDisplay kind="gran" x={261.2} y={16.72} width={24} height={48} />
       <PixelRects px={[[264, 83, 2, 4, '#806747'], [286, 83, 2, 4, '#806747'], [263, 86, 4, 1, '#5c4a33'], [285, 86, 4, 1, '#5c4a33']]} />
       <ReferenceDisplay kind="ambicion" x={256} y={73} width={40} height={14} />
 

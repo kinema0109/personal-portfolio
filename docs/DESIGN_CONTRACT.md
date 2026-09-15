@@ -56,6 +56,18 @@ Owner sources were partially archived on 2026-09-15. See [REFERENCE_IMPLEMENTATI
 | Overall approved room, figures | `approved-room-screenshot.png` | `CCB48ABCE42AC415EB5D7D5519B28B12DE25CA0C6E9A6B1DD3C1607F9555A7C2` | Composition reference; standalone figure sources missing |
 | `desk-album` | Not added | Not recorded | Waiting for owner source files |
 
+### Derived runtime assets (2026-09-15)
+
+Production builds from GitHub, where `public/references/locked/` is deliberately absent, so the room no longer crops the screenshot at runtime. `scripts/export-derived-references.mjs` exports each reference from `approved-room-screenshot.png` using the crop and silhouette data in `src/art/referenceData.ts` (Grey Seer additionally keyed on its blue photo backdrop) into `public/art/derived/`, which is committed. Re-run the script after changing any crop or silhouette. Pixels are the source's own, at native resolution; nothing is redrawn.
+
+| Asset ID | Derived file | Source crop (x y w h) | SHA-256 |
+| --- | --- | --- | --- |
+| `wall-sword-set` | `public/art/derived/wall-sword-set.png` | 745 84 90 104 | `999C76F5F08BA5E40EE4ECBE8241BBEB723AE1A4D93D36B4F66399B114876BEF` |
+| `shelf-gran-centurio` | `public/art/derived/shelf-gran-centurio.png` | 896 82 75 143 | `F6B122F7C557CCE3D0FD92EEE274F44B2A8A0080E0DBCC069563DA8F9B7DCCE3` |
+| `desk-ambicion` | `public/art/derived/desk-ambicion.png` | 970 309 77 34 | `BF251F56C813E5A470F25D78B9B4C49F35417AD7E25CEDF698925DE34691FA8B` |
+| `approved-figures` / Grey Seer | `public/art/derived/figure-grey-seer.png` | 802 270 52 52 | `C5A670664BE807C7F540AB9465CFB44152ECDAAAE3CB10F1E0888F405B4B6B00` |
+| `approved-figures` / Alpha Legion | `public/art/derived/figure-alpha-legion.png` | 957 235 46 59 | `6D4B6F0FC6331C8B2C1392053AFB13FF0D11B4E6B2D4871582767FDE6C2494FA` |
+
 ## Unlocked design surface
 
 The rest of the room and portfolio remains open to improve using the existing project direction: walls, window/city, desk, laptop screen, chair, books, plants, lighting, dialogue UI, copy, navigation, project panels, motion, and responsive behavior. Changes must not obscure, replace, or break interactions with locked references.

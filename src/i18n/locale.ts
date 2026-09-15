@@ -1,17 +1,13 @@
 import type { Locale } from '../content/types'
 
-/** Order of the buttons in the top bar. */
-export const LOCALES: readonly { id: Locale; short: string; name: string }[] = [
-  { id: 'vi', short: 'VI', name: 'Tiếng Việt' },
-  { id: 'en', short: 'EN', name: 'English' },
-  { id: 'ja', short: 'JA', name: '日本語' },
-]
+/** Enabled languages, in top-bar order. The language switch is hidden while only one is enabled. */
+export const LOCALES: readonly { id: Locale; short: string; name: string }[] = [{ id: 'en', short: 'EN', name: 'English' }]
 
 const STORAGE_KEY = 'tho-vn:locale'
 
-const isLocale = (value: unknown): value is Locale => value === 'vi' || value === 'en' || value === 'ja'
+const isLocale = (value: unknown): value is Locale => LOCALES.some((l) => l.id === value)
 
-/** A saved choice wins; otherwise the first supported browser language; otherwise English. */
+/** A saved choice wins; otherwise the first enabled browser language; otherwise English. */
 export function initialLocale(): Locale {
   try {
     const saved = localStorage.getItem(STORAGE_KEY)

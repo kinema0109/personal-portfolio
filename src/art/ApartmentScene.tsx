@@ -1,6 +1,7 @@
 import type { SceneFocus } from './camera'
 import { C, type Px } from './palette'
 import { PixelRects } from './PixelRects'
+import { FireEmblemShelf } from './GameShelf'
 import { ReferenceDisplay } from './ReferenceDisplay'
 
 /**
@@ -15,6 +16,9 @@ export const APARTMENT_FOCUS: SceneFocus = {
   primary: { x: 86, y: 8, w: 308, h: 146 },
   secondary: { x: 8, y: 4, w: 390, h: 152 },
 }
+
+/** Where the Fire Emblem row stands in the cabinet's bottom bay; Scene.tsx uses it to place the name labels. */
+export const FIRE_EMBLEM_SHELF = { x: 310, floor: 136 } as const
 
 /** Album bounds on the desk, used to place the gallery hotspot button. */
 // LOCKED: See docs/DESIGN_CONTRACT.md before changing this album hotspot.
@@ -68,21 +72,6 @@ const windowFront: Px[] = [
   [8, 10, 106, 2, C.woodDark],
   [12, 12, 12, 88, C.red], [15, 12, 2, 88, C.redDark], [20, 12, 1, 88, C.redDark],
   [104, 12, 9, 84, C.red], [107, 12, 1, 84, C.redDark],
-]
-
-/** Cabinet is independent of the desk; each collectible has its own bay. */
-const rightShelf: Px[] = [
-  [302, 16, 86, 126, '#312b2a'], [307, 21, 76, 115, '#131f29'],
-  [302, 16, 86, 3, '#876a45'], [302, 19, 4, 122, '#654d36'],
-  [384, 19, 4, 122, '#493b2e'],
-  [307, 76, 76, 3, '#876a45'], [307, 79, 76, 2, '#392e28'],
-  [307, 108, 76, 3, '#876a45'], [307, 111, 76, 2, '#392e28'],
-  [343, 22, 3, 54, '#493b2e'],
-  [306, 136, 79, 5, '#654d36'], [307, 141, 5, 8, '#392e28'], [378, 141, 5, 8, '#392e28'],
-  // Low storage, separated from display bays.
-  [348, 119, 4, 17, C.redDark], [354, 116, 5, 20, C.slate],
-  [361, 120, 4, 16, C.ochreDark], [367, 118, 4, 18, C.creamDim],
-  [374, 122, 5, 14, C.tealDark],
 ]
 
 const desk: Px[] = [
@@ -195,7 +184,7 @@ const chair: Px[] = [
 ]
 
 const deskItems: Px[] = [
-  // Water has its own gap between the laptop and the Grey Seer.
+  // Water glass beside the laptop.
   [248, 93, 1, 11, C.mist], [255, 93, 1, 11, C.mist],
   [249, 98, 6, 5, C.water], [249, 103, 6, 1, C.mist], [250, 96, 1, 6, C.cream],
   // Fan on the left end of the desk, clear of the album and laptop.
@@ -205,10 +194,95 @@ const deskItems: Px[] = [
 ]
 
 // LOCKED SWORD REFERENCES: see docs/DESIGN_CONTRACT.md before editing.
-const wallReferencePx: Px[] = [
-  [245, 18, 44, 57, '#18222e'], [243, 16, 44, 57, '#80674c'],
-  [245, 18, 40, 53, '#101b27'],
+/**
+ * Wooden wall frame with a drop shadow and a backing for a reference.
+ * `backing` should match the backdrop sampled around the reference in the source image, so any backdrop
+ * left inside the silhouette clip blends into the frame instead of showing as patches.
+ */
+function WallFrame({ x, y, w, h, backing = '#101b27' }: { x: number; y: number; w: number; h: number; backing?: string }) {
+  return <PixelRects px={[[x + 2, y + 2, w, h, '#18222e'], [x, y, w, h, '#80674c'], [x + 2, y + 2, w - 4, h - 4, backing]]} />
+}
+
+/**
+ * Personal references grouped by theme (owner-approved, see docs/DESIGN_CONTRACT.md):
+ * the tactics-RPG blades share the wall, the Warhammer minis share the lit figure bay, the Fire Emblem games fill the bottom bay.
+ */
+function ReferenceDisplays() {
+  return (
+    <g>
+      {/* Tactics corner: Alhazard + Langrisser, Gran Centurio in its own tall frame, Ambicion on wall pegs below. */}
+      {/* Positions are optically centred: measured artwork bounds sit mid-frame (see frame-measure QA). */}
+      <WallFrame x={207} y={12} w={44} h={57} backing="#1b1e31" />
+      <ReferenceDisplay kind="swords" x={210.25} y={16.75} width={38} height={48} />
+      <WallFrame x={257} y={12} w={30} h={57} backing="#10161f" />
+      <ReferenceDisplay kind="gran" x={261.4} y={16.8} width={24} height={48} />
+      <PixelRects px={[[264, 83, 2, 4, '#806747'], [286, 83, 2, 4, '#806747'], [263, 86, 4, 1, '#5c4a33'], [285, 86, 4, 1, '#5c4a33']]} />
+      <ReferenceDisplay kind="ambicion" x={256} y={73} width={40} height={14} />
+
+      <PixelRects px={cabinet} />
+      {/* Figure bay: the tallest bay, with a warm shelf light so the dark minis read against the backing.
+          Both minis share one scale (0.45 scene units per source pixel) and their own painted bases stand on the bay floor (y 108).
+          The round base on the right is kept free for the next figure (Garchomp). */}
+      <defs>
+        <linearGradient id="figure-bay-light" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#f2d29a" stopOpacity={0.2} />
+          <stop offset="1" stopColor="#f2d29a" stopOpacity={0} />
+        </linearGradient>
+      </defs>
+      <ellipse cx={319.8} cy={107.4} rx={10.5} ry={1.3} fill="#05080c" opacity={0.55} />
+      <ellipse cx={346.6} cy={107.4} rx={10} ry={1.3} fill="#05080c" opacity={0.55} />
+      <ReferenceDisplay kind="seer" x={309} y={84.6} width={23.4} height={23.4} />
+      <ReferenceDisplay kind="alpha" x={336} y={81.45} width={20.7} height={26.55} />
+      <ellipse cx={371} cy={106.9} rx={9} ry={1.6} fill="#221c18" />
+      <ellipse cx={371} cy={106} rx={9} ry={1.5} fill="#4a3d30" />
+      {/* The light is drawn over the minis, so the backing and any leftover photo backdrop brighten together. */}
+      <rect x={307} y={71} width={76} height={37} fill="url(#figure-bay-light)" />
+      <rect x={309} y={71} width={72} height={1} fill="#f2d29a" opacity={0.4} />
+      {/* Top bays: books; headphones with the paint pots and brush. */}
+      <PixelRects
+        px={[
+          [311, 46, 4, 20, C.redDark], [316, 43, 4, 23, C.slate], [321, 48, 5, 18, C.ochreDark],
+          [327, 45, 4, 21, C.creamDim], [332, 51, 8, 15, C.tealDark],
+          [351, 57, 5, 8, '#8090a3'], [366, 57, 5, 8, '#8090a3'],
+          [374, 62, 3, 4, C.red], [374, 61, 3, 1, C.creamDim],
+          [378, 63, 3, 3, C.tealDark], [378, 62, 3, 1, C.creamDim],
+          [381, 56, 1, 10, C.woodDark], [381, 55, 1, 1, C.cream],
+        ]}
+      />
+      {/* Bottom bay: every boxed Fire Emblem game, in release order (see GameShelf.tsx), with a brass name plate on the shelf edge. */}
+      <FireEmblemShelf x={FIRE_EMBLEM_SHELF.x} floor={FIRE_EMBLEM_SHELF.floor} />
+      <rect x={329} y={136.8} width={36} height={3.6} fill="#c9a45c" />
+      <rect x={329} y={136.8} width={36} height={0.6} fill="#e8cf8f" />
+      <text
+        x={347}
+        y={139.55}
+        textAnchor="middle"
+        fontFamily="ui-monospace, Consolas, monospace"
+        fontSize={2.6}
+        fontWeight={700}
+        letterSpacing={0.25}
+        fill="#2a2018"
+      >
+        FIRE EMBLEM
+      </text>
+      <path d="M353 60V53Q361 42 369 53V60" fill="none" stroke="#62748a" strokeWidth={2} />
+    </g>
+  )
+}
+
+/** Display cabinet, independent of the desk. The top shelf sits high so the figure bay is the tallest bay. */
+const cabinet: Px[] = [
+  [302, 16, 86, 126, '#312b2a'], [307, 21, 76, 115, '#131f29'],
+  [302, 16, 86, 3, '#876a45'], [302, 19, 4, 122, '#654d36'],
+  [384, 19, 4, 122, '#493b2e'],
+  [307, 66, 76, 3, '#876a45'], [307, 69, 76, 2, '#392e28'],
+  [307, 108, 76, 3, '#876a45'], [307, 111, 76, 2, '#392e28'],
+  [343, 22, 3, 44, '#493b2e'],
+  [306, 136, 79, 5, '#654d36'], [307, 141, 5, 8, '#392e28'], [378, 141, 5, 8, '#392e28'],
 ]
+
+/** A closed notebook and pen on the right of the desk, which only holds work items. */
+const notebookPx: Px[] =[[262, 101, 18, 3, C.slate], [262, 101, 18, 1, C.slateLight], [264, 99, 10, 1, C.ochre]]
 /** Open photo album standing on the desk; clicking it opens the gallery. Original placeholder art. */
 // LOCKED SINGLE ALBUM: see docs/DESIGN_CONTRACT.md before editing.
 const albumPx: Px[] = [
@@ -293,18 +367,7 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle }: Apartment
       <PixelRects px={cityLightsB} className="f-city" />
       <PixelRects px={windowFront} />
 
-      <PixelRects px={wallReferencePx} />
-      <ReferenceDisplay kind="swords" x={246} y={20} width={38} height={48} />
-      <PixelRects px={rightShelf} />
-      <ReferenceDisplay kind="gran" x={314} y={24} width={23} height={48} />
-      <ReferenceDisplay kind="alpha" x={352} y={46} width={22} height={28} />
-      <rect x={314} y={73} width={23} height={2} fill="#67553b" />
-      <rect x={351} y={74} width={24} height={2} fill="#67553b" />
-      <ReferenceDisplay kind="ambicion" x={317} y={91} width={57} height={14} />
-      <path d="M334 108V99M355 108V99" stroke="#806747" strokeWidth={1} />
-      <path d="M316 129V122Q325 111 334 122V129" fill="none" stroke="#62748a" strokeWidth={2} />
-      <rect x={315} y={126} width={5} height={8} rx={1} fill="#8090a3" />
-      <rect x={330} y={126} width={5} height={8} rx={1} fill="#8090a3" />
+      <ReferenceDisplays />
 
       <PixelRects px={desk} />
       <PixelRects px={laptopFrame} />
@@ -317,7 +380,7 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle }: Apartment
 
       <PixelRects px={chair} />
       <PixelRects px={deskItems} />
-      <ReferenceDisplay kind="seer" x={264} y={81} width={19} height={23} />
+      <PixelRects px={notebookPx} />
       <PixelRects px={albumPx} />
       {sparkle && <PixelRects px={glintPx} className="f-glint" />}
       <g transform="translate(-174 2)">

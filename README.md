@@ -35,8 +35,8 @@ npm run preview    # serve dist/ on http://localhost:4173
 | Branch 1: Work | Career summary and stack, 3 featured projects (CBPO, CA2T, TheAvoTree), archive of all 7 projects, and a detail page for each (context, role, contributions, technologies) |
 | Branch 2: How I work | How Thọ uses AI-assisted tools, then three deep dives: moving production MongoDB from Atlas to 6 self-hosted GCP VMs (CBPO), the real-time webhook listener (TheAvoTree), role-based access control (CA2T) |
 | Branch 3: Outside work | Gaming background, then the album on the desk |
-| Gallery | Pixel-art album opened by clicking the photo album on the desk, or a choice. Thumbnails open a full-size lightbox (arrow keys / Prev / Next, Esc or backdrop to close) |
-| Explore the room | There are no shortcut buttons: click the **laptop** for projects, the **album** for the gallery and the **desk drawer** (a CV sheet peeks out) for the CV. The sword frame and display cabinet are personal references and do not open. Hotspots show a label on hover/focus and are hidden while covered by the UI |
+| Gallery | Pixel-art album that **only** opens by clicking the photo album on the desk (no menu or dialogue choice leads there). One picture at a time with no titles or captions; Prev/Next or arrow keys to browse, Esc or Close to leave |
+| Explore the room | There are no shortcut buttons: click the **laptop** for projects, the **album** for the gallery and the **desk drawer** (a CV sheet peeks out) for the CV. The sword frames and display cabinet are personal references and do not open; each boxed Fire Emblem game on the bottom shelf shows its name on hover or tap. Hotspots show a label on hover/focus and are hidden while covered by the UI |
 | Always available | Top bar: name (goes home) and sound toggle (off by default). Dialogue box: **Back**, **Home** |
 
 Controls: click or tap anything; click the dialogue text (or **Next ▼**) to advance. Keyboard: `Enter`/`Space` advance the dialogue (or activate the focused button), `Tab` to move, `1`–`9` to pick a choice, `Esc` to go back (one dialogue step, then one place).
@@ -47,7 +47,7 @@ Visual-novel conventions (see `docs/ui/vn-dialogue-hud-audit.md`):
 
 Layout (fullscreen, the page never scrolls):
 - The pixel scene fills the whole screen at any size. A camera (`src/art/camera.ts`) reframes it so the desk and person stay in the area not covered by the UI, at whole-number pixel scales when possible.
-- **Desktop / tablet**: compact dialogue box along the bottom with a portrait, a speaker tag, Back/Home/Projects controls and choices in columns. Project, CV and gallery panels open as a card on the right, and the room shifts left.
+- **Desktop / tablet**: fixed-height dialogue box along the bottom with a portrait, the speaker name and Back/Home controls; choices appear in a menu above it after the last line. Project, CV and gallery panels open as a card on the right, and the room shifts left.
 - **Phone (portrait)**: the dialogue sits at the bottom, choices stack, and panels sit above the dialogue.
 - **Phone (landscape)**: the panel gets its own column next to the dialogue.
 - The scene reacts to the conversation: the laptop shows code, a diagram, a small game or documents depending on the branch, and a speech bubble appears while Thọ is speaking.
@@ -58,29 +58,32 @@ Motion (all stepped, to match the pixel art):
 - **Camera glide**: when a panel opens or closes, the room moves over in 5 frames instead of jumping. Dialogue steps, resizes and zoom changes still snap.
 - **Iris**: the first load opens with a stepped circle wipe.
 - **Album glint**: the album on the desk flashes a small glint every few seconds until the visitor opens the gallery. This is remembered per browser (localStorage) and comes back when pictures are added.
-- **Lightbox**: the gallery viewer fades and scales in and out.
+- **Album viewer**: opens as a full-screen dialog over the room.
 - `prefers-reduced-motion` stops all of the above except a plain short fade on new content. Dialogue never uses a typewriter effect.
 
 ## Editing content
 
 | File | Contains |
 | --- | --- |
-| `src/content/i18n/{en,vi,ja}.ts` | **All visitor-facing text** per language: dialogue, choices, project text, CV text, UI labels |
+| `src/content/i18n/en.ts` | **All visitor-facing text**: dialogue, choices, project text, CV text, UI labels |
 | `src/content/site.ts` | Name, CV file path, contact links, review flags |
 | `src/content/story.ts` | Conversation structure: nodes, step status/sources and choice targets |
 | `src/content/projects.ts` | Project facts (name, company, dates, featured flag, technologies) |
-| `src/content/gallery.ts` | Pixel-art album pictures (file, title, alt text, optional credit) |
+| `src/content/gallery.ts` | Pixel-art album pictures (file and screen-reader alt text; nothing else is shown) |
 | `src/content/cv.ts` | CV structure (companies, dates, GPA) |
 | `src/content/types.ts` | Types for all of the above, including `LocaleContent` |
 
 ### Languages
 
-Vietnamese, English and Japanese. The `VI · EN · JA` buttons in the top bar switch language without leaving the current place. The first visit follows the browser language (English otherwise); an explicit choice is remembered in `localStorage`.
+English only for now; Vietnamese and Japanese will be added once Thọ's own translations are ready (the earlier drafts are in git history, commit `bcc8d86`). The i18n structure stays in place, and the language buttons appear automatically once more than one language is enabled.
 
-- English (`en.ts`) is the source text. Change a fact there first, then in `vi.ts` and `ja.ts`.
-- Story steps are fixed-length tuples in `LocaleContent`, so adding or removing a step fails `npm run typecheck` until every language has it.
-- `vi.ts` and `ja.ts` have `translationStatus: 'draft'`: in review mode every step shows a "draft translation" tag. Set it to `'ready'` once Thọ has checked the wording.
-- Proper nouns, technology names, dates, gallery titles and the CV PDF are not translated.
+To add a language:
+1. Add its code to `Locale` in `src/content/types.ts`.
+2. Copy `src/content/i18n/en.ts` to e.g. `vi.ts` and translate it. Story steps are fixed-length tuples in `LocaleContent`, so a missing or extra step fails `npm run typecheck`.
+3. Register it in `CONTENT` (`src/content/index.ts`) and `LOCALES` (`src/i18n/locale.ts`).
+4. `translationStatus: 'draft'` shows a "draft translation" tag in review mode; set it to `'ready'` when the wording is final.
+
+Proper nouns, technology names, dates, gallery titles and the CV PDF are not translated.
 
 Rules the data follows:
 - A dialogue step has **one to three lines**, each one or two sentences (`lines` is a 1-, 2- or 3-tuple).
@@ -91,14 +94,14 @@ Rules the data follows:
 - Project text comes from the CV (Full-Stack Developer edition), with the CBPO six-VM detail confirmed by Thọ directly. Older details that the current CV no longer lists (BuyBox/competitor tracking, Chart.js, Tailwind on CA2T and SingleKey, Django on SingleKey, BMAD, Flutter/Swift parity, iKara Android/iOS sync) were confirmed by Thọ to stay. The one-line context for Suzu.net, iKara Admin CMS and Yokara also uses the products' public pages (suzu.net, the iKara App Store listing, inmobivn.com).
 - Contact `value: null` shows "Not provided yet".
 
-Before going to production, set `review.showContentStatus` and `review.showArtworkNotice` to `false` in `site.ts`, once the artwork and gallery are in.
+`review.showArtworkNotice` is already `false` (no "Placeholder art" notice or "Temp" portrait tag). Set `review.showContentStatus` to `false` in `site.ts` as well before the final release to hide draft/placeholder tags.
 
 ### Adding gallery pictures
 
 Put the images in `public/gallery/` and list each one in `src/content/gallery.ts`:
 
 ```ts
-{ file: 'gallery/rooftop.png', title: 'Rooftop at night', alt: 'Pixel art of a rooftop at night', credit: '…' }
+{ file: 'gallery/rooftop.png', alt: 'Pixel art of a rooftop at night' }
 ```
 
 Pictures are drawn with `image-rendering: pixelated`, so export pixel art at its native size (or an exact multiple) rather than a smoothed upscale. While the list is empty, the panel shows empty frames and a placeholder note.
@@ -119,7 +122,7 @@ The scene exports a `primary` focus rect (must stay visible) and a `secondary` o
 
 **Artwork (all placeholder, coming later)**
 - [ ] Final pixel-art room, developer figure (a character, not a portrait) and album
-- [ ] Gallery pictures → `public/gallery/` + `src/content/gallery.ts`
+- [x] Gallery pictures → `public/gallery/` + `src/content/gallery.ts` (six approved images)
 - [ ] Optional: favicon and social preview image
 
 **To confirm**

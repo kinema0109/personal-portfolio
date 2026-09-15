@@ -18,6 +18,6 @@ export const site: SiteConfig = {
 
   review: {
     showContentStatus: true,
-    showArtworkNotice: true,
+    showArtworkNotice: false,
   },
 }

@@ -4,7 +4,8 @@
  * Visitor-facing text for each language lives in src/content/i18n/*.ts and is typed by LocaleContent.
  */
 
-export type Locale = 'vi' | 'en' | 'ja'
+/** Enabled languages. English only until Thọ's Vietnamese and Japanese translations are ready. */
+export type Locale = 'en'
 
 /**
  * ready       – safe to show as-is (facts from the CV, or neutral framing text)
@@ -99,11 +100,8 @@ export interface Project extends ProjectInfo, ProjectText {
 export interface GalleryItem {
   /** Path relative to /public, e.g. 'gallery/rooftop.png'. */
   file: string
-  title: string
-  /** Describes the picture for screen readers. */
+  /** Describes the picture for screen readers only; the album shows no visible titles or captions. */
   alt: string
-  /** Optional credit line shown under the picture. */
-  credit?: string
 }
 
 export type ContactId = 'email' | 'github' | 'linkedin'
@@ -166,8 +164,6 @@ export interface LocaleContent {
     roles: string
     seeDetails: (project: string) => string
     askOther: string
-    album: string
-    albumHint: string
     approach: string
     seeFeatured: string
   }
@@ -202,7 +198,6 @@ export interface LocaleContent {
     back: string
     home: string
     next: string
-    lineOf: (line: number, total: number) => string
     hotspots: Record<HotspotId, string>
     sceneDescription: string
     artNotice: string
@@ -213,7 +208,6 @@ export interface LocaleContent {
       draft: string
       placeholder: string
       translationDraft: string
-      source: (source: string) => string
     }
     project: {
       context: string
@@ -237,11 +231,13 @@ export interface LocaleContent {
       contactLabels: Record<ContactId, string>
     }
     gallery: {
+      finish: string
+      lastPage: string
+      keyHint: string
+      loadError: string
       eyebrow: string
       title: string
-      open: (title: string) => string
       noPictures: string
-      placeholderNote: string
       prev: string
       next: string
       close: string

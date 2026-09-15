@@ -1,6 +1,4 @@
 import { en } from './i18n/en'
-import { ja } from './i18n/ja'
-import { vi } from './i18n/vi'
 import { localizeProjects } from './projects'
 import { buildStory } from './story'
 import type { DialogueLines, Locale, LocaleContent, NodeId, Project, ProjectId, StoryNode } from './types'
@@ -46,8 +44,7 @@ function build(locale: Locale, text: LocaleContent): Content {
   }
 }
 
+/** One entry per enabled language. To add one: extend `Locale`, add its file in ./i18n and list it here and in LOCALES. */
 export const CONTENT: Readonly<Record<Locale, Content>> = {
-  vi: build('vi', vi),
   en: build('en', en),
-  ja: build('ja', ja),
 }

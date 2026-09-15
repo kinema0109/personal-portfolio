@@ -1,10 +1,20 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
-import { ALBUM_BOX, APARTMENT_FOCUS, ApartmentScene, DRAWER_BOX, LAPTOP_BOX, type ScreenMode } from '../art/ApartmentScene'
+import {
+  ALBUM_BOX,
+  APARTMENT_FOCUS,
+  ApartmentScene,
+  DRAWER_BOX,
+  FIRE_EMBLEM_SHELF,
+  LAPTOP_BOX,
+  type ScreenMode,
+} from '../art/ApartmentScene'
+import { layoutFireEmblemShelf } from '../art/GameShelf'
 import { frameCamera, type Camera, type Rect } from '../art/camera'
 import { site } from '../content/site'
 import type { HotspotId, SpeakerId } from '../content/types'
 import type { FreeRegion } from '../hooks/useFreeRegion'
 import { useLocale } from '../i18n/LocaleProvider'
+import './shelf.css'
 
 /**
  * Destinations live in the room itself; there are no shortcut buttons to find them.
@@ -27,6 +37,9 @@ interface SceneProps {
   /** Glint on the album until the visitor has opened the gallery. */
   sparkle: boolean
 }
+
+/** Game spines on the cabinet's bottom shelf; each names itself on hover, focus or tap. */
+const SHELF_SPINES = layoutFireEmblemShelf(FIRE_EMBLEM_SHELF.x, FIRE_EMBLEM_SHELF.floor)
 
 /** Camera glides play as a few whole frames, like the rest of the pixel art. */
 const PAN_FRAMES = 5
@@ -108,22 +121,32 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
     shown.current = { measured, cam }
   })
 
-  // Hotspots in CSS px; each is only offered when no UI hides it, including the choice menu drawn over the room.
+  // Scene boxes in CSS px; each is only offered when no UI hides it, including the choice menu drawn over the room.
   const menu = free.menu
-  const hotspots = HOTSPOTS.flatMap(({ id, box }) => {
-    const style = {
-      left: (box.x - cam.x) * cam.scale,
-      top: (box.y - cam.y) * cam.scale,
-      width: box.w * cam.scale,
-      height: box.h * cam.scale,
-    }
+  const toScreen = (box: Rect) => ({
+    left: (box.x - cam.x) * cam.scale,
+    top: (box.y - cam.y) * cam.scale,
+    width: box.w * cam.scale,
+    height: box.h * cam.scale,
+  })
+  const isOffered = (style: ReturnType<typeof toScreen>) => {
     const right = style.left + style.width
     const bottom = style.top + style.height
     const inside =
       style.left >= free.left && style.top >= free.top && right <= free.left + free.width && bottom <= free.top + free.height
     const underMenu =
       menu !== null && style.left < menu.right && right > menu.left && style.top < menu.bottom && bottom > menu.top
-    return inside && !underMenu ? [{ id, style }] : []
+    return inside && !underMenu
+  }
+  const hotspots = HOTSPOTS.flatMap(({ id, box }) => {
+    const style = toScreen(box)
+    return isOffered(style) ? [{ id, style }] : []
+  })
+  const shelfLabels = SHELF_SPINES.flatMap((spine) => {
+    const style = toScreen(spine)
+    // Labels open towards the middle of the screen so long titles are not cut off at the edge.
+    const alignEnd = style.left + style.width / 2 > size.w / 2
+    return isOffered(style) ? [{ key: spine.title, label: spine.label, style, alignEnd }] : []
   })
 
   // The scene opens with a pixel iris centred on the uncovered part of the screen.
@@ -136,7 +159,12 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
     <div className="scene-layer" ref={layerRef}>
       <figure className="scene" role="img" aria-label={ui.sceneDescription}>
         <div className="scene-art" style={irisOrigin}>
-          <ApartmentScene viewBox={viewBox} screen={screen} speaking={speaker === 'tho'} sparkle={sparkle} />
+          <ApartmentScene
+            viewBox={viewBox}
+            screen={screen}
+            speaking={speaker === 'tho'}
+            sparkle={sparkle}
+          />
         </div>
       </figure>
 
@@ -146,6 +174,14 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
           <span className="art-notice-detail">{ui.artNoticeDetail}</span>
         </p>
       )}
+
+      {shelfLabels.map(({ key, label, style, alignEnd }) => (
+        <button key={key} type="button" tabIndex={-1} className="shelf-spine" style={style} aria-label={label}>
+          <span className={`hotspot-label shelf-label${alignEnd ? ' align-end' : ''}`} aria-hidden="true">
+            {label}
+          </span>
+        </button>
+      ))}
 
       {hotspots.map(({ id, style }) => (
         <button key={id} type="button" className="hotspot" style={style} onClick={() => onHotspot(id)}>

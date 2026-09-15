@@ -103,7 +103,7 @@ export default function App() {
       firstRender.current = false
       return
     }
-    linesRef.current?.focus({ preventScroll: true })
+    if (here.kind !== 'gallery') linesRef.current?.focus({ preventScroll: true })
   }, [key])
 
   // Shortcuts: Enter/Space advance the dialogue, 1–9 pick a choice, Esc goes back.
@@ -143,7 +143,7 @@ export default function App() {
         speaker={view.step.speaker}
         onHotspot={onHotspot}
         region={region}
-        panelOpen={view.panel !== null}
+        panelOpen={view.panel !== null && view.panel.kind !== 'gallery'}
         sparkle={!gallerySeen}
       />
 
@@ -153,22 +153,24 @@ export default function App() {
           <span className="brand-role">{content.text.role}</span>
         </button>
         <div className="topnav">
-          <div className="lang-switch" role="group" aria-label={ui.language}>
-            {LOCALES.map((l) => (
-              <button
-                key={l.id}
-                type="button"
-                className="nav-btn lang-btn"
-                lang={l.id}
-                aria-label={l.name}
-                aria-pressed={locale === l.id}
-                title={l.name}
-                onClick={() => setLocale(l.id)}
-              >
-                {l.short}
-              </button>
-            ))}
-          </div>
+          {LOCALES.length > 1 && (
+            <div className="lang-switch" role="group" aria-label={ui.language}>
+              {LOCALES.map((l) => (
+                <button
+                  key={l.id}
+                  type="button"
+                  className="nav-btn lang-btn"
+                  lang={l.id}
+                  aria-label={l.name}
+                  aria-pressed={locale === l.id}
+                  title={l.name}
+                  onClick={() => setLocale(l.id)}
+                >
+                  {l.short}
+                </button>
+              ))}
+            </div>
+          )}
           <button
             type="button"
             className="nav-btn nav-sound"
@@ -182,8 +184,9 @@ export default function App() {
         </div>
       </header>
 
-      <div className={`hud${view.panel ? ' has-panel' : ''}`}>
-        {view.panel && (
+      {here.kind === 'gallery' && <GalleryPanel onClose={() => act({ type: 'back' })} />}
+      <div className={`hud${view.panel && view.panel.kind !== 'gallery' ? ' has-panel' : ''}`}>
+        {view.panel && view.panel.kind !== 'gallery' && (
           <aside className="doc" ref={docRef} key={key} aria-label={ui.details}>
             <Panel panel={view.panel} onOpenProject={openProject} />
           </aside>
@@ -218,6 +221,6 @@ function Panel({ panel, onOpenProject }: { panel: PanelView; onOpenProject: (id:
     case 'cv':
       return <CvPanel onOpenProject={onOpenProject} />
     case 'gallery':
-      return <GalleryPanel />
+      return null
   }
 }

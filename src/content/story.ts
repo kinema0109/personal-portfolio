@@ -95,7 +95,8 @@ export function buildStory(
     {
       id: 'outside',
       steps: [tho(s.outside[0], 'Thọ'), tho(s.outside[1])],
-      choices: [{ label: c.album, hint: c.albumHint, target: { kind: 'gallery' } }],
+      // No choice leads to the album: it only opens by clicking the album on the desk.
+      choices: [],
     },
   ]
 

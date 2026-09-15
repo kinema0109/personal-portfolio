@@ -32,12 +32,7 @@ export function DialogueBox({ view, revealKey, canGoBack, boxRef, linesRef, onNe
     <section ref={boxRef} className="dialogue" id="dialogue" aria-label={ui.dialogue}>
       <div className="dlg-head">
         <span className="speaker">{text.speakers[step.speaker]}</span>
-        {stepCount > 1 && (
-          <span className="step-count" aria-label={ui.lineOf(stepIndex + 1, stepCount)}>
-            {stepIndex + 1}/{stepCount}
-          </span>
-        )}
-        <StatusTag status={step.status} source={step.source} />
+        <StatusTag status={step.status} />
       </div>
 
       {hasPortrait(step.speaker) ? (

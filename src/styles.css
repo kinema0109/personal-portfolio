@@ -1,5 +1,6 @@
 /* ── Tokens ─────────────────────────────────────────────────── */
 :root {
+  --album-edge: #b4a485;
   --night: #161a2b;
   --navy: #1f2640;
   --panel: rgba(27, 33, 54, 0.96);
@@ -348,11 +349,6 @@ p {
   letter-spacing: 0.08em;
   line-height: 1.6;
 }
-.step-count {
-  font-size: 0.75rem;
-  color: var(--mist);
-}
-
 .portrait {
   grid-area: portrait;
   position: relative;
@@ -1116,7 +1112,6 @@ p {
   color: var(--ochre-light);
   font-size: 0.78rem;
 }
-.step-count,
 .tag {
   color: var(--mist);
 }
@@ -1402,8 +1397,7 @@ p {
   overflow: hidden;
   white-space: nowrap;
 }
-.dlg-head > .speaker,
-.dlg-head > .step-count {
+.dlg-head > .speaker {
   flex: none;
 }
 .dlg-head > .tag {

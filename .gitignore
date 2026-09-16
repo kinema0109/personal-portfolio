@@ -17,3 +17,7 @@ public/art/derived/*-coarse.png
 public/art/derived/*-v2.png
 public/art/derived/*-v3.png
 public/art/derived/master-ball.png
+
+# The CV PDF stays local: it carries personal contact details, and the room checks for the file
+# at runtime, so without it the CV panel shows "CV not added yet" instead of a broken link.
+public/cv/*.pdf

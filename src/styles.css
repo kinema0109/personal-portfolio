@@ -188,6 +188,13 @@ p {
 .f-rgb-b { opacity: 0; animation: show-second-half 6s linear infinite; }
 .f-fan-a { animation: show-first-half 0.24s linear infinite; }
 .f-fan-b { opacity: 0; animation: show-second-half 0.24s linear infinite; }
+/* The desk fan runs at three speeds and then stops; clicking it steps round. */
+.fan-low .f-fan-a, .fan-low .f-fan-b { animation-duration: 0.44s; }
+.fan-mid .f-fan-a, .fan-mid .f-fan-b { animation-duration: 0.24s; }
+.fan-high .f-fan-a, .fan-high .f-fan-b { animation-duration: 0.1s; }
+/* Switched off: the blades hold one position. */
+.fan-off .f-fan-a { animation: none; opacity: 1; }
+.fan-off .f-fan-b { animation: none; opacity: 0; }
 .f-cursor { animation: show-first-half 1.1s linear infinite; }
 .f-code-a { animation: show-first-half 5s linear infinite; }
 .f-code-b { opacity: 0; animation: show-second-half 5s linear infinite; }

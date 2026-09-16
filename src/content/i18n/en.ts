@@ -243,6 +243,7 @@ export const en: LocaleContent = {
       placeholder: 'Waiting for real content',
       translationDraft: 'Draft translation · needs Thọ to confirm',
     },
+    fan: 'Desk fan',
     sunflower: 'Shake the sunflower',
     sun: 'Collect the sun',
     project: {

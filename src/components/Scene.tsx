@@ -6,6 +6,8 @@ import {
   DRAWER_BOX,
   FIRE_EMBLEM_SHELF,
   LAPTOP_BOX,
+  FAN_BOX,
+  FAN_SPEEDS,
   LIMBUS_SHELF,
   type DroppedSun,
   type ScreenMode,
@@ -66,6 +68,8 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
   const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight })
   const [suns, setSuns] = useState<readonly DroppedSun[]>([])
   const [charge, setCharge] = useState(0)
+  const [fanStep, setFanStep] = useState(0)
+  const fanSpeed = FAN_SPEEDS[fanStep]
   const nextSunId = useRef(0)
   const timers = useRef(new Map<number, number[]>())
 
@@ -223,6 +227,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
             sparkle={sparkle}
             suns={suns}
             charge={charge}
+            fanSpeed={fanSpeed}
           />
         </div>
       </figure>
@@ -241,6 +246,16 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
           </span>
         </button>
       ))}
+
+      {isOffered(toScreen(FAN_BOX)) && (
+        <button
+          type="button"
+          className="hotspot hotspot-plain"
+          style={toScreen(FAN_BOX)}
+          onClick={() => setFanStep((step) => (step + 1) % FAN_SPEEDS.length)}
+          aria-label={`${ui.fan}: ${fanSpeed}`}
+        />
+      )}
 
       {isOffered(toScreen(SUNFLOWER_BOX)) && (
         <button

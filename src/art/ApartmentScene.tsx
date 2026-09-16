@@ -39,6 +39,13 @@ export const ALBUM_BOX = { x: 118, y: 84, w: 34, h: 21 } as const
 export const LAPTOP_BOX = { x: 192, y: 72, w: 52, h: 32 } as const
 export const DRAWER_BOX = { x: 246, y: 112, w: 28, h: 31 } as const
 
+/** The desk fan. Clicking it steps through its speeds and then switches it off. */
+export const FAN_BOX = { x: 94, y: 73, w: 20, h: 32 } as const
+
+/** Fan settings in the order the switch goes round. */
+export const FAN_SPEEDS = ['low', 'mid', 'high', 'off'] as const
+export type FanSpeed = (typeof FAN_SPEEDS)[number]
+
 /** Brass on the paint case latches. */
 const GOLD_CASE = '#c9a45c'
 
@@ -273,22 +280,30 @@ const handA: Px[] = [[203, 97, 6, 4, C.skin]]
 const handB: Px[] = [[204, 96, 6, 4, C.skin]]
 
 /**
- * Office chair seen from behind. Its castors used to stop at y=138 while the desk legs, the tower,
- * the paint case and the power strip all stand on y=146, so it was the one thing in the room
- * floating above the floor. The column is longer now and the base lands where everything else does.
+ * Office chair seen from behind: back, armrests, gas column and a five-star base.
+ *
+ * Only three legs are drawn. On a star base the two that point towards the viewer are almost fully
+ * foreshortened and end up behind the sitter's feet, so drawing all five turns the base into a solid
+ * bar — which is what the first version looked like. Two legs stepping out to castors plus a stub in
+ * front reads as a star base; a bar does not. The castors land on y=146 with everything else.
  */
 const chair: Px[] = [
   [152, 90, 36, 2, C.slate], [150, 92, 40, 26, C.slate], [150, 92, 40, 2, C.slateLight],
   [150, 116, 40, 2, C.navy],
+  // No armrests: a real one sits level with the desk surface at this scale, so it lands on the desk's
+  // own edge and reads as a shelf rather than part of the chair. The star base carries the read.
+  [152, 112, 36, 2, C.navy], [152, 112, 36, 1, '#39405e'],
   // Gas column down to the hub.
-  [168, 118, 4, 16, '#2b3040'], [167, 132, 6, 2, '#2b3040'],
-  [164, 134, 12, 3, '#333a4d'], [164, 136, 12, 1, '#1e2230'],
-  // Two legs stepping down and out to castors on the floor.
-  [156, 136, 9, 2, '#333a4d'], [149, 138, 8, 2, '#333a4d'],
-  [175, 136, 9, 2, '#333a4d'], [183, 138, 8, 2, '#333a4d'],
-  [156, 137, 9, 1, '#1e2230'], [175, 137, 9, 1, '#1e2230'],
-  [146, 140, 5, 6, '#1e2230'], [189, 140, 5, 6, '#1e2230'],
-  [146, 140, 5, 1, '#454c63'], [189, 140, 5, 1, '#454c63'],
+  [168, 118, 4, 14, '#2b3040'], [168, 118, 1, 14, '#3a4157'],
+  [165, 132, 10, 4, '#333a4d'], [165, 132, 10, 1, '#454c63'],
+  // Two legs stepping out to castors, and the stub of a third pointing at the viewer.
+  [160, 135, 6, 2, '#333a4d'], [154, 137, 6, 2, '#333a4d'], [148, 139, 6, 2, '#333a4d'],
+  [175, 135, 6, 2, '#333a4d'], [181, 137, 6, 2, '#333a4d'], [187, 139, 6, 2, '#333a4d'],
+  [160, 136, 6, 1, '#1e2230'], [154, 138, 6, 1, '#1e2230'], [148, 140, 6, 1, '#1e2230'],
+  [175, 136, 6, 1, '#1e2230'], [181, 138, 6, 1, '#1e2230'], [187, 140, 6, 1, '#1e2230'],
+  [167, 136, 6, 3, '#2b3040'],
+  [145, 141, 5, 5, '#1e2230'], [190, 141, 5, 5, '#1e2230'],
+  [145, 141, 5, 1, '#454c63'], [190, 141, 5, 1, '#454c63'],
 ]
 
 /**
@@ -502,6 +517,8 @@ interface ApartmentSceneProps {
   suns: readonly DroppedSun[]
   /** Counts suns taken in. Changing it replays the flash, which is why it is a number. */
   charge: number
+  /** How fast the desk fan is turning, or whether it is off. */
+  fanSpeed: FanSpeed
 }
 
 /** One sun lying on the floor. `collecting` plays it up and out before Scene drops it. */
@@ -513,7 +530,7 @@ export interface DroppedSun {
   state: 'idle' | 'taken' | 'fading'
 }
 
-export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charge }: ApartmentSceneProps) {
+export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charge, fanSpeed }: ApartmentSceneProps) {
   return (
     <svg
       className="pixel-svg"
@@ -582,7 +599,7 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charg
       <PixelRects px={notebookPx} />
       <PixelRects px={albumPx} />
       {sparkle && <PixelRects px={glintPx} className="f-glint" />}
-      <g transform="translate(-174 2)">
+      <g transform="translate(-174 2)" className={`fan fan-${fanSpeed}`} data-fan={fanSpeed}>
         <PixelRects px={fanBladesA} className="f-fan-a" />
         <PixelRects px={fanBladesB} className="f-fan-b" />
         <rect x={276} y={80} width={3} height={3} fill={C.cream} />

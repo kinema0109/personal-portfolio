@@ -45,11 +45,15 @@ try {
   {
     const { context, page } = await open({ timezoneId: 'Asia/Ho_Chi_Minh', time: HCM_NOON })
     assert.equal(await phaseOf(page), 'day', 'noon in Ho Chi Minh City is day')
+    await page.locator('.pixel-svg').waitFor()
+    assert.equal(await page.locator('[data-night-dim]').count(), 0, 'the room is not dimmed by day')
     await context.close()
   }
   {
     const { context, page } = await open({ timezoneId: 'Asia/Ho_Chi_Minh', time: HCM_NIGHT })
     assert.equal(await phaseOf(page), 'night', '22:00 in Ho Chi Minh City is night')
+    await page.locator('.pixel-svg').waitFor()
+    assert.equal(await page.locator('[data-night-dim]').count(), 1, 'the room is dimmed at night')
     await context.close()
   }
   {
@@ -67,6 +71,7 @@ try {
 
     await button.click()
     assert.equal(await phaseOf(page), 'day')
+    assert.equal(await button.getAttribute('aria-pressed'), 'false')
     assert.equal(await storedOf(page), 'day', 'an override that differs from the clock is saved')
 
     await page.reload({ waitUntil: 'domcontentloaded' })

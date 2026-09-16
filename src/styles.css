@@ -376,7 +376,8 @@ p {
   border-color: var(--ochre);
   color: var(--night);
 }
-.nav-sound {
+.nav-sound,
+.nav-phase {
   font-weight: 400;
   color: var(--mist);
 }
@@ -1396,7 +1397,7 @@ p {
   .tag-source { display: none; }
 }
 
-/* Portrait phones: the top bar only holds the name and the sound toggle. */
+/* Portrait phones: the top bar only holds the name, the day/night switch and the sound toggle. */
 @media (max-width: 699px) and (min-height: 501px) {
   :root { --topbar-h: 44px; }
   .topbar { padding: 4px 8px; }

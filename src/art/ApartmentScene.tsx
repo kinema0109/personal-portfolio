@@ -3,6 +3,7 @@ import { C, type Px } from './palette'
 import { PixelRects } from './PixelRects'
 import { FireEmblemShelf } from './GameShelf'
 import { LimbusBookShelf } from './BookShelf'
+import { Fumo } from './Fumo'
 import { ReferenceDisplay } from './ReferenceDisplay'
 import { REFRESHED_SPRITES } from './refreshedSprites'
 
@@ -201,6 +202,40 @@ const deskItems: Px[] = [
   [96, 91, 16, 1, C.slate], [98, 92, 12, 1, C.slate], [97, 77, 14, 13, C.night],
 ]
 
+// Pixel silhouette traced from the owner's Horde reference: outer crest,
+// open central loop, floating diamond and two unequal tapered tails.
+const hordePrint = [
+  '00000000000000000000000',
+  '00000000000110000000000',
+  '00000000001111000000000',
+  '00000110011111100000000',
+  '00000111111111110000000',
+  '00000111111111111110000',
+  '00000111111111111110000',
+  '00001111100000011110000',
+  '00011111000100011111000',
+  '00011111001110001111000',
+  '00111110011111001111100',
+  '00001110001111001110000',
+  '00001110001110001110000',
+  '01000110000100011100110',
+  '00111110000000011111100',
+  '00111111000000011111100',
+  '00011111000000111111000',
+  '00000001100000110001000',
+  '00000000100001100000000',
+  '00000000010001100000000',
+  '00000000010001100000000',
+  '00000000010001110000000',
+  '00000001110001110000000',
+  '00000000111001100000000',
+  '00000000111001000000000',
+  '00000000011001000000000',
+  '00000000010000000000000',
+  '00000000000000000000000',
+  '00000000000000000000000',
+] as const
+
 // LOCKED SWORD REFERENCES: see docs/DESIGN_CONTRACT.md before editing.
 /**
  * Wooden wall frame with a drop shadow and a backing for a reference.
@@ -218,6 +253,15 @@ function WallFrame({ x, y, w, h, backing = '#101b27' }: { x: number; y: number; 
 function ReferenceDisplays() {
   return (
     <g>
+      {/* Personal faction print in the free wall bay; clear of the head and speech bubble. */}
+      <g data-decoration="horde-frame">
+        <WallFrame x={143} y={10} w={30} h={38} backing="#1b1c24" />
+        <g fill="#a33436" transform="translate(146.5 14.5)">
+          {hordePrint.flatMap((row, y) => [...row].flatMap((ink, x) =>
+            ink === '1' ? [<rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} />] : []
+          ))}
+        </g>
+      </g>
       {/* Tactics corner: Alhazard + Langrisser, Gran Centurio in its own tall frame, Armageddon on wall pegs below. */}
       {/* Positions are optically centred: measured artwork bounds sit mid-frame (see frame-measure QA). */}
       <WallFrame x={207} y={12} w={44} h={57} backing="#1b1e31" />
@@ -261,16 +305,10 @@ function ReferenceDisplays() {
       <rect x={307} y={71} width={76} height={37} fill="url(#figure-bay-light)" />
       <rect x={309} y={71} width={72} height={1} fill="#f2d29a" opacity={0.4} />
       {/* Top bay: the book behind each Limbus Company sinner on the left, named on hover or tap;
-          headphones with the paint pots and brush on the right. */}
+          the Sparkle and Sparxie plushes sitting together on the right. */}
       <LimbusBookShelf x={LIMBUS_SHELF.x} floor={LIMBUS_SHELF.floor} />
-      <PixelRects
-        px={[
-          [351, 57, 5, 8, '#8090a3'], [366, 57, 5, 8, '#8090a3'],
-          [374, 62, 3, 4, C.red], [374, 61, 3, 1, C.creamDim],
-          [378, 63, 3, 3, C.tealDark], [378, 62, 3, 1, C.creamDim],
-          [381, 56, 1, 10, C.woodDark], [381, 55, 1, 1, C.cream],
-        ]}
-      />
+      <Fumo kind="sparkle" x={348} floor={66} />
+      <Fumo kind="sparxie" x={366} floor={66} />
       {/* Bottom bay: every boxed Fire Emblem game, in release order (see GameShelf.tsx), with a brass name plate on the shelf edge. */}
       <FireEmblemShelf x={FIRE_EMBLEM_SHELF.x} floor={FIRE_EMBLEM_SHELF.floor} />
       <rect x={329} y={136.8} width={36} height={3.6} fill="#c9a45c" />
@@ -287,7 +325,6 @@ function ReferenceDisplays() {
       >
         FIRE EMBLEM
       </text>
-      <path d="M353 60V53Q361 42 369 53V60" fill="none" stroke="#62748a" strokeWidth={2} />
     </g>
   )
 }

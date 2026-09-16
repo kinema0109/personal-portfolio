@@ -3,9 +3,10 @@ import type { LocaleContent } from '../types'
 /** English: the source text. Facts come from Thọ's CV (Full-Stack Developer, 2026 edition). */
 export const en: LocaleContent = {
   translationStatus: 'ready',
+  // Kept in step with index.html, which is what link previews and search engines read.
   meta: {
-    title: 'Hoàng Công Thọ — Portfolio (prototype)',
-    description: 'Hoàng Công Thọ — Full-Stack Engineer. A short visual novel portfolio.',
+    title: 'Hoàng Công Thọ — Full-Stack Engineer',
+    description: 'Full-Stack Engineer, three years in the JavaScript and TypeScript ecosystem: React and Next.js interfaces, NestJS APIs, SQL and NoSQL. CV and projects inside.',
   },
   role: 'Full-Stack Engineer',
   present: 'present',

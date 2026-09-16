@@ -4,7 +4,7 @@ import { mkdir } from 'node:fs/promises'
 import assert from 'node:assert/strict'
 const browser = await chromium.launch({channel:'msedge', headless:true})
 const errors = []
-const approvedFiles = ['01-storm-castle.webp', '03-golden-field.webp', '04-fractured-world.webp', '05-starlit-rest-v2.webp', '06-rain-confrontation.webp', '07-white-haired-portrait.webp', '08-cradle.webp', '09-garden-reunion.webp', '10-group-portrait.webp', '11-artanis.webp', '12-frozen-duel-selected.webp', '13-bedside.webp', '14-resting-blades.webp', '15-golden-warrior.webp', '16-crimson-knight.webp', '17-held-hand.webp', '18-red-core.webp', '19-nagash.webp', '20-sunset-archer.webp']
+const approvedFiles = ['01-storm-castle.webp', '03-golden-field.webp', '04-fractured-world.webp', '05-starlit-rest-v2.webp', '06-rain-confrontation.webp', '07-white-haired-portrait.webp', '08-cradle.webp', '09-garden-reunion.webp', '10-group-portrait.webp', '11-artanis.webp', '12-frozen-duel-selected.webp', '13-bedside.webp', '14-resting-blades.webp', '15-golden-warrior.webp', '16-crimson-knight.webp', '17-held-hand.webp', '18-red-core.webp', '19-nagash.webp', '20-battlefield-duel.webp']
 const counter = index => `${String(index + 1).padStart(2, '0')} / ${String(approvedFiles.length).padStart(2, '0')}`
 await mkdir('artifacts', {recursive:true})
 try {

@@ -27,7 +27,7 @@ export const galleryItems: readonly GalleryItem[] = [
   { file: 'gallery/17-held-hand.webp', alt: 'A standing armored knight holds the hand of a long-haired person bowing from a tall carved chair, in muted gray and sepia.' },
   { file: 'gallery/18-red-core.webp', alt: 'A party and a white dog face a towering spiked dark mass with a glowing red core above castle rooftops.' },
   { file: 'gallery/19-nagash.webp', alt: 'Nagash raises a book and a long staff amid turquoise spirits, floating books, lightning and dark ruins.' },
-  { file: 'gallery/20-sunset-archer.webp', alt: 'A red-haired archer in dark armor holds a bow and a bright curved blade against an orange sunset.' },
+  { file: 'gallery/20-battlefield-duel.webp', alt: 'Two armed fighters face each other across a muddy battlefield, with distant soldiers, small fires and an overcast sky.' },
 ]
 
 export function galleryUrl(item: GalleryItem): string {

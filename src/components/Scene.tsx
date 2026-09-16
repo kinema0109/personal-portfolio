@@ -69,6 +69,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
   const [suns, setSuns] = useState<readonly DroppedSun[]>([])
   const [charge, setCharge] = useState(0)
   const [fanStep, setFanStep] = useState(0)
+  const [flowerHighlight, setFlowerHighlight] = useState(false)
   const fanSpeed = FAN_SPEEDS[fanStep]
   const nextSunId = useRef(0)
   const timers = useRef(new Map<number, number[]>())
@@ -228,6 +229,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
             suns={suns}
             charge={charge}
             fanSpeed={fanSpeed}
+            flowerHighlight={flowerHighlight}
           />
         </div>
       </figure>
@@ -250,7 +252,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
       {isOffered(toScreen(FAN_BOX)) && (
         <button
           type="button"
-          className="hotspot hotspot-plain"
+          className="hotspot"
           style={toScreen(FAN_BOX)}
           onClick={() => setFanStep((step) => (step + 1) % FAN_SPEEDS.length)}
           aria-label={`${ui.fan}: ${fanSpeed}`}
@@ -263,6 +265,10 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
           className="hotspot hotspot-plain"
           style={toScreen(SUNFLOWER_BOX)}
           onClick={dropSun}
+          onPointerEnter={() => setFlowerHighlight(true)}
+          onPointerLeave={() => setFlowerHighlight(false)}
+          onFocus={() => setFlowerHighlight(true)}
+          onBlur={() => setFlowerHighlight(false)}
           aria-label={ui.sunflower}
         />
       )}
@@ -271,7 +277,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
         <button
           key={sun.id}
           type="button"
-          className="hotspot hotspot-plain"
+          className="hotspot"
           style={toScreen({ x: sun.x, y: sun.y, w: SUN_SIZE, h: SUN_SIZE })}
           onClick={() => takeSun(sun.id)}
           aria-label={ui.sun}

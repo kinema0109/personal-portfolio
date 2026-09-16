@@ -109,14 +109,32 @@ const face: Px[] = [
   [37, 100, 5, 1, INK], [38, 101, 3, 1, INK],
 ]
 
-/** The potted sunflower. Only the head bobs; the pot and leaves stay put. */
-export function Sunflower() {
+const HALO = '#f4dca8'
+
+/**
+ * Grows every rectangle by one unit and paints it behind the real thing, so all that shows is a
+ * one-pixel rim around the silhouette. A rectangle drawn around the whole plant would be four times
+ * its area and would say nothing about what is clickable.
+ */
+const outlineOf = (px: readonly Px[]): Px[] =>
+  px.map(([rx, ry, rw, rh]) => [rx - 1, ry - 1, rw + 2, rh + 2, HALO] as Px)
+
+const bodyOutline = outlineOf([...pot, ...stem, ...leaves])
+const headOutline = outlineOf([...petals, ...face])
+
+/**
+ * The potted sunflower. Only the head bobs; the pot and leaves stay put, so the outline is split the
+ * same way and the highlighted rim bobs with the head.
+ */
+export function Sunflower({ highlight }: { highlight: boolean }) {
   return (
     <g data-plant="sunflower">
+      {highlight && <PixelRects px={bodyOutline} />}
       <PixelRects px={pot} />
       <PixelRects px={stem} />
       <PixelRects px={leaves} />
       <g className="f-bob">
+        {highlight && <PixelRects px={headOutline} />}
         <PixelRects px={petals} />
         <PixelRects px={face} />
       </g>

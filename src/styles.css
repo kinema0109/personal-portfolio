@@ -263,8 +263,11 @@ p {
 .f-sun-b { opacity: 0; animation: show-second-half 0.7s linear infinite; }
 .f-sun-a { animation: show-first-half 0.7s linear infinite; }
 
-/* Hotspots with nothing to say: the sunflower and its suns are their own label. */
+/* Hotspots over objects that are not rectangles. The box would be several times the size of the
+   thing inside it, so these highlight the object itself instead and draw no box of their own.
+   Keyboard focus still gets the global outline, which is the only visible cue a keyboard user has. */
 .hotspot-plain { cursor: pointer; }
+.hotspot-plain:hover { border-color: transparent; background: transparent; }
 
 /* Album glint: a brief flash every few seconds. */
 @keyframes glint { 0%, 87.99% { opacity: 0; } 88%, 93.99% { opacity: 1; } 94%, 100% { opacity: 0; } }

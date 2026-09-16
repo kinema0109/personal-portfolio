@@ -519,6 +519,8 @@ interface ApartmentSceneProps {
   charge: number
   /** How fast the desk fan is turning, or whether it is off. */
   fanSpeed: FanSpeed
+  /** Whether the visitor is pointing at the sunflower, which outlines the plant itself. */
+  flowerHighlight: boolean
 }
 
 /** One sun lying on the floor. `collecting` plays it up and out before Scene drops it. */
@@ -530,7 +532,7 @@ export interface DroppedSun {
   state: 'idle' | 'taken' | 'fading'
 }
 
-export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charge, fanSpeed }: ApartmentSceneProps) {
+export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charge, fanSpeed, flowerHighlight }: ApartmentSceneProps) {
   return (
     <svg
       className="pixel-svg"
@@ -566,7 +568,7 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charg
       <PixelRects px={windowFront} />
 
       {/* Potted sunflower in the daylight, and any sun it has dropped. */}
-      <Sunflower />
+      <Sunflower highlight={flowerHighlight} />
       {suns.map((sun) => (
         <Sun key={sun.id} x={sun.x} y={sun.y} state={sun.state} />
       ))}

@@ -4,16 +4,19 @@ import type { Px } from './palette'
 type Platform = 'fc' | 'sfc' | 'gba' | 'gc' | 'wii' | 'ds' | '3ds' | 'switch'
 
 /**
- * Spine size (scene units) and colours per platform, so the row reads as a history of consoles:
+ * Spine size (scene units) and colours per platform, so the row reads as a history of consoles.
+ * Widths also make the twenty-two spines and their gaps measure exactly 74 units, which fills the
+ * cabinet's bottom bay (interior 307–383) with one unit of backing showing at each end. The chunky
+ * formats are the wide ones, which is both true of the real boxes and what makes the sum work:
  * tall cardboard boxes for Famicom/Super Famicom, short handheld cases, taller disc and Switch cases.
  * Generic colour coding only; no logos or cover art.
  */
 const PLATFORM: Record<Platform, { name: string; w: number; h: number; body: string; band: string }> = {
-  fc: { name: 'Famicom', w: 3, h: 15, body: '#d9ccb0', band: '#b33a32' },
+  fc: { name: 'Famicom', w: 4, h: 15, body: '#d9ccb0', band: '#b33a32' },
   sfc: { name: 'Super Famicom', w: 3, h: 19, body: '#b9b6b1', band: '#5a4f8a' },
   gba: { name: 'Game Boy Advance', w: 2, h: 13, body: '#2e3352', band: '#9aa3c4' },
-  gc: { name: 'GameCube', w: 2, h: 20, body: '#26242e', band: '#6a55a0' },
-  wii: { name: 'Wii', w: 2, h: 20, body: '#e6e6e6', band: '#9aa0a8' },
+  gc: { name: 'GameCube', w: 3, h: 20, body: '#26242e', band: '#6a55a0' },
+  wii: { name: 'Wii', w: 3, h: 20, body: '#e6e6e6', band: '#9aa0a8' },
   ds: { name: 'Nintendo DS', w: 2, h: 14, body: '#e0e0e0', band: '#4a4a52' },
   '3ds': { name: 'Nintendo 3DS', w: 2, h: 14, body: '#e8e8e8', band: '#c0392b' },
   switch: { name: 'Nintendo Switch', w: 2, h: 18, body: '#c7302f', band: '#e8e0d8' },

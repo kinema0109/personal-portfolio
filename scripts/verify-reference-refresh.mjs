@@ -38,6 +38,31 @@ try {
       })
       assert.ok(fits, `${kind} must fit the room`)
     }
+    // Both rows are sized to fill their compartment with one unit of backing at each end. Adding a
+    // game or a book, or changing a spine width, silently breaks that, so it is measured here.
+    const scene = await page.locator('.scene-art svg, .scene svg').first()
+      .evaluate((svg) => {
+        const [vx, , vw] = svg.getAttribute('viewBox').trim().split(' ').map(Number)
+        const box = svg.getBoundingClientRect()
+        return { left: box.left, scale: box.width / vw, origin: vx }
+      })
+    const toScreen = (unit) => scene.left + (unit - scene.origin) * scene.scale
+    for (const [row, selector, from, to] of [
+      ['Fire Emblem', '[data-shelf="fire-emblem"] rect', 307, 383],
+      ['the book shelf', '[data-shelf="limbus-books"] rect', 307, 343],
+    ]) {
+      const edges = await page.locator(selector).evaluateAll((rs) => {
+        const boxes = rs.map((r) => r.getBoundingClientRect())
+        return { left: Math.min(...boxes.map((b) => b.left)), right: Math.max(...boxes.map((b) => b.right)) }
+      })
+      const leftGap = edges.left - toScreen(from)
+      const rightGap = toScreen(to) - edges.right
+      assert.ok(
+        Math.abs(leftGap - rightGap) <= scene.scale * 0.6 && leftGap > 0 && leftGap < scene.scale * 2.5,
+        `${row} must fill its compartment evenly (gaps ${leftGap.toFixed(1)} and ${rightGap.toFixed(1)} px)`,
+      )
+    }
+
     await page.screenshot({ path: `artifacts/reference-refresh-${width}.png` })
     for (const [label, panel] of [['Open CV', '#cv-title'], ['Open album', '.album-viewer[open]']]) {
       await page.goto(process.env.ROOM_URL || 'http://127.0.0.1:5181')

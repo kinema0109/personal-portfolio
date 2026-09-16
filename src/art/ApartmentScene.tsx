@@ -24,10 +24,10 @@ export const APARTMENT_FOCUS: SceneFocus = {
 }
 
 /** Where the Fire Emblem row stands in the cabinet's bottom bay; Scene.tsx uses it to place the name labels. */
-export const FIRE_EMBLEM_SHELF = { x: 310, floor: 136 } as const
+export const FIRE_EMBLEM_SHELF = { x: 308, floor: 136 } as const
 
 /** Where the sinners' books stand in the cabinet's top bay; Scene.tsx uses it for the name labels. */
-export const LIMBUS_SHELF = { x: 309, floor: 66 } as const
+export const LIMBUS_SHELF = { x: 308, floor: 66 } as const
 
 /** The point the two framed blades cross at. */
 const SWORD_CROSS = { x: 229, y: 40 } as const
@@ -444,10 +444,10 @@ function ReferenceDisplays({ highlight }: { highlight: Highlight }) {
       <Fumo kind="sparxie" x={366} floor={66} />
       {/* Bottom bay: every boxed Fire Emblem game, in release order (see GameShelf.tsx), with a brass name plate on the shelf edge. */}
       <FireEmblemShelf x={FIRE_EMBLEM_SHELF.x} floor={FIRE_EMBLEM_SHELF.floor} />
-      <rect x={329} y={136.8} width={36} height={3.6} fill="#c9a45c" />
-      <rect x={329} y={136.8} width={36} height={0.6} fill="#e8cf8f" />
+      <rect x={327} y={136.8} width={36} height={3.6} fill="#c9a45c" />
+      <rect x={327} y={136.8} width={36} height={0.6} fill="#e8cf8f" />
       <text
-        x={347}
+        x={345}
         y={139.55}
         textAnchor="middle"
         fontFamily="ui-monospace, Consolas, monospace"

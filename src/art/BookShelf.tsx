@@ -35,10 +35,15 @@ export const LIMBUS_BOOKS: readonly {
   { sinner: 'Gregor', title: 'The Metamorphosis', author: 'Franz Kafka', pages: 70, height: 15, body: '#6b4a24', band: '#c08040' },
 ]
 
-/** Thicker book, longer work, rounded to the half unit the pixel grid can draw. Thirteen spines
- *  plus their gaps have to fit the 36-unit compartment, so the range is 1.5 to 4. */
+/**
+ * Thicker book, longer work, in whole units. The thirteen spines add up to 34, which is the width of
+ * the cabinet's left compartment (307–343) with one unit of backing showing at each end.
+ */
 function spineWidth(pages: number) {
-  return Math.min(4, Math.max(1.5, Math.round((1.2 + pages / 900) * 2) / 2))
+  if (pages > 1500) return 5
+  if (pages > 800) return 4
+  if (pages > 500) return 3
+  return 2
 }
 
 /** One spine in scene units, with the label shown when the visitor points at it. */
@@ -52,7 +57,7 @@ export interface BookSpine {
 }
 
 /** Positions every spine left to right from `x`, standing on `floor`. Shared by the drawing and the labels. */
-export function layoutBookShelf(x: number, floor: number, gap = 0.6): readonly BookSpine[] {
+export function layoutBookShelf(x: number, floor: number, gap = 0): readonly BookSpine[] {
   let cursor = x
   return LIMBUS_BOOKS.map((book) => {
     const w = spineWidth(book.pages)
@@ -71,7 +76,7 @@ export function layoutBookShelf(x: number, floor: number, gap = 0.6): readonly B
 }
 
 /** Total width of the row, so it can be checked against the compartment it stands in. */
-export function bookShelfWidth(gap = 0.6) {
+export function bookShelfWidth(gap = 0) {
   return LIMBUS_BOOKS.reduce((total, book) => total + spineWidth(book.pages) + gap, 0) - gap
 }
 

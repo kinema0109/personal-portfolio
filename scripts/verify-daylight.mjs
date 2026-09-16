@@ -46,14 +46,14 @@ try {
     const { context, page } = await open({ timezoneId: 'Asia/Ho_Chi_Minh', time: HCM_NOON })
     assert.equal(await phaseOf(page), 'day', 'noon in Ho Chi Minh City is day')
     await page.locator('.pixel-svg').waitFor()
-    assert.equal(await page.locator('[data-night-dim]').count(), 0, 'the room is not dimmed by day')
+    assert.equal(await page.locator('[data-window="day"]').count(), 1, 'the window shows the day view')
     await context.close()
   }
   {
     const { context, page } = await open({ timezoneId: 'Asia/Ho_Chi_Minh', time: HCM_NIGHT })
     assert.equal(await phaseOf(page), 'night', '22:00 in Ho Chi Minh City is night')
     await page.locator('.pixel-svg').waitFor()
-    assert.equal(await page.locator('[data-night-dim]').count(), 1, 'the room is dimmed at night')
+    assert.equal(await page.locator('[data-window="night"]').count(), 1, 'the window shows the night view')
     await context.close()
   }
   {

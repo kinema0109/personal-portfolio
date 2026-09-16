@@ -85,7 +85,8 @@ const windowLight: Px[] = [
 
 const windowFrame: Px[] = [[22, 18, 82, 78, C.slate]]
 
-const windowView: Px[] = [
+/** The view by day: blue sky, clouds, the sun and a front-lit skyline. */
+const dayView: Px[] = [
   // Daylight sky, deeper overhead than at the rooftops.
   [26, 22, 74, 70, '#9cc3e2'],
   [26, 22, 74, 16, '#84b0d6'],
@@ -108,7 +109,28 @@ const windowView: Px[] = [
   [88, 70, 2, 3, '#5d7091'], [41, 68, 2, 3, '#5d7091'], [77, 74, 2, 3, '#5d7091'],
 ]
 
-const mullions: Px[] = [[62, 22, 2, 70, C.slateLight], [26, 55, 74, 2, C.slateLight]]
+/**
+ * The view by night, from before the window opened onto daylight (commit 254f596): moon, city
+ * silhouette and lit windows, with stars and some of the lights blinking. The window is the only
+ * thing in the room that changes with the phase (owner decision 2026-09-16).
+ */
+const nightView: Px[] = [
+  [26, 22, 74, 70, C.night],
+  [83, 29, 6, 8, C.cream], [82, 30, 8, 6, C.cream], [85, 32, 2, 2, C.creamDim],
+  // city silhouette
+  [26, 70, 12, 22, C.navy], [38, 62, 10, 30, C.navy], [48, 74, 14, 18, C.navy],
+  [62, 58, 12, 34, C.navy], [74, 68, 10, 24, C.navy], [84, 64, 16, 28, C.navy],
+  [44, 72, 2, 2, C.ochreDark], [67, 62, 2, 2, C.ochre], [67, 80, 2, 2, C.ochreDark],
+  [93, 78, 2, 2, C.ochreDark], [30, 76, 2, 2, C.ochreDark],
+]
+const starsA: Px[] = [[34, 28, 1, 1, C.cream], [72, 26, 1, 1, C.cream], [94, 46, 1, 1, C.cream]]
+const starsB: Px[] = [[58, 34, 1, 1, C.creamDim], [46, 44, 1, 1, C.creamDim], [40, 38, 1, 1, C.cream]]
+const cityLightsA: Px[] = [[41, 66, 2, 2, C.ochre], [70, 70, 2, 2, C.ochre], [88, 70, 2, 2, C.ochre]]
+const cityLightsB: Px[] = [[53, 82, 2, 2, C.ochre], [89, 84, 2, 2, C.ochre], [77, 74, 2, 2, C.ochre]]
+
+/** The glazing bars catch the daylight; at night they sink back into the frame. */
+const dayMullions: Px[] = [[62, 22, 2, 70, C.slateLight], [26, 55, 74, 2, C.slateLight]]
+const nightMullions: Px[] = [[62, 22, 2, 70, C.slate], [26, 55, 74, 2, C.slate]]
 
 const windowFront: Px[] = [
   [18, 94, 90, 4, C.slateLight], [18, 98, 90, 1, C.night],
@@ -116,12 +138,6 @@ const windowFront: Px[] = [
   [12, 12, 12, 88, C.red], [15, 12, 2, 88, C.redDark], [20, 12, 1, 88, C.redDark],
   [104, 12, 9, 84, C.red], [107, 12, 1, 84, C.redDark],
 ]
-
-/**
- * Mask id for the night dimming: white is dimmed, black stays bright. Night changes brightness only,
- * never colour (owner decision 2026-09-16): the same room and the same daylight view, darker.
- */
-const NIGHT_LIGHTS = 'apt-night-lights'
 
 const desk: Px[] = [
   [90, 104, 196, 4, '#95734d'], [90, 108, 196, 3, '#4d3c30'],
@@ -578,7 +594,7 @@ export function SpeechBubble({ x, y }: { x: number; y: number }) {
 
 interface ApartmentSceneProps {
   viewBox: string
-  /** Day or night where the visitor is; night dims the room and changes nothing else. */
+  /** Day or night where the visitor is; only the view through the window changes. */
   phase: Phase
   screen: ScreenMode
   speaking: boolean
@@ -645,20 +661,6 @@ export function ApartmentScene({ viewBox, phase, screen, speaking, sparkle, suns
           <rect x="20" y="0" width="1" height="14" fill={C.night} />
           <rect x="65" y="15" width="1" height="14" fill={C.night} />
         </pattern>
-        {/* Night: only what gives off light stays bright, cut to its own pixels so nothing in front of
-            or beside it escapes the dimming: the laptop screen (but not Thọ's arm and hands over it),
-            the tower's lit strips and the lamp's bulb. */}
-        <mask id={NIGHT_LIGHTS} maskUnits="userSpaceOnUse" x={X0} y={-600} width={XW} height={1400}>
-          <rect x={X0} y={-600} width={XW} height={1400} fill="#fff" />
-          <rect x={198} y={74} width={40} height={26} fill="#000" />
-          {[...developerArm, ...handA, ...handB].map(([x, y, w, h], i) => (
-            <rect key={`arm-${i}`} x={x} y={y} width={w} height={h} fill="#fff" />
-          ))}
-          {[...towerGlowA, ...towerGlowB].map(([x, y, w, h], i) => (
-            <rect key={`glow-${i}`} x={x} y={y} width={w} height={h} fill="#000" />
-          ))}
-          <rect x={176} y={2} width={16} height={1} fill="#000" />
-        </mask>
       </defs>
 
       <PixelRects px={shell} />
@@ -673,8 +675,20 @@ export function ApartmentScene({ viewBox, phase, screen, speaking, sparkle, suns
       <path d="M180 -5H188L196 2H172Z" fill="#142330" />
       <rect x={176} y={2} width={16} height={1} fill="#f2d29a" />
       <PixelRects px={windowFrame} />
-      <PixelRects px={windowView} />
-      <PixelRects px={mullions} />
+      <g data-window={phase}>
+        {night ? (
+          <>
+            <PixelRects px={nightView} />
+            <PixelRects px={starsA} className="f-twinkle-1" />
+            <PixelRects px={starsB} className="f-twinkle-2" />
+            <PixelRects px={cityLightsA} />
+            <PixelRects px={cityLightsB} className="f-city" />
+          </>
+        ) : (
+          <PixelRects px={dayView} />
+        )}
+        <PixelRects px={night ? nightMullions : dayMullions} />
+      </g>
       <PixelRects px={windowFront} />
 
       {/* Potted sunflower and Sun-shroom by the window. Their suns are drawn last, above the night
@@ -723,9 +737,6 @@ export function ApartmentScene({ viewBox, phase, screen, speaking, sparkle, suns
         <rect x={276} y={80} width={3} height={3} fill={C.cream} />
       </g>
 
-      {night && (
-        <rect data-night-dim x={X0} y={-600} width={XW} height={1400} fill={C.night} opacity={0.4} mask={`url(#${NIGHT_LIGHTS})`} />
-      )}
       {sunLayer}
 
       {speaking && <SpeechBubble x={186} y={40} />}

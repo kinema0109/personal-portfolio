@@ -42,3 +42,19 @@
   .album-art { margin: 6px 12px; }
   .album-footer .btn, .album-header .btn { min-height: 32px; }
 }
+
+/* Above the 1440-wide design size the UI scales with the viewport (see styles.css), so the album
+   window and its chrome are expressed as shares of the width too, instead of staying 1240px wide
+   in the middle of a much larger screen. */
+@media (min-width: 1441px) {
+  .album-viewer {
+    width: min(77.5rem, calc(100vw - 2rem));
+    height: min(56.25rem, calc(100dvh - 2rem));
+    border-width: 0.125rem;
+    box-shadow: 0 0 0 0.25rem #101722, 0 1.125rem 5rem #0009;
+  }
+  .album-header, .album-footer { gap: 1rem; padding: 0.875rem 1.25rem; }
+  .album-art { margin: 1rem 1.25rem; }
+  .album-footer .btn, .album-header .btn { min-height: 2.75rem; padding-inline: 1rem; }
+  .album-close kbd { margin-left: 0.625rem; }
+}

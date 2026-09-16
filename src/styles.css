@@ -1495,3 +1495,101 @@ p {
     min-height: 24px;
   }
 }
+
+/* ── Screens wider than the design size ────────────────────────
+   The room is an SVG, so it grows with the screen, but the UI was pinned to pixels: at 2560 the
+   textbox still measured 1240px and the text still 16px, so it shrank to half the width and read
+   small next to the room. Above 1440 every UI length becomes a share of the viewport instead, by
+   scaling the root font size and expressing the UI in rem. The 1440 layout is unchanged, and wider
+   screens now show that same layout, larger. Narrower screens never reach this block. */
+@media (min-width: 1441px) {
+  :root {
+    /* 1rem = 16px at 1440, and the same fraction of the width above it. */
+    font-size: calc(100vw / 90);
+    --topbar-h: 3rem;
+    --px: 0.1875rem;
+  }
+  .topbar {
+    gap: 0.625rem;
+    padding-inline: 1rem;
+    border-bottom-width: 0.125rem;
+  }
+  .btn {
+    min-height: 1.875rem;
+    padding: 0.125rem 0.625rem;
+    border-width: 0.125rem;
+  }
+  .nav-btn {
+    min-height: 1.75rem;
+    padding: 0.0625rem 0.625rem;
+  }
+  .hud {
+    gap: 0.5rem;
+    /* 77.5rem is the old 1240px cap, now a share of the width. */
+    padding: 0.5rem max(0.5rem, calc((100vw - 77.5rem) / 2)) 0.625rem;
+  }
+  .dialogue {
+    gap: 0.4375rem;
+    padding: 1rem 1.25rem;
+  }
+  .dlg-head {
+    gap: 0.375rem;
+  }
+  .speaker {
+    padding-inline: 0.5rem;
+  }
+  .tag {
+    padding-inline: 0.375rem;
+    border-width: 0.0625rem;
+  }
+  .portrait {
+    width: 4.5rem;
+    height: 4.5rem;
+    border-width: 0.125rem;
+    box-shadow: 0 0 0 0.125rem var(--night);
+  }
+  .portrait-tag {
+    right: -0.125rem;
+    bottom: -0.125rem;
+    padding-inline: 0.25rem;
+  }
+  .dlg-main {
+    gap: 0.5rem;
+  }
+  .lines-row {
+    gap: 0.625rem;
+  }
+  .lines {
+    padding-left: 0.5rem;
+  }
+  .next-slot {
+    min-width: 6rem;
+    min-height: 1.875rem;
+  }
+  .choice-menu {
+    width: min(100%, 45rem);
+    padding: 0.5rem;
+  }
+  .choices {
+    gap: 0.625rem;
+    grid-template-columns: repeat(auto-fit, minmax(11.875rem, 1fr));
+  }
+  .choice {
+    min-height: 2.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+  .choice-key {
+    width: 0.9375rem;
+    height: 0.9375rem;
+  }
+  .controls {
+    gap: 0.3125rem;
+  }
+  .controls .btn {
+    min-height: 1.5rem;
+  }
+  /* The CV / projects panel keeps its share of the width instead of staying 400px wide. */
+  .hud.has-panel {
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 25rem);
+  }
+}

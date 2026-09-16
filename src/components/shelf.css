@@ -28,3 +28,8 @@
   left: auto;
   right: 0;
 }
+
+/* Matches the viewport-proportional UI scale above the 1440-wide design size (see styles.css). */
+@media (min-width: 1441px) {
+  .shelf-label { max-width: min(20rem, 80vw); }
+}

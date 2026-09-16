@@ -10,6 +10,7 @@ import type { Px } from './palette'
  * Colours are binding colours chosen to nod at each sinner; they carry no logo or cover art.
  */
 export const LIMBUS_BOOKS: readonly {
+  /** Why the book is on the shelf. Recorded here, never shown: the hover label names the book alone. */
   sinner: string
   title: string
   author: string
@@ -57,10 +58,8 @@ export function layoutBookShelf(x: number, floor: number, gap = 0.6): readonly B
     const w = spineWidth(book.pages)
     const spine = {
       title: book.title,
-      // Some sinners carry the name of their own book or its author, so naming them again would stutter.
-      label: book.sinner === book.title || book.sinner === book.author
-        ? `${book.title} · ${book.author}`
-        : `${book.title} · ${book.author} · ${book.sinner}`,
+      // The label names the book, not the sinner it belongs to: anyone who plays Limbus knows which is which.
+      label: `${book.title} · ${book.author}`,
       x: cursor,
       y: floor - book.height,
       w,

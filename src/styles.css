@@ -266,6 +266,49 @@ p {
 .f-sun-b { opacity: 0; animation: show-second-half 0.7s linear infinite; }
 .f-sun-a { animation: show-first-half 0.7s linear infinite; }
 
+/* Sun-shroom. Awake, it rocks on whole pixels and blinks now and then; asleep, it holds still under
+   rising Zs. Everything steps, like the rest of the room. Reduced motion turns all of it off, which
+   leaves one still Z over the sleeping plant. */
+@keyframes shroom-sway {
+  0%, 49.99% { transform: translateX(0); }
+  50%, 100% { transform: translateX(1px); }
+}
+@keyframes shroom-blink { 0%, 93.99% { opacity: 1; } 94%, 100% { opacity: 0; } }
+@keyframes shroom-nudge {
+  0%, 24.99% { transform: translateX(-1px); }
+  25%, 49.99% { transform: translateX(1px); }
+  50%, 74.99% { transform: translateX(-1px); }
+  75%, 100% { transform: translateX(0); }
+}
+@keyframes z-rise {
+  0% { transform: translate(0, 0); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translate(3px, -6px); opacity: 0; }
+}
+/* Before a sun comes out, the whole plant lights up towards white, as it does in the game. */
+@keyframes shroom-flash {
+  0% { opacity: 0; }
+  50% { opacity: 0.85; }
+  100% { opacity: 0; }
+}
+@keyframes shroom-grow {
+  from { transform: scale(0.56); }
+  to { transform: scale(1); }
+}
+.f-shroom-sway { animation: shroom-sway 1.6s linear infinite; }
+.f-blink { animation: shroom-blink 3.7s linear infinite; }
+.f-shroom-nudge { animation: shroom-nudge 320ms linear both; }
+.f-z-1 { animation: z-rise 2.4s steps(6, end) infinite; }
+.f-z-2 { opacity: 0; animation: z-rise 2.4s steps(6, end) 1.2s infinite; }
+.f-z-burst { opacity: 0; animation: z-rise 700ms steps(4, end) both; }
+.f-shroom-flash { opacity: 0; animation: shroom-flash 360ms linear both; }
+.f-shroom-flash rect { fill: #fff6d2; }
+.f-grow {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: shroom-grow 1s steps(5, end) both;
+}
+
 
 /* Album glint: a brief flash every few seconds. */
 @keyframes glint { 0%, 87.99% { opacity: 0; } 88%, 93.99% { opacity: 1; } 94%, 100% { opacity: 0; } }

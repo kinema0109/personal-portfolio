@@ -105,28 +105,58 @@ const desk: Px[] = [
 ]
 
 /**
- * The desktop tower under the left of the desk, seen through its glass side panel, with its lead
- * running to the wall socket that was already there. It fills the empty half of the desk's
- * underside and balances the drawer on the right.
+ * The desktop tower, under the screen it drives: the laptop sits at x 192–244, so the case stands at
+ * x 208–222 rather than on the far side of the chair where it used to be. Its lead runs along the
+ * floor to a power strip by the wall socket at x 110–115, which is also what ties the two halves of
+ * the desk's underside together.
  */
 const tower: Px[] = [
   // Case, with a lighter top edge and feet.
-  [118, 118, 14, 28, '#24272f'],
-  [118, 118, 14, 1, '#343949'],
-  [118, 118, 1, 28, '#31353f'],
-  [119, 144, 3, 2, '#15171d'], [128, 144, 3, 2, '#15171d'],
+  [208, 118, 14, 28, '#24272f'],
+  [208, 118, 14, 1, '#343949'],
+  [208, 118, 1, 28, '#31353f'],
+  [209, 144, 3, 2, '#15171d'], [218, 144, 3, 2, '#15171d'],
   // Glass side panel.
-  [120, 121, 10, 21, '#12151b'],
-  [120, 121, 10, 1, '#1d222c'],
+  [210, 121, 10, 21, '#12151b'],
+  [210, 121, 10, 1, '#1d222c'],
   // Cooler at the top, graphics card across the middle, drives below.
-  [122, 123, 6, 6, '#2b303c'], [123, 124, 4, 4, '#3b4252'], [124, 125, 2, 2, '#22262f'],
-  [121, 132, 8, 3, '#353b49'], [121, 132, 8, 1, '#464e60'],
-  [121, 137, 8, 2, '#2a2f3a'],
+  [212, 123, 6, 6, '#2b303c'], [213, 124, 4, 4, '#3b4252'], [214, 125, 2, 2, '#22262f'],
+  [211, 132, 8, 3, '#353b49'], [211, 132, 8, 1, '#464e60'],
+  [211, 137, 8, 2, '#2a2f3a'],
   // Front panel: power button and a drive slot.
-  [130, 120, 1, 1, '#6fb3a6'],
-  [130, 123, 1, 4, '#191c23'],
-  // Lead to the wall socket, which sits at x 110–115.
-  [112, 122, 1, 18, '#15171d'], [112, 139, 6, 1, '#15171d'],
+  [220, 120, 1, 1, '#6fb3a6'],
+  [220, 123, 1, 4, '#191c23'],
+]
+
+/**
+ * The power strip on the floor under the socket, and the leads running to it. The socket at x 110–115
+ * was already on that wall; this is what it now feeds.
+ */
+const cables: Px[] = [
+  // Down the wall from the socket to the strip.
+  [112, 122, 1, 21, '#15171d'],
+  // The strip itself, with its own pilot light.
+  [106, 143, 16, 3, '#2b2f38'], [106, 143, 16, 1, '#3c414d'],
+  [108, 144, 1, 1, '#6fb3a6'],
+  // The tower's lead, crossing the floor and dipping on the way.
+  [122, 144, 40, 1, '#15171d'], [161, 144, 1, 2, '#15171d'], [162, 145, 46, 1, '#15171d'],
+  [207, 141, 1, 5, '#15171d'],
+]
+
+/**
+ * Storage under the desk, standing to the right of the power strip so neither hides the other.
+ * Two boxes, the lower one taped shut.
+ */
+const boxes: Px[] = [
+  [126, 130, 22, 16, '#8a6a45'],
+  [126, 130, 22, 1, '#a07f56'],
+  [126, 130, 1, 16, '#6d5236'], [146, 130, 2, 16, '#6d5236'],
+  [135, 130, 2, 16, '#6d5236'],
+  [126, 137, 22, 1, '#c9b48c'],
+  [130, 124, 15, 6, '#7d5f3e'],
+  [130, 124, 15, 1, '#93744d'],
+  [130, 124, 1, 6, '#63492f'], [143, 124, 2, 6, '#63492f'],
+  [136, 124, 2, 6, '#63492f'],
 ]
 
 /**
@@ -134,10 +164,10 @@ const tower: Px[] = [
  * glass and kept dim: the lamp and the window are the bright things in this room, not the PC.
  */
 const towerGlowA: Px[] = [
-  [122, 130, 7, 1, '#357f92'], [128, 124, 1, 14, '#357f92'], [124, 129, 3, 1, '#23596a'],
+  [212, 130, 7, 1, '#357f92'], [218, 124, 1, 14, '#357f92'], [214, 129, 3, 1, '#23596a'],
 ]
 const towerGlowB: Px[] = [
-  [122, 130, 7, 1, '#7a4276'], [128, 124, 1, 14, '#7a4276'], [124, 129, 3, 1, '#552f54'],
+  [212, 130, 7, 1, '#7a4276'], [218, 124, 1, 14, '#7a4276'], [214, 129, 3, 1, '#552f54'],
 ]
 
 const laptopFrame: Px[] = [
@@ -231,12 +261,26 @@ const developerArm: Px[] = [[188, 80, 6, 14, C.red], [190, 94, 14, 5, C.red]]
 const handA: Px[] = [[203, 97, 6, 4, C.skin]]
 const handB: Px[] = [[204, 96, 6, 4, C.skin]]
 
+/**
+ * Office chair seen from behind. The base used to be one flat bar with three stubs under it, and the
+ * middle stub sat directly under the column, so the whole thing read as a letter T. It is now a star
+ * base: the column drops to a hub, the legs step down and outwards, and each one ends in a castor.
+ * The pair angled towards the viewer ends lower and further in than the pair going straight out.
+ */
 const chair: Px[] = [
   [152, 90, 36, 2, C.slate], [150, 92, 40, 26, C.slate], [150, 92, 40, 2, C.slateLight],
   [150, 116, 40, 2, C.navy],
-  [168, 118, 4, 14, C.night],
-  [154, 132, 32, 3, C.night],
-  [154, 135, 3, 2, C.night], [168, 135, 4, 2, C.night], [183, 135, 3, 2, C.night],
+  // Gas column down to the hub.
+  [168, 118, 4, 11, C.night], [167, 127, 6, 2, C.night],
+  [164, 129, 12, 3, C.night],
+  // The two legs that run straight out to the sides.
+  [157, 131, 8, 2, C.night], [151, 133, 7, 2, C.night],
+  [175, 131, 8, 2, C.night], [182, 133, 7, 2, C.night],
+  [150, 135, 4, 2, '#0c0f16'], [186, 135, 4, 2, '#0c0f16'],
+  // The two legs angled towards the viewer, so they finish lower and closer in.
+  [161, 132, 6, 2, C.night], [158, 134, 6, 2, C.night],
+  [173, 132, 6, 2, C.night], [176, 134, 6, 2, C.night],
+  [157, 136, 4, 2, '#0c0f16'], [179, 136, 4, 2, '#0c0f16'],
 ]
 
 const deskItems: Px[] = [
@@ -493,6 +537,8 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charg
       <ReferenceDisplays />
 
       <PixelRects px={desk} />
+      <PixelRects px={cables} />
+      <PixelRects px={boxes} />
       <PixelRects px={tower} />
       <PixelRects px={towerGlowA} className="f-rgb-a" />
       <PixelRects px={towerGlowB} className="f-rgb-b" />

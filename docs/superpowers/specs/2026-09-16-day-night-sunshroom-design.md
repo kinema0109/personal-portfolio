@@ -17,6 +17,16 @@ The room follows the visitor's day and night. A top-bar button swaps day and nig
 | How the Sun-shroom works | Click to drop a sun, like the Sunflower. Collecting 3 small suns grows it |
 | The two plants by day and night | As in the game. Day: Sunflower works, Sun-shroom sleeps. Night: both work |
 
+## Revisions during implementation (owner, 2026-09-16)
+
+These override the sections below wherever they disagree.
+
+1. **Night changes brightness only, never colour.** There is no night window view (no moon, stars or city lights) and no light UI for day. Night is the same daylight room under a navy dimming layer (`C.night`, opacity 0.4). Only the laptop screen (not Thọ's arm and hands over it), the tower's lit strips and the lamp's bulb are masked out, each cut to its own pixels. The UI, including the dialogue box, the top bar and the browser chrome colour, is identical in both phases. `src/day.css` was built and then removed.
+2. **The Sun-shroom sits in its own pot, smaller than the Sunflower's**, in the same pot colours: rim x 63–76, 10 units tall, on the floor line y = 146. The plant sits on its soil at y = 136.
+3. **The solar position is hand-written** (USNO approximate solar coordinates, `src/daylight/solar.ts`) instead of using `suncalc`. `nextPhaseChange` scans ahead in 10-minute steps for up to 48 hours.
+4. **The zone table reads `zone.tab` first**, then `zone1970.tab`, then the `backward` aliases. `zone1970.tab` folds country zones into another country's group (Reykjavik into Abidjan, Réunion into Dubai). The table has 549 entries, not about 300.
+5. `PhaseProvider` wraps `App` in `main.tsx`, not inside `App.tsx`.
+
 ## Research basis
 
 An IP address carries no time, only an approximate location. The visitor's device already knows the time and the timezone, so an IP lookup would only add latitude and longitude. The free browser-callable geo-IP APIs are unreliable: worldtimeapi.org has been sunset, ip-api.com has no HTTPS on its free tier, and ipapi.co's free tier is "not meant for production". Sending visitor IPs to a third party also has GDPR exposure (LG München I, 3 O 17493/20). The site is hosted on Vercel, whose `x-vercel-ip-latitude`/`-longitude` headers remain a possible later upgrade. They are out of scope here.

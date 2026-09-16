@@ -51,6 +51,15 @@ export const SUN_SIZE = 14
  */
 const HEAD = { x: 39 - SUN_SIZE / 2, y: 98 - SUN_SIZE / 2 }
 
+/** Where a taken sun flies: Thọ's chest, so it reads as him soaking the sun up. */
+const CHEST = { x: 174 - SUN_SIZE / 2, y: 90 - SUN_SIZE / 2 }
+
+/** How long a sun lies on the floor before it goes out, and how long the going-out takes. */
+export const SUN_LIFE_MS = 8000
+export const SUN_FADE_MS = 700
+/** How long the flight into Thọ takes. */
+export const SUN_TAKE_MS = 520
+
 const pot: Px[] = [
   [30, 127, 18, 17, POT],
   [31, 144, 16, 2, POT_SHADE],
@@ -145,20 +154,22 @@ const sunRaysB = (x: number, y: number): Px[] => [
 ]
 
 /**
- * One dropped sun. It is drawn at its landing spot and the toss is a transform back to the flower's
- * head, so the arc is described per sun in these three offsets and the keyframes stay shared.
- * `collecting` plays it up and out; Scene removes it when that finishes.
+ * One dropped sun. It is drawn at its landing spot and every movement is a transform away from it,
+ * so the arcs are described per sun in these offsets and the keyframes stay shared.
  */
-export function Sun({ x, y, collecting }: { x: number; y: number; collecting: boolean }) {
+export function Sun({ x, y, state }: { x: number; y: number; state: 'idle' | 'taken' | 'fading' }) {
   const arc = {
     '--sun-from-x': `${HEAD.x - x}px`,
     '--sun-from-y': `${HEAD.y - y}px`,
     // Apex: part way across, and well above both the flower and the floor.
     '--sun-peak-x': `${(HEAD.x - x) * 0.55}px`,
     '--sun-peak-y': `${HEAD.y - y - 14}px`,
+    '--sun-to-x': `${CHEST.x - x}px`,
+    '--sun-to-y': `${CHEST.y - y}px`,
   } as CSSProperties
+  const phase = state === 'taken' ? ' is-taken' : state === 'fading' ? ' is-fading' : ''
   return (
-    <g className={`f-sun${collecting ? ' is-collected' : ''}`} style={arc} data-sun="">
+    <g className={`f-sun${phase}`} style={arc} data-sun={state}>
       <PixelRects px={sunCore(x, y)} />
       <PixelRects px={sunRaysA(x, y)} className="f-sun-a" />
       <PixelRects px={sunRaysB(x, y)} className="f-sun-b" />

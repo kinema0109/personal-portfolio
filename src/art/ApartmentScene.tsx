@@ -266,8 +266,11 @@ function ReferenceDisplays() {
     <g>
       {/* Personal faction print in the free wall bay; clear of the head and speech bubble. */}
       <g data-decoration="horde-frame">
-        <WallFrame x={143} y={10} w={30} h={38} backing="#1b1c24" />
-        <g fill="#a33436" transform="translate(146.5 14.5)">
+        {/* Same top and bottom as the two sword frames, so the three read as one hung set. Moved left
+            to x=125 so the taller frame clears Thọ's head, which starts at x=165. The emblem keeps its
+            own 1:1 pixel grid and is centred in the mat rather than scaled up. */}
+        <WallFrame x={125} y={12} w={33} h={57} backing="#1b1c24" />
+        <g fill="#a33436" transform="translate(130 26)">
           {hordePrint.flatMap((row, y) => [...row].flatMap((ink, x) =>
             ink === '1' ? [<rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} />] : []
           ))}
@@ -290,7 +293,10 @@ function ReferenceDisplays() {
       </g>
       <WallFrame x={259} y={12} w={26} h={57} backing="#10161f" />
       <ReferenceDisplay kind="gran" x={260} y={16} width={24} height={49} />
-      <PixelRects px={[[260, 82, 2, 4, '#806747'], [282, 82, 2, 4, '#806747'], [259, 85, 4, 1, '#5c4a33'], [281, 85, 4, 1, '#5c4a33']]} />
+      {/* Both pegs carry the blade, which runs x 250–279. The right one used to sit at the sword's
+          three-quarter point, which is under the gold guard, so it was hidden and the rack looked
+          lopsided. Peg tops meet the underside of the blade at y≈82. */}
+      <PixelRects px={[[257, 81, 2, 5, '#806747'], [274, 81, 2, 5, '#806747'], [256, 85, 4, 1, '#5c4a33'], [273, 85, 4, 1, '#5c4a33']]} />
       <ReferenceDisplay kind="armageddon" x={250} y={75} width={44} height={9} />
 
       <PixelRects px={cabinet} />
@@ -394,6 +400,8 @@ interface ApartmentSceneProps {
   sparkle: boolean
   /** Suns the visitor has shaken out of the sunflower and not collected yet. */
   suns: readonly DroppedSun[]
+  /** Counts suns taken in. Changing it replays the flash, which is why it is a number. */
+  charge: number
 }
 
 /** One sun lying on the floor. `collecting` plays it up and out before Scene drops it. */
@@ -401,10 +409,11 @@ export interface DroppedSun {
   id: number
   x: number
   y: number
-  collecting: boolean
+  /** idle: lying on the floor · taken: flying into Thọ · fading: left too long and going out. */
+  state: 'idle' | 'taken' | 'fading'
 }
 
-export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns }: ApartmentSceneProps) {
+export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charge }: ApartmentSceneProps) {
   return (
     <svg
       className="pixel-svg"
@@ -442,7 +451,7 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns }: Apa
       {/* Potted sunflower in the daylight, and any sun it has dropped. */}
       <Sunflower />
       {suns.map((sun) => (
-        <Sun key={sun.id} x={sun.x} y={sun.y} collecting={sun.collecting} />
+        <Sun key={sun.id} x={sun.x} y={sun.y} state={sun.state} />
       ))}
 
       <ReferenceDisplays />
@@ -452,6 +461,12 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns }: Apa
       <Screen mode={screen} />
 
       <PixelRects px={developerBody} className="f-breathe" />
+      {charge > 0 && (
+        <g key={charge} className="f-charge" aria-hidden="true">
+          <PixelRects px={developerBody} />
+          <PixelRects px={developerArm} />
+        </g>
+      )}
       <PixelRects px={developerArm} />
       <PixelRects px={handA} className={speaking ? undefined : 'f-type-a'} />
       {!speaking && <PixelRects px={handB} className="f-type-b" />}

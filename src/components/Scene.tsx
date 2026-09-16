@@ -11,7 +11,7 @@ import {
   type ScreenMode,
 } from '../art/ApartmentScene'
 import { layoutBookShelf } from '../art/BookShelf'
-import { SUNFLOWER_BOX, SUN_SIZE, SUN_SPOTS } from '../art/Sunflower'
+import { SUNFLOWER_BOX, SUN_FADE_MS, SUN_LIFE_MS, SUN_SIZE, SUN_SPOTS, SUN_TAKE_MS } from '../art/Sunflower'
 import { layoutFireEmblemShelf } from '../art/GameShelf'
 import { frameCamera, type Camera, type Rect } from '../art/camera'
 import { site } from '../content/site'
@@ -60,31 +60,54 @@ const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)'
 export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }: SceneProps) {
   const ui = useLocale().content.text.ui
   const layerRef = useRef<HTMLDivElement>(null)
+  const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight })
   const [suns, setSuns] = useState<readonly DroppedSun[]>([])
+  const [charge, setCharge] = useState(0)
   const nextSunId = useRef(0)
-  const timers = useRef<number[]>([])
+  const timers = useRef(new Map<number, number[]>())
 
-  useEffect(() => () => timers.current.forEach(clearTimeout), [])
+  const clearTimers = (id: number) => {
+    timers.current.get(id)?.forEach(clearTimeout)
+    timers.current.delete(id)
+  }
+  const after = (id: number, ms: number, run: () => void) => {
+    const handles = timers.current.get(id) ?? []
+    handles.push(window.setTimeout(run, ms))
+    timers.current.set(id, handles)
+  }
+  const drop = (id: number) => {
+    setSuns((current) => current.filter((sun) => sun.id !== id))
+    clearTimers(id)
+  }
+  const setState = (id: number, state: DroppedSun['state']) =>
+    setSuns((current) => current.map((sun) => (sun.id === id ? { ...sun, state } : sun)))
 
-  // Plants vs. Zombies: shaking the flower drops a sun, and a sun sits there until it is collected.
-  // There is no counter and no score, so the only state is where the suns are.
+  useEffect(() => {
+    const all = timers.current
+    return () => all.forEach((handles) => handles.forEach(clearTimeout))
+  }, [])
+
+  // Plants vs. Zombies: the flower spits out a sun, a sun left alone goes out on its own, and a sun
+  // that is taken flies into Thọ. There is no counter and no score, so the only state is the suns.
   const dropSun = () =>
     setSuns((current) => {
-      if (current.length >= SUN_SPOTS.length) return current
       const taken = new Set(current.map((sun) => `${sun.x},${sun.y}`))
       const spot = SUN_SPOTS.find((s) => !taken.has(`${s.x},${s.y}`))
       if (!spot) return current
-      return [...current, { id: nextSunId.current++, x: spot.x, y: spot.y, collecting: false }]
+      const id = nextSunId.current++
+      after(id, SUN_LIFE_MS, () => {
+        setState(id, 'fading')
+        after(id, SUN_FADE_MS, () => drop(id))
+      })
+      return [...current, { id, x: spot.x, y: spot.y, state: 'idle' }]
     })
 
-  const collectSun = (id: number) => {
-    setSuns((current) => current.map((sun) => (sun.id === id ? { ...sun, collecting: true } : sun)))
-    // Matches the collect animation in styles.css; the sun is gone once it has flown out.
-    timers.current.push(
-      window.setTimeout(() => setSuns((current) => current.filter((sun) => sun.id !== id)), 460),
-    )
+  const takeSun = (id: number) => {
+    clearTimers(id)
+    setState(id, 'taken')
+    setCharge((n) => n + 1)
+    after(id, SUN_TAKE_MS, () => drop(id))
   }
-  const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight })
 
   useLayoutEffect(() => {
     const el = layerRef.current
@@ -196,6 +219,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
             speaking={speaker === 'tho'}
             sparkle={sparkle}
             suns={suns}
+            charge={charge}
           />
         </div>
       </figure>
@@ -225,13 +249,13 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
         />
       )}
 
-      {suns.map((sun) => (
+      {suns.filter((sun) => sun.state === 'idle').map((sun) => (
         <button
           key={sun.id}
           type="button"
           className="hotspot hotspot-plain"
           style={toScreen({ x: sun.x, y: sun.y, w: SUN_SIZE, h: SUN_SIZE })}
-          onClick={() => collectSun(sun.id)}
+          onClick={() => takeSun(sun.id)}
           aria-label={ui.sun}
         />
       ))}

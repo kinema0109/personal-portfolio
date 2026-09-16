@@ -227,12 +227,29 @@ p {
   50% { transform: translate(var(--sun-peak-x), var(--sun-peak-y)); }
   100% { transform: translate(0, 0); opacity: 1; }
 }
-@keyframes sun-collect {
-  0% { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(-22px); opacity: 0; }
+/* Taken: the sun flies into Thọ at the desk and is soaked up. */
+@keyframes sun-take {
+  0% { transform: translate(0, 0); opacity: 1; }
+  100% { transform: translate(var(--sun-to-x), var(--sun-to-y)); opacity: 0; }
+}
+/* Left alone: it blinks out where it lies. */
+@keyframes sun-fade {
+  0%, 24.99% { opacity: 1; }
+  25%, 49.99% { opacity: 0.25; }
+  50%, 74.99% { opacity: 1; }
+  75%, 100% { opacity: 0; }
+}
+/* The warm flash in Thọ's own shape when a sun reaches him. */
+@keyframes charge-flash {
+  0% { opacity: 0; }
+  30% { opacity: 0.55; }
+  100% { opacity: 0; }
 }
 .f-sun { animation: sun-toss 700ms steps(8, end) both; }
-.f-sun.is-collected { animation: sun-collect 440ms steps(5, end) both; }
+.f-sun.is-taken { animation: sun-take 520ms steps(6, end) both; }
+.f-sun.is-fading { animation: sun-fade 700ms steps(1, end) both; }
+.f-charge { opacity: 0; animation: charge-flash 420ms linear both; }
+.f-charge rect { fill: #ffe27a; }
 .f-sun-b { opacity: 0; animation: show-second-half 0.7s linear infinite; }
 .f-sun-a { animation: show-first-half 0.7s linear infinite; }
 

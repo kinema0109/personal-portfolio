@@ -104,6 +104,42 @@ const desk: Px[] = [
   [251, 126, 13, 2, C.cream], [253, 125, 7, 1, C.creamDim],
 ]
 
+/**
+ * The desktop tower under the left of the desk, seen through its glass side panel, with its lead
+ * running to the wall socket that was already there. It fills the empty half of the desk's
+ * underside and balances the drawer on the right.
+ */
+const tower: Px[] = [
+  // Case, with a lighter top edge and feet.
+  [118, 118, 14, 28, '#24272f'],
+  [118, 118, 14, 1, '#343949'],
+  [118, 118, 1, 28, '#31353f'],
+  [119, 144, 3, 2, '#15171d'], [128, 144, 3, 2, '#15171d'],
+  // Glass side panel.
+  [120, 121, 10, 21, '#12151b'],
+  [120, 121, 10, 1, '#1d222c'],
+  // Cooler at the top, graphics card across the middle, drives below.
+  [122, 123, 6, 6, '#2b303c'], [123, 124, 4, 4, '#3b4252'], [124, 125, 2, 2, '#22262f'],
+  [121, 132, 8, 3, '#353b49'], [121, 132, 8, 1, '#464e60'],
+  [121, 137, 8, 2, '#2a2f3a'],
+  // Front panel: power button and a drive slot.
+  [130, 120, 1, 1, '#6fb3a6'],
+  [130, 123, 1, 4, '#191c23'],
+  // Lead to the wall socket, which sits at x 110–115.
+  [112, 122, 1, 18, '#15171d'], [112, 139, 6, 1, '#15171d'],
+]
+
+/**
+ * The lit parts of the tower, shown in turn so the case drifts between two colours. Kept inside the
+ * glass and kept dim: the lamp and the window are the bright things in this room, not the PC.
+ */
+const towerGlowA: Px[] = [
+  [122, 130, 7, 1, '#357f92'], [128, 124, 1, 14, '#357f92'], [124, 129, 3, 1, '#23596a'],
+]
+const towerGlowB: Px[] = [
+  [122, 130, 7, 1, '#7a4276'], [128, 124, 1, 14, '#7a4276'], [124, 129, 3, 1, '#552f54'],
+]
+
 const laptopFrame: Px[] = [
   [196, 72, 44, 30, C.night],
   [194, 101, 48, 1, C.mist], [192, 102, 52, 2, C.slateLight],
@@ -457,6 +493,9 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charg
       <ReferenceDisplays />
 
       <PixelRects px={desk} />
+      <PixelRects px={tower} />
+      <PixelRects px={towerGlowA} className="f-rgb-a" />
+      <PixelRects px={towerGlowB} className="f-rgb-b" />
       <PixelRects px={laptopFrame} />
       <Screen mode={screen} />
 

@@ -278,12 +278,14 @@ p {
   left: 0;
   right: 0;
   z-index: 3;
-  height: var(--topbar-h);
+  /* Safe area: a notch or a rounded corner must not eat the name or the sound toggle. */
+  height: calc(var(--topbar-h) + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding-inline: 12px;
+  padding-inline: max(12px, env(safe-area-inset-left, 0px)) max(12px, env(safe-area-inset-right, 0px));
   background: rgba(22, 26, 43, 0.9);
   border-bottom: 2px solid var(--navy);
 }
@@ -343,7 +345,7 @@ p {
 /* ── HUD: detail panel + dialogue box ───────────────────────── */
 .hud {
   position: absolute;
-  top: var(--topbar-h);
+  top: calc(var(--topbar-h) + env(safe-area-inset-top, 0px));
   bottom: 0;
   left: 0;
   right: 0;
@@ -352,7 +354,11 @@ p {
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr) auto;
   gap: 8px;
-  padding: 8px 8px 10px;
+  padding:
+    8px
+    max(8px, env(safe-area-inset-right, 0px))
+    max(10px, env(safe-area-inset-bottom, 0px))
+    max(8px, env(safe-area-inset-left, 0px));
   pointer-events: none;
 }
 .hud > * {
@@ -1174,7 +1180,8 @@ p {
 /* The HUD starts below the top bar so panels never slide underneath it. */
 .hud {
   top: var(--topbar-h);
-  padding: 8px max(8px, calc((100vw - 1240px) / 2));
+  padding: 8px max(8px, env(safe-area-inset-right, 0px), calc((100vw - 1240px) / 2)) 8px
+    max(8px, env(safe-area-inset-left, 0px), calc((100vw - 1240px) / 2));
 }
 .dialogue {
   gap: 7px;
@@ -1621,7 +1628,9 @@ p {
   .hud {
     gap: 0.5rem;
     /* 77.5rem is the old 1240px cap, now a share of the width. */
-    padding: 0.5rem max(0.5rem, calc((100vw - 77.5rem) / 2)) 0.625rem;
+    padding: 0.5rem max(0.5rem, env(safe-area-inset-right, 0px), calc((100vw - 77.5rem) / 2))
+      max(0.625rem, env(safe-area-inset-bottom, 0px))
+      max(0.5rem, env(safe-area-inset-left, 0px), calc((100vw - 77.5rem) / 2));
   }
   .dialogue {
     gap: 0.4375rem;

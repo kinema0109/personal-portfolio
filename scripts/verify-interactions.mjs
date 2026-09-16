@@ -46,8 +46,22 @@ try {
   await page.waitForTimeout(600)
   assert.equal(await page.locator('#cv-title').count(), 0, 'Back must close the panel')
 
+  // An open panel is the top of the screen stack, so focus belongs inside it.
+  await page.getByRole('button', { name: 'Open CV' }).click()
+  await page.waitForTimeout(600)
+  const focused = await page.evaluate(() => {
+    const active = document.activeElement
+    return { inPanel: !!active?.closest('.doc'), tag: active?.className || active?.tagName }
+  })
+  assert.ok(focused.inPanel, `focus must land in the open panel, went to ${focused.tag}`)
+
+  // Escape backs out of it, the same as the panel's own Back.
+  await page.keyboard.press('Escape')
+  await page.waitForTimeout(500)
+  assert.equal(await page.locator('#cv-title').count(), 0, 'Escape must close the panel')
+
   assert.deepEqual(errors, [])
-  console.log('interactions: clicking Thọ advances, and a panel backs out of itself PASS')
+  console.log('interactions: clicking Thọ advances, a panel backs out of itself, and focus lands inside it PASS')
 } finally {
   await browser.close()
 }

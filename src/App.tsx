@@ -103,8 +103,12 @@ export default function App() {
       firstRender.current = false
       return
     }
-    if (here.kind !== 'gallery') linesRef.current?.focus({ preventScroll: true })
-  }, [key])
+    if (here.kind === 'gallery') return
+    // A panel is the top of the screen stack now, so focus goes into it; otherwise the reader is
+    // left in the dialogue and has to tab across the room to reach what just opened.
+    const target = view.panel ? docRef.current : linesRef.current
+    target?.focus({ preventScroll: true })
+  }, [key, view.panel])
 
   // Shortcuts: Enter/Space advance the dialogue, 1–9 pick a choice, Esc goes back.
   useEffect(() => {
@@ -188,7 +192,7 @@ export default function App() {
       {here.kind === 'gallery' && <GalleryPanel onClose={() => act({ type: 'back' })} />}
       <div className={`hud${view.panel && view.panel.kind !== 'gallery' ? ' has-panel' : ''}`}>
         {view.panel && view.panel.kind !== 'gallery' && (
-          <aside className="doc" ref={docRef} key={key} aria-label={ui.details}>
+          <aside className="doc" ref={docRef} key={key} tabIndex={-1} aria-label={ui.details}>
             {/* The dialogue's own Back sits in its corner; a panel needs one where the reader is looking. */}
             {backAllowed && (
               <button type="button" className="doc-back" onClick={() => act({ type: 'back' })}>

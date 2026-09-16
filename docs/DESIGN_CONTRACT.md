@@ -122,7 +122,7 @@ Served from `public/art/derived/`, regenerated with `npm install --no-save sharp
 
 The rest of the room and portfolio remains open to improve using the existing project direction: walls, window/city, desk, laptop screen, chair, books, plants, lighting, dialogue UI, copy, navigation, project panels, motion, and responsive behavior. Changes must not obscure, replace, or break interactions with locked references.
 
-## 2026-09-16 — the man at the desk matches the portrait
+## 2026-09-16 — the man at the desk matches the portrait (REJECTED)
 
 Codex's portrait gave Thọ a face; the figure at the desk still had the placeholder head — a 20×18
 rectangle of hair with a slab of cheek beside it, which read as a helmet. Redrawn to agree with the
@@ -134,3 +134,10 @@ them. The ear stays under the hair; at 20 units wide it only ever made a stripe.
 
 The hover rim comes from `outlineOf([...developerBody, ...developerArm])`, so it followed the new
 silhouette without being touched.
+
+**Rejected the same day.** Everything above is what the drawing was *meant* to do; at native size it
+does not do it. The head is 22 rows of near-black with almost no value break, so it reads as a blob
+rather than a skull, and the sliver of face beside it reads as a stripe glued to the blob rather
+than as a cheek in front of it. The lit sweep and the glasses arm are both invisible at 1:1 — they
+only appear when you zoom in, which is the tell that the drawing was checked at the wrong size.
+Handed to Codex: docs/handoffs/2026-09-16-seated-figure.md.

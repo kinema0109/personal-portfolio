@@ -359,6 +359,24 @@ p {
   pointer-events: auto;
 }
 
+/* Back out of an open panel without aiming at the dialogue's corner. */
+.doc-back {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  align-self: flex-start;
+  margin: 0 0 -2px auto;
+  padding: 3px 10px;
+  background: var(--night);
+  border: 2px solid var(--cream-dim);
+  color: var(--cream);
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.doc-back:hover, .doc-back:focus-visible { border-color: var(--ochre-light); color: var(--ochre-light); }
+
 .doc {
   grid-column: 1;
   grid-row: 1;

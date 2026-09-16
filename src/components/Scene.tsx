@@ -8,6 +8,7 @@ import {
   LAPTOP_BOX,
   FAN_BOX,
   FAN_SPEEDS,
+  SPEAKER_BOX,
   LIMBUS_SHELF,
   type DroppedSun,
   type ScreenMode,
@@ -43,6 +44,8 @@ interface SceneProps {
   panelOpen: boolean
   /** Glint on the album until the visitor has opened the gallery. */
   sparkle: boolean
+  /** Advancing the story by clicking Thọ; null when the current step is the last one. */
+  onAdvance: (() => void) | null
 }
 
 /** Spines that name themselves on hover, focus or tap: the games in the cabinet and the books over the desk. */
@@ -62,7 +65,7 @@ const PANEL_GLIDE_WINDOW_MS = 400
 const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2)
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }: SceneProps) {
+export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, onAdvance }: SceneProps) {
   const ui = useLocale().content.text.ui
   const layerRef = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight })
@@ -258,6 +261,17 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
           </span>
         </button>
       ))}
+
+      {onAdvance && isOffered(toScreen(SPEAKER_BOX)) && (
+        <button
+          type="button"
+          className="hotspot"
+          style={toScreen(SPEAKER_BOX)}
+          onClick={onAdvance}
+          {...points('speaker')}
+          aria-label={ui.advance}
+        />
+      )}
 
       {isOffered(toScreen(FAN_BOX)) && (
         <button

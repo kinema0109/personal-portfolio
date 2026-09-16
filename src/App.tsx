@@ -145,6 +145,7 @@ export default function App() {
         region={region}
         panelOpen={view.panel !== null && view.panel.kind !== 'gallery'}
         sparkle={!gallerySeen}
+        onAdvance={hasNext ? () => act({ type: 'next' }) : null}
       />
 
       <header className="topbar" ref={topRef}>
@@ -188,6 +189,12 @@ export default function App() {
       <div className={`hud${view.panel && view.panel.kind !== 'gallery' ? ' has-panel' : ''}`}>
         {view.panel && view.panel.kind !== 'gallery' && (
           <aside className="doc" ref={docRef} key={key} aria-label={ui.details}>
+            {/* The dialogue's own Back sits in its corner; a panel needs one where the reader is looking. */}
+            {backAllowed && (
+              <button type="button" className="doc-back" onClick={() => act({ type: 'back' })}>
+                ← {ui.back}
+              </button>
+            )}
             <Panel panel={view.panel} onOpenProject={openProject} />
           </aside>
         )}

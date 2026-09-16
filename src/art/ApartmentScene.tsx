@@ -40,6 +40,9 @@ export const ALBUM_BOX = { x: 118, y: 84, w: 34, h: 21 } as const
 export const LAPTOP_BOX = { x: 192, y: 72, w: 52, h: 32 } as const
 export const DRAWER_BOX = { x: 246, y: 112, w: 28, h: 31 } as const
 
+/** Thọ at the desk. Clicking him advances the story, so the reader never has to aim at the textbox. */
+export const SPEAKER_BOX = { x: 150, y: 52, w: 44, h: 60 } as const
+
 /** The desk fan. Clicking it steps through its speeds and then switches it off. */
 export const FAN_BOX = { x: 94, y: 73, w: 20, h: 32 } as const
 
@@ -493,6 +496,7 @@ const OUTLINES = {
   laptop: outlineOf(laptopFrame),
   drawer: outlineOf(drawerPx),
   fan: outlineOf(fanPx),
+  speaker: outlineOf([...developerBody, ...developerArm]),
 } as const
 
 /** Small cross-shaped glint on the album's top corner. */
@@ -606,6 +610,7 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charg
       <PixelRects px={laptopFrame} />
       <Screen mode={screen} />
 
+      {highlight === 'speaker' && <PixelRects px={OUTLINES.speaker} className="f-breathe" />}
       <PixelRects px={developerBody} className="f-breathe" />
       {charge > 0 && (
         <g key={charge} className="f-charge" aria-hidden="true">

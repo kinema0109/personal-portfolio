@@ -208,6 +208,37 @@ p {
 /* Portrait mouth flaps a few times while a new line appears, then rests closed. */
 .f-talk { opacity: 0; animation: show-second-half 180ms linear; animation-iteration-count: var(--talk, 4); }
 
+/* Sunflower: the head bobs and sways on the spot, the way it does in Plants vs. Zombies.
+   Whole pixels only, so it steps like the rest of the room instead of gliding. */
+@keyframes flower-bob {
+  0%, 24.99% { transform: translate(-1px, 0); }
+  25%, 49.99% { transform: translate(0, 1px); }
+  50%, 74.99% { transform: translate(1px, 0); }
+  75%, 100% { transform: translate(0, 1px); }
+}
+.f-bob { animation: flower-bob 2s linear infinite; }
+
+/* A dropped sun is tossed out of the flower's head, arcs up over the plant and falls to the floor,
+   the way a sunflower spits one out in Plants vs. Zombies. The three offsets come from the sun
+   itself, since each one lands somewhere different. */
+@keyframes sun-toss {
+  0% { transform: translate(var(--sun-from-x), var(--sun-from-y)); opacity: 0; }
+  12% { opacity: 1; }
+  50% { transform: translate(var(--sun-peak-x), var(--sun-peak-y)); }
+  100% { transform: translate(0, 0); opacity: 1; }
+}
+@keyframes sun-collect {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-22px); opacity: 0; }
+}
+.f-sun { animation: sun-toss 700ms steps(8, end) both; }
+.f-sun.is-collected { animation: sun-collect 440ms steps(5, end) both; }
+.f-sun-b { opacity: 0; animation: show-second-half 0.7s linear infinite; }
+.f-sun-a { animation: show-first-half 0.7s linear infinite; }
+
+/* Hotspots with nothing to say: the sunflower and its suns are their own label. */
+.hotspot-plain { cursor: pointer; }
+
 /* Album glint: a brief flash every few seconds. */
 @keyframes glint { 0%, 87.99% { opacity: 0; } 88%, 93.99% { opacity: 1; } 94%, 100% { opacity: 0; } }
 .f-glint { opacity: 0; animation: glint 3.2s linear 1s infinite; }

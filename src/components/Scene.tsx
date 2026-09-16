@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import {
   ALBUM_BOX,
   APARTMENT_FOCUS,
@@ -7,9 +7,11 @@ import {
   FIRE_EMBLEM_SHELF,
   LAPTOP_BOX,
   LIMBUS_SHELF,
+  type DroppedSun,
   type ScreenMode,
 } from '../art/ApartmentScene'
 import { layoutBookShelf } from '../art/BookShelf'
+import { SUNFLOWER_BOX, SUN_SIZE, SUN_SPOTS } from '../art/Sunflower'
 import { layoutFireEmblemShelf } from '../art/GameShelf'
 import { frameCamera, type Camera, type Rect } from '../art/camera'
 import { site } from '../content/site'
@@ -58,6 +60,30 @@ const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)'
 export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }: SceneProps) {
   const ui = useLocale().content.text.ui
   const layerRef = useRef<HTMLDivElement>(null)
+  const [suns, setSuns] = useState<readonly DroppedSun[]>([])
+  const nextSunId = useRef(0)
+  const timers = useRef<number[]>([])
+
+  useEffect(() => () => timers.current.forEach(clearTimeout), [])
+
+  // Plants vs. Zombies: shaking the flower drops a sun, and a sun sits there until it is collected.
+  // There is no counter and no score, so the only state is where the suns are.
+  const dropSun = () =>
+    setSuns((current) => {
+      if (current.length >= SUN_SPOTS.length) return current
+      const taken = new Set(current.map((sun) => `${sun.x},${sun.y}`))
+      const spot = SUN_SPOTS.find((s) => !taken.has(`${s.x},${s.y}`))
+      if (!spot) return current
+      return [...current, { id: nextSunId.current++, x: spot.x, y: spot.y, collecting: false }]
+    })
+
+  const collectSun = (id: number) => {
+    setSuns((current) => current.map((sun) => (sun.id === id ? { ...sun, collecting: true } : sun)))
+    // Matches the collect animation in styles.css; the sun is gone once it has flown out.
+    timers.current.push(
+      window.setTimeout(() => setSuns((current) => current.filter((sun) => sun.id !== id)), 460),
+    )
+  }
   const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight })
 
   useLayoutEffect(() => {
@@ -169,6 +195,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
             screen={screen}
             speaking={speaker === 'tho'}
             sparkle={sparkle}
+            suns={suns}
           />
         </div>
       </figure>
@@ -186,6 +213,27 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
             {label}
           </span>
         </button>
+      ))}
+
+      {isOffered(toScreen(SUNFLOWER_BOX)) && (
+        <button
+          type="button"
+          className="hotspot hotspot-plain"
+          style={toScreen(SUNFLOWER_BOX)}
+          onClick={dropSun}
+          aria-label={ui.sunflower}
+        />
+      )}
+
+      {suns.map((sun) => (
+        <button
+          key={sun.id}
+          type="button"
+          className="hotspot hotspot-plain"
+          style={toScreen({ x: sun.x, y: sun.y, w: SUN_SIZE, h: SUN_SIZE })}
+          onClick={() => collectSun(sun.id)}
+          aria-label={ui.sun}
+        />
       ))}
 
       {hotspots.map(({ id, style }) => (

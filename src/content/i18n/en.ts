@@ -233,7 +233,7 @@ export const en: LocaleContent = {
     next: 'Next',
     hotspots: { laptop: 'See projects', album: 'Open album', drawer: 'Open CV' },
     sceneDescription:
-      'Pixel art of a small apartment at night. Thọ works at a desk with a laptop, a photo album and a notebook. On the wall, Alhazard and Langrisser share one frame, Gran Centurio hangs in a tall frame beside it, and Ambicion rests on pegs below. In the display cabinet, a Skaven Grey Seer and an Alpha Legion miniature stand on the lit middle shelf next to an empty base, and every boxed Fire Emblem game lines the bottom shelf. Click the laptop, the album or the desk drawer to explore.',
+      'Pixel art of a small apartment on a bright day. Thọ works at a desk with a laptop, a photo album and a notebook, with a potted sunflower on the floor by the window. On the wall, Alhazard and Langrisser cross in one frame, Gran Centurio hangs in a tall frame beside it, and Armageddon rests on pegs below. The display cabinet holds the books behind the Limbus Company sinners and two plushes on the top shelf, a Skaven Grey Seer, an Alpha Legion miniature and a Master Ball on the lit middle shelf, and every boxed Fire Emblem game along the bottom. Click the laptop, the album or the desk drawer to explore, or the sunflower for a sun.',
     artNotice: 'Placeholder art',
     artNoticeDetail: ' · final art coming later',
     portrait: 'Developer portrait (placeholder)',
@@ -243,6 +243,8 @@ export const en: LocaleContent = {
       placeholder: 'Waiting for real content',
       translationDraft: 'Draft translation · needs Thọ to confirm',
     },
+    sunflower: 'Shake the sunflower',
+    sun: 'Collect the sun',
     project: {
       context: 'Context',
       role: 'My role',

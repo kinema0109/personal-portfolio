@@ -306,19 +306,6 @@ const chair: Px[] = [
   [145, 141, 5, 1, '#454c63'], [190, 141, 5, 1, '#454c63'],
 ]
 
-/**
- * Thọ's legs, which the chair back hid completely. Seen from behind, a seated person shows very
- * little: the shins disappear under the seat, so only the cuffs and the shoes are drawn, either side
- * of the gas column so the chair is still readable between them. They stand on y=146 like the rest.
- */
-const developerLegs: Px[] = [
-  [159, 134, 6, 8, '#39405e'], [176, 134, 6, 8, '#39405e'],
-  [159, 134, 1, 8, '#4a5271'], [181, 134, 1, 8, '#2b3149'],
-  [157, 141, 10, 5, '#26262f'], [174, 141, 10, 5, '#26262f'],
-  [157, 141, 10, 1, '#3d3d4c'], [174, 141, 10, 1, '#3d3d4c'],
-  [157, 145, 10, 1, '#101018'], [174, 145, 10, 1, '#101018'],
-]
-
 const deskItems: Px[] = [
   // Water glass beside the laptop.
   [248, 93, 1, 11, C.mist], [255, 93, 1, 11, C.mist],
@@ -596,7 +583,6 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charg
       {!speaking && <PixelRects px={handB} className="f-type-b" />}
 
       <PixelRects px={chair} />
-      <PixelRects px={developerLegs} />
       <PixelRects px={deskItems} />
       <PixelRects px={notebookPx} />
       <PixelRects px={albumPx} />

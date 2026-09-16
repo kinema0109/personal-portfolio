@@ -284,13 +284,11 @@ function Screen({ mode }: { mode: ScreenMode }) {
  * crown, the same glasses, the same red sweater.
  *
  * The head used to be a 20×18 rectangle of hair with a slab of cheek beside it, which read as a
- * helmet. What fixes it is the silhouette, not the detail: the crown steps in over three rows, the
- * hair stops short at the nape so the neck shows, and the sliver of face tapers to a jaw instead of
- * standing there as a slab. The ear stays under the hair — at this size it only made a stripe — and
- * the glasses arm comes out of the hair over the temple. One pixel row, but it is the thing that
- * says the man at the desk is the man in the portrait.
+ * helmet. The stepped crown and short nape remain, with a broad lamp-facing plane breaking up
+ * the rear skull. The visible cheek, ear and side-on lens form a profile rather than a skin stripe.
+ * Keep these masses readable at native room scale; do not add fine hair strands or extra texture.
  */
-const HAIR_LIT = '#34333a'
+const HAIR_LIT = '#59505a'
 const GLASS = '#675653'
 
 const developerBody: Px[] = [
@@ -303,13 +301,19 @@ const developerBody: Px[] = [
   [169, 52, 12, 1, C.hair], [167, 53, 16, 1, C.hair], [166, 54, 18, 1, C.hair],
   [165, 55, 20, 14, C.hair], [166, 69, 18, 2, C.hair], [167, 71, 15, 1, C.hair],
   [168, 72, 13, 2, C.hair],
-  // The sweep the portrait has, lit from the lamp above and to the left.
-  [170, 53, 9, 1, HAIR_LIT], [167, 55, 7, 1, HAIR_LIT], [166, 56, 4, 2, HAIR_LIT],
-  // The quarter of the face that clears the skull, tapering to the jaw.
-  [182, 59, 5, 7, C.skin], [182, 66, 4, 3, C.skin], [183, 69, 2, 1, C.skinShade],
-  [186, 61, 1, 5, C.skinShade], [185, 66, 1, 3, C.skinShade],
-  // Glasses: the arm coming out of the hair over the temple. The ear stays under the hair.
-  [182, 61, 4, 1, GLASS],
+  // Broad lamp-facing plane: the sweep must read at room scale, not just enlarged.
+  [168, 54, 12, 3, HAIR_LIT], [166, 57, 11, 3, HAIR_LIT],
+  [166, 60, 6, 6, '#403a43'], [172, 60, 6, 3, '#403a43'],
+  [167, 66, 5, 3, '#403a43'],
+  // Visible temple and cheek form a stepped profile in front of the rear skull.
+  [180, 59, 6, 5, C.skin], [179, 64, 7, 4, C.skin],
+  [181, 68, 4, 3, C.skinShade], [181, 68, 3, 2, C.skin],
+  [186, 64, 1, 2, C.skin],
+  // Sideburn and ear anchor the glasses arm; the lens keeps skin inside it.
+  [179, 59, 1, 5, C.hair], [178, 64, 2, 3, C.skinShade],
+  [179, 64, 1, 2, C.skin],
+  [179, 62, 4, 1, GLASS], [183, 61, 4, 1, GLASS],
+  [183, 62, 1, 2, GLASS], [186, 62, 1, 2, GLASS], [184, 64, 2, 1, GLASS],
 ]
 const developerArm: Px[] = [[188, 80, 6, 14, C.red], [190, 94, 14, 5, C.red]]
 const handA: Px[] = [[203, 97, 6, 4, C.skin]]

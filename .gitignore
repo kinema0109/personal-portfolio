@@ -10,3 +10,10 @@ artifacts/
 
 # Album source PNGs: the site serves the WebP set exported by scripts/export-album-webp.mjs
 public/gallery/*.png
+
+# Generated HD sprite sources: scripts/coarsen-references.mjs redraws them on the room's pixel
+# grid, and only those small *-px.png files are served, so the big originals stay local.
+public/art/derived/*-coarse.png
+public/art/derived/*-v2.png
+public/art/derived/*-v3.png
+public/art/derived/master-ball.png

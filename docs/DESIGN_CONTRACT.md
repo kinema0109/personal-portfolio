@@ -20,6 +20,14 @@ The room is a portfolio interface, but it is also a personal game-history displa
 
 ## Rules for all agents
 
+2026-09-16 owner feedback, room pixel grid: the coarse pass was still too sharp for the room. Every refreshed sprite is now stored at the size it is drawn at, 1.5 sprite pixels per scene unit, by `scripts/coarsen-references.mjs`, and the app upscales it with image-rendering: pixelated, so one sprite pixel covers roughly the same area as one room pixel. The tilt of the two framed blades is baked into their sprites before the downsample instead of being applied as an SVG rotation, which keeps their pixels square; the exporter records how far each rotated silhouette sits from the point the pair crosses at (x=229, y=40), and the room adds it back, so the composition, sizes and all other positions are unchanged. Identities, placement, album, hotspots, camera and Master Ball are unchanged. The generated HD sources (`*-coarse.png`, `*-v2.png`, `*-v3.png`, `master-ball.png`) are the exporter's input only: they are kept locally and git-ignored, like the locked screenshots and the album PNGs, so `public/` only serves the 28 kB the room actually draws. See the grid-pass notes in REFERENCE_REFRESH.md.
+
+2026-09-16 latest owner feedback: the HD refresh was too detailed for the room, including ALL swords. Active sprites now use the `*-coarse.png` simplified pixel adaptations. Prefer larger contiguous color blocks and restrained highlights; do not restore HD v2/v3 assets by default. Preserve identities, placement, album and Master Ball. See the coarse-pass notes in REFERENCE_REFRESH.md.
+
+2026-09-16 owner-approved reference refresh (supersedes older asset locks below for these items): install separate pixel-art adaptations of Alpha Legion, Grey Seer, Gran Centurio, Alhazard and Langrisser; replace Ambicion with Armageddon on the wall supports. Preserve old derived assets and exporter as legacy fallback, not the active rendering source. The reserved third figure position now holds the approved Master Ball. Keep album, hotspots and camera unchanged. New inline figure/sword references supersede screenshot identities where applicable; these are generated approximations, not exact source pixels. See [REFERENCE_REFRESH.md](REFERENCE_REFRESH.md) for provenance, prompts and verification.
+
+2026-09-16 owner-approved desktop polish: preserve the sword and miniature source assets; render ReferenceDisplay images with nearest-neighbour pixelated sampling. Narrow Gran Centurio's frame from 30 to 26 scene units around its existing centre x=272. Shift Ambicion left 4 scene units and align its supporting pegs underneath. Album, interaction bounds and mobile camera are unchanged. Garchomp is authorized for the reserved third base, but image generation was blocked by the image service; no new sprite has been installed and the base remains empty.
+
 2026-09-15 owner-approved themed room (supersedes the placements below): wall = tactics corner — Alhazard + Langrisser in one frame (silhouette clip without the source painting's own border), Gran Centurio in a separate tall frame, Ambicion horizontal on wall pegs beneath it; both frames are optically centred and their backings match the sampled source backdrops. Display cabinet = figure bay (tallest bay, shelf light) with Grey Seer and Alpha Legion at one shared scale on their own painted bases, plus an empty base reserved for Garchomp; the bottom bay holds every boxed Fire Emblem game with hover/tap name labels. The desk holds only work items (laptop, album, notebook, drawer). Album position, ALBUM_BOX and the album interaction are unchanged; references stay non-interactive.
 
 2026-09-15 owner request: the top-bar shortcuts (Collection, Projects, Album, CV) and the dialogue "Projects" button are removed so visitors discover destinations in the room. Laptop opens projects, the album (same `ALBUM_BOX`) opens the gallery, the desk drawer opens the CV. The sword frame and display cabinet are references only and must stay non-interactive. Locked art is unchanged.
@@ -67,6 +75,20 @@ Production builds from GitHub, where `public/references/locked/` is deliberately
 | `desk-ambicion` | `public/art/derived/desk-ambicion.png` | 970 309 77 34 | `BF251F56C813E5A470F25D78B9B4C49F35417AD7E25CEDF698925DE34691FA8B` |
 | `approved-figures` / Grey Seer | `public/art/derived/figure-grey-seer.png` | 802 270 52 52 | `C5A670664BE807C7F540AB9465CFB44152ECDAAAE3CB10F1E0888F405B4B6B00` |
 | `approved-figures` / Alpha Legion | `public/art/derived/figure-alpha-legion.png` | 957 235 46 59 | `6D4B6F0FC6331C8B2C1392053AFB13FF0D11B4E6B2D4871582767FDE6C2494FA` |
+
+### Runtime sprites on the room grid (2026-09-16)
+
+Served from `public/art/derived/`, regenerated with `npm install --no-save sharp && node scripts/coarsen-references.mjs`. Their sizes and the crossing offset are written to `src/art/refreshedSprites.ts`, which is generated with them, so the viewBox can never drift from the file. The HD inputs are local-only.
+
+| Asset ID | Runtime file | Size | SHA-256 |
+| --- | --- | --- | --- |
+| `wall-sword-set` / Alhazard | `alhazard-px.png` | 39x57 | `B8600CAAC92657B968088B498D29CC5AD985DC8DBC92849C3E20D7C7B7E6DDD4` |
+| `wall-sword-set` / Langrisser | `langrisser-px.png` | 37x55 | `207C543D77A700839440536A2B8C6D376B4F99932D58BD7C31F0BB19D097144E` |
+| `shelf-gran-centurio` | `gran-px.png` | 31x74 | `E06E88E853106CF221E70A2A1B3036CE0DF175BF034957D5EA18C0D3772565B9` |
+| Armageddon (replaced `desk-ambicion`) | `armageddon-px.png` | 66x13 | `3FDDF2A0763E1D95503A80130875BF3F04FF5050154D260BF55602EF1A70EBE2` |
+| `approved-figures` / Grey Seer | `seer-px.png` | 32x50 | `0B185656ACE87B8E09179E8BF8C7D1CCA8FEA0A5F11E19BF96C3B3DBB07A51E6` |
+| `approved-figures` / Alpha Legion | `alpha-px.png` | 36x46 | `AE739B1E807416F8ACFA8D9467EAAFB2AE36F005758D9458D4941587987EA531` |
+| `approved-figures` / Master Ball | `master-ball-px.png` | 30x29 | `154FF5EFC699B239EEA4D87B289A24FDDFEC196ED410E0490D3C744603257B52` |
 
 ## Unlocked design surface
 

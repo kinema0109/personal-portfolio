@@ -1,18 +1,23 @@
 import { REFERENCES, type ReferenceKind } from './referenceData'
+import { REFRESHED_SPRITES, type RefreshedKind } from './refreshedSprites'
 
 /**
- * One personal reference, pre-cropped to its silhouette (public/art/derived/, exported by
- * scripts/export-derived-references.mjs from the owner's screenshot). Placed in scene units; the image keeps its
- * native source pixels and is scaled by the viewBox, so the room never shows a rectangular photo background.
+ * Owner-approved pixel adaptations, with legacy screenshot crops retained as fallback.
+ *
+ * The refreshed sprites are stored at the size they are drawn at, so one sprite pixel covers
+ * the same area as one room pixel and they no longer read as HD pictures pasted into the room.
+ * Regenerate them with scripts/coarsen-references.mjs; the size table is generated with them.
  */
 export function ReferenceDisplay({ kind, x, y, width, height }: {
-  kind: ReferenceKind
+  kind: ReferenceKind | RefreshedKind
   x: number; y: number; width: number; height: number
 }) {
-  const { w, h, file } = REFERENCES[kind]
+  const { w, h, file } = kind in REFRESHED_SPRITES
+    ? REFRESHED_SPRITES[kind as RefreshedKind]
+    : REFERENCES[kind as ReferenceKind]
   return (
     <svg x={x} y={y} width={width} height={height} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="xMidYMid meet" overflow="hidden" data-reference={kind}>
-      <image href={`${import.meta.env.BASE_URL}art/derived/${file}`} width={w} height={h} />
+      <image href={`${import.meta.env.BASE_URL}art/derived/${file}`} width={w} height={h} style={{ imageRendering: 'pixelated' }} />
     </svg>
   )
 }

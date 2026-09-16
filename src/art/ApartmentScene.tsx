@@ -3,6 +3,7 @@ import { C, type Px } from './palette'
 import { PixelRects } from './PixelRects'
 import { FireEmblemShelf } from './GameShelf'
 import { ReferenceDisplay } from './ReferenceDisplay'
+import { REFRESHED_SPRITES } from './refreshedSprites'
 
 /**
  * Room layout with separate work and display zones, drawn in code. Scene pixels: the room core spans 0–320 × 0–180,
@@ -19,6 +20,9 @@ export const APARTMENT_FOCUS: SceneFocus = {
 
 /** Where the Fire Emblem row stands in the cabinet's bottom bay; Scene.tsx uses it to place the name labels. */
 export const FIRE_EMBLEM_SHELF = { x: 310, floor: 136 } as const
+
+/** The point the two framed blades cross at. */
+const SWORD_CROSS = { x: 229, y: 40 } as const
 
 /** Album bounds on the desk, used to place the gallery hotspot button. */
 // LOCKED: See docs/DESIGN_CONTRACT.md before changing this album hotspot.
@@ -210,19 +214,30 @@ function WallFrame({ x, y, w, h, backing = '#101b27' }: { x: number; y: number; 
 function ReferenceDisplays() {
   return (
     <g>
-      {/* Tactics corner: Alhazard + Langrisser, Gran Centurio in its own tall frame, Ambicion on wall pegs below. */}
+      {/* Tactics corner: Alhazard + Langrisser, Gran Centurio in its own tall frame, Armageddon on wall pegs below. */}
       {/* Positions are optically centred: measured artwork bounds sit mid-frame (see frame-measure QA). */}
       <WallFrame x={207} y={12} w={44} h={57} backing="#1b1e31" />
-      <ReferenceDisplay kind="swords" x={210.25} y={16.75} width={38} height={48} />
-      <WallFrame x={257} y={12} w={30} h={57} backing="#10161f" />
-      <ReferenceDisplay kind="gran" x={261.2} y={16.72} width={24} height={48} />
-      <PixelRects px={[[264, 83, 2, 4, '#806747'], [286, 83, 2, 4, '#806747'], [263, 86, 4, 1, '#5c4a33'], [285, 86, 4, 1, '#5c4a33']]} />
-      <ReferenceDisplay kind="ambicion" x={256} y={73} width={40} height={14} />
+      {/* The blades hang crossed around one point. The tilt is baked into each sprite so its pixels stay
+          square, so each one is hung by its centre instead of being rotated here. */}
+      <g data-reference="swords">
+        {(['alhazard', 'langrisser'] as const).map(kind => {
+          const { units, pivot } = REFRESHED_SPRITES[kind]
+          return (
+            <ReferenceDisplay key={kind} kind={kind}
+              x={SWORD_CROSS.x + pivot.dx - units.w / 2} y={SWORD_CROSS.y + pivot.dy - units.h / 2}
+              width={units.w} height={units.h} />
+          )
+        })}
+      </g>
+      <WallFrame x={259} y={12} w={26} h={57} backing="#10161f" />
+      <ReferenceDisplay kind="gran" x={260} y={16} width={24} height={49} />
+      <PixelRects px={[[260, 82, 2, 4, '#806747'], [282, 82, 2, 4, '#806747'], [259, 85, 4, 1, '#5c4a33'], [281, 85, 4, 1, '#5c4a33']]} />
+      <ReferenceDisplay kind="armageddon" x={250} y={75} width={44} height={9} />
 
       <PixelRects px={cabinet} />
       {/* Figure bay: the tallest bay, with a warm shelf light so the dark minis read against the backing.
           Both minis share one scale (0.45 scene units per source pixel) and their own painted bases stand on the bay floor (y 108).
-          The round base on the right is kept free for the next figure (Garchomp). */}
+          The right-hand base displays the owner's Master Ball collectible. */}
       <defs>
         <linearGradient id="figure-bay-light" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#f2d29a" stopOpacity={0.2} />
@@ -231,10 +246,13 @@ function ReferenceDisplays() {
       </defs>
       <ellipse cx={319.8} cy={107.4} rx={10.5} ry={1.3} fill="#05080c" opacity={0.55} />
       <ellipse cx={346.6} cy={107.4} rx={10} ry={1.3} fill="#05080c" opacity={0.55} />
-      <ReferenceDisplay kind="seer" x={309} y={84.6} width={23.4} height={23.4} />
-      <ReferenceDisplay kind="alpha" x={336} y={81.45} width={20.7} height={26.55} />
+      <ReferenceDisplay kind="seer" x={309.3} y={74} width={21} height={34} />
+      <ReferenceDisplay kind="alpha" x={334.6} y={77} width={24} height={31} />
       <ellipse cx={371} cy={106.9} rx={9} ry={1.6} fill="#221c18" />
       <ellipse cx={371} cy={106} rx={9} ry={1.5} fill="#4a3d30" />
+      <ellipse cx={371} cy={106} rx={5} ry={0.8} fill="#11151c" opacity={0.65} />
+      <image data-reference="master-ball" href={`${import.meta.env.BASE_URL}art/derived/master-ball-px.png`}
+        x={361} y={87} width={20} height={20} preserveAspectRatio="xMidYMid meet" style={{ imageRendering: 'pixelated' }} />
       {/* The light is drawn over the minis, so the backing and any leftover photo backdrop brighten together. */}
       <rect x={307} y={71} width={76} height={37} fill="url(#figure-bay-light)" />
       <rect x={309} y={71} width={72} height={1} fill="#f2d29a" opacity={0.4} />

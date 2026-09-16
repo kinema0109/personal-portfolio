@@ -275,10 +275,6 @@ function Screen({ mode }: { mode: ScreenMode }) {
 }
 
 /**
- * REJECTED DRAFT — the owner turned this down on 2026-09-16. See docs/handoffs/2026-09-16-seated-figure.md.
- * At native size the head reads as a black blob with a beige stripe stuck to it. Do not patch it;
- * redraw it. The wiring below (frames, hover rim, breathing) is fine and should be left alone.
- *
  * Thọ at the desk, seen from behind at three-quarters — the same man as the portrait in the
  * dialogue box, so the two have to agree: the same swept hair catching the lamp on the left of the
  * crown, the same glasses, the same red sweater.
@@ -287,6 +283,10 @@ function Screen({ mode }: { mode: ScreenMode }) {
  * helmet. The stepped crown and short nape remain, with a broad lamp-facing plane breaking up
  * the rear skull. The visible cheek, ear and side-on lens form a profile rather than a skin stripe.
  * Keep these masses readable at native room scale; do not add fine hair strands or extra texture.
+ *
+ * The draft before this one had the silhouette right and one flat dark value inside it, so the head
+ * read as a blob at 1:1 and only came apart when you zoomed in. Judge any change to it on an
+ * unresampled 1440×900 crop first; docs/handoffs/2026-09-16-seated-figure.md has the recipe.
  */
 const HAIR_LIT = '#59505a'
 const GLASS = '#675653'

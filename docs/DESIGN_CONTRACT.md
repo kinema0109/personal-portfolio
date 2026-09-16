@@ -140,4 +140,7 @@ does not do it. The head is 22 rows of near-black with almost no value break, so
 rather than a skull, and the sliver of face beside it reads as a stripe glued to the blob rather
 than as a cheek in front of it. The lit sweep and the glasses arm are both invisible at 1:1 — they
 only appear when you zoom in, which is the tell that the drawing was checked at the wrong size.
-Handed to Codex: docs/handoffs/2026-09-16-seated-figure.md.
+Handed to Codex, who redrew it the same day: a broad lamp-facing plane and a mid tone break the
+rear skull into three values, and the cheek, ear and a side-on lens make a profile instead of a skin
+stripe. Accepted. The lesson worth keeping is the process one — the draft was judged at 5× and the
+owner saw it at 1:1, which is the only size that counts.

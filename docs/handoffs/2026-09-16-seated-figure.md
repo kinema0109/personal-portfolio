@@ -1,6 +1,6 @@
 # Handoff: the figure at the desk
 
-Owner: Hoàng Công Thọ · Date: 2026-09-16 · Status: **art rejected** — redraw the head. Everything else about the figure works.
+Owner: Hoàng Công Thọ · Date: 2026-09-16 · Status: **done** — Codex redrew the head in `823b710`. Kept for the record of what the rejected draft got wrong, and for the native-size check at the bottom, which is the part worth reusing.
 
 Read `AGENTS.md` and `docs/DESIGN_CONTRACT.md` first, in particular the 2026-09-16 notes. This is the companion to `2026-09-16-portrait.md` / `2026-09-16-portrait-revision.md`, which you drew and the owner accepted.
 

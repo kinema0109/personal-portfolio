@@ -17,6 +17,8 @@ try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, locale: 'en-US' })
   const errors = []
   page.on('pageerror', (e) => errors.push(e.message))
+  // The rim colour is measured exactly, and the night dimming shifts it, so check by day.
+  await page.addInitScript(() => localStorage.setItem('tho-vn:phase', 'day'))
   await page.goto(url)
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.waitForTimeout(1300)

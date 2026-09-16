@@ -4,7 +4,6 @@ import { ALSO_USES, FROM_CV, SKILL_GROUPS, skillsInGroup } from '../content/skil
 import { formatPeriod } from '../content/projects'
 import { site } from '../content/site'
 import type { ProjectId } from '../content/types'
-import { useCvFile } from '../hooks/useCvFile'
 import { useLocale } from '../i18n/LocaleProvider'
 import { Missing, StatusTag } from './StatusTag'
 
@@ -17,7 +16,6 @@ export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => v
   const { content } = useLocale()
   const { text } = content
   const labels = text.ui.cv
-  const cv = useCvFile()
   const [tab, setTab] = useState<Tab>('experience')
 
   return (
@@ -30,15 +28,6 @@ export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => v
           <h2 id="cv-title" className="paper-title">
             {site.name}
           </h2>
-        </div>
-        <div className="cv-file">
-          {cv.state === 'available' && (
-            <a className="btn-paper" href={cv.url} target="_blank" rel="noopener">
-              {labels.openPdf}
-            </a>
-          )}
-          {cv.state === 'missing' && <Missing>{labels.notAdded}</Missing>}
-          {cv.state === 'checking' && <span className="meta">{labels.checking}</span>}
         </div>
       </div>
 

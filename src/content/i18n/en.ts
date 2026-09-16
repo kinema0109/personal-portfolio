@@ -255,9 +255,6 @@ export const en: LocaleContent = {
       reviewNote: 'Source: CV, plus the product’s public page for context where the CV has none.',
     },
     cv: {
-      openPdf: 'Open CV (PDF)',
-      notAdded: 'CV not added yet',
-      checking: 'Checking…',
       sections: 'Profile sections',
       experience: 'Experience',
       education: 'Education',

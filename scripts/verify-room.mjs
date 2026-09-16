@@ -29,7 +29,7 @@ for (const [name, width, height] of [['desktop', 1440, 900], ['mobile', 390, 844
   })
   if (checks.overflow || checks.refs.some(r => !r.visible)) throw Error(`${name}: ${JSON.stringify(checks)}`)
   // Destinations are discovered through room hotspots; there is no top navigation.
-  for (const [label, panel] of [['See projects', null], ['Open CV', '#cv-title'], ['Open album', '.album-viewer[open]']]) {
+  for (const [label, panel] of [['See projects', null], ['Profile', '#cv-title'], ['Open album', '.album-viewer[open]']]) {
     await page.goto('http://127.0.0.1:5179')
     await page.getByRole('button', { name: label, exact: true }).click()
     if (panel) await page.locator(panel).waitFor()

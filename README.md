@@ -106,10 +106,6 @@ Put the images in `public/gallery/` and list each one in `src/content/gallery.ts
 
 Pictures are drawn with `image-rendering: pixelated`, so export pixel art at its native size (or an exact multiple) rather than a smoothed upscale. While the list is empty, the panel shows empty frames and a placeholder note.
 
-### The CV
-
-The PDF lives at `public/cv/hoang-cong-tho-cv.pdf`. The app checks at runtime that the file exists and is a PDF, and shows **"CV not added yet"** otherwise. The current PDF (Full-Stack Developer edition) includes a phone number, so anyone who opens the site can read it.
-
 ### Replacing the artwork
 
 - `src/art/ApartmentScene.tsx`: the room. The core is 320×180 pixels, and wall and floor extend in every direction so wide or tall screens never show empty space.
@@ -128,7 +124,7 @@ The scene exports a `primary` focus rect (must stay visible) and a `secondary` o
 **To confirm**
 - [ ] GitHub and LinkedIn links in `site.ts` (taken from Thọ's previous portfolio; the CV shows the icons but not the URLs)
 
-**Deliberately not included**: screenshots, client quotes, demo links, and the phone number (only in the PDF).
+**Deliberately not included**: screenshots, client quotes, demo links, the CV PDF, and the phone number.
 
 ## Project structure
 
@@ -137,10 +133,9 @@ src/
   art/          pixel-art scene + portrait (placeholder), palette, camera framing
   components/   Scene, DialogueBox, ProjectDetail, CvPanel, GalleryPanel, StatusTag
   content/      typed, editable content (see above)
-  hooks/        useCvFile (PDF presence check), useBlip (optional sound), useFreeRegion (uncovered screen area)
+  hooks/        useBlip (optional sound), useFreeRegion (uncovered screen area)
   state/        navigation reducer (history, back/home) + view builder
   App.tsx       wiring, keyboard shortcuts, focus management
   styles.css    all styles (tokens, desktop/mobile, motion, reduced motion)
-public/cv/      the CV PDF
 public/gallery/ pixel-art pictures for the album
 ```

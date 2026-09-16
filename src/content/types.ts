@@ -121,10 +121,6 @@ export interface ContactItem {
 
 export interface SiteConfig {
   name: string
-  cv: {
-    /** Path relative to /public. The app checks at runtime that it exists. */
-    file: string
-  }
   contact: readonly ContactItem[]
   review: {
     /** Show draft/placeholder tags and sources. Set to false for production. */
@@ -230,9 +226,6 @@ export interface LocaleContent {
       reviewNote: string
     }
     cv: {
-      openPdf: string
-      notAdded: string
-      checking: string
       sections: string
       experience: string
       education: string

@@ -5,7 +5,7 @@
   "description": "Choice-driven visual novel portfolio prototype for Hoàng Công Thọ",
   "type": "module",
   "engines": {
-    "node": ">=20.19"
+    "node": ">=22.18"
   },
   "scripts": {
     "dev": "vite",

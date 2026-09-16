@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useLayoutEffect, useState, type ReactNode } from 'react'
-import { applyPhase, autoPhase, initialPhase, nextAutoChange, saveOverride, type Phase } from './phase.ts'
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from 'react'
+import { applyPhase, autoPhase, initialPhase, nextAutoChange, saveOverride, type Phase } from './phase'
 
 interface PhaseValue {
   phase: Phase
@@ -20,37 +20,52 @@ export function PhaseProvider({ children }: { children: ReactNode }) {
 
   useLayoutEffect(() => applyPhase(phase), [phase])
 
-  // On the clock: flip at the next sunrise or sunset, and look again whenever the tab comes back,
-  // since a sleeping laptop or a background tab can hold a timer well past its time. Every sync makes
-  // a new state object, so this effect re-arms itself even when the phase did not change.
+  // On the clock: flip at the next sunrise or sunset, and look again whenever the tab or window comes
+  // back, since a sleeping laptop or a background tab can hold a timer well past its time. A check
+  // that finds nothing changed keeps the same state, so the room does not re-render for nothing.
   useEffect(() => {
     if (override) return
-    const sync = () => setState({ phase: autoPhase(), override: null })
-    const next = nextAutoChange()
-    const wait = next ? next.getTime() - Date.now() + 1000 : RECHECK_MS
-    const timer = window.setTimeout(sync, Math.min(Math.max(wait, 1000), 24 * RECHECK_MS))
+    let timer = 0
+    const arm = () => {
+      window.clearTimeout(timer)
+      const next = nextAutoChange()
+      const wait = next ? next.getTime() - Date.now() + 1000 : RECHECK_MS
+      timer = window.setTimeout(sync, Math.min(Math.max(wait, 1000), 24 * RECHECK_MS))
+    }
+    const sync = () => {
+      const now = autoPhase()
+      setState((current) => (current.phase === now && current.override === null ? current : { phase: now, override: null }))
+      arm()
+    }
     const onVisible = () => {
       if (document.visibilityState === 'visible') sync()
     }
+    arm()
     document.addEventListener('visibilitychange', onVisible)
+    window.addEventListener('focus', sync)
+    window.addEventListener('pageshow', sync)
     return () => {
       window.clearTimeout(timer)
       document.removeEventListener('visibilitychange', onVisible)
+      window.removeEventListener('focus', sync)
+      window.removeEventListener('pageshow', sync)
     }
-  }, [state, override])
+  }, [override])
 
-  const toggle = () => {
-    const next: Phase = phase === 'day' ? 'night' : 'day'
-    setState({ phase: next, override: saveOverride(next) })
-  }
+  const toggle = useCallback(() => {
+    setState((current) => {
+      const next: Phase = current.phase === 'day' ? 'night' : 'day'
+      return { phase: next, override: saveOverride(next) }
+    })
+  }, [])
 
-  return (
-    <PhaseContext.Provider value={{ phase, isOverride: override !== null, toggle }}>{children}</PhaseContext.Provider>
-  )
+  const value = useMemo(() => ({ phase, isOverride: override !== null, toggle }), [phase, override, toggle])
+
+  return <PhaseContext.Provider value={value}>{children}</PhaseContext.Provider>
 }
 
 export function usePhase(): PhaseValue {
   const value = useContext(PhaseContext)
-  if (!value) throw Error('usePhase must be used inside PhaseProvider')
+  if (!value) throw new Error('usePhase must be used inside <PhaseProvider>')
   return value
 }

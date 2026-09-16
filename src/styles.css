@@ -146,11 +146,14 @@ p {
   cursor: pointer;
   border-radius: 2px;
 }
-/* Hotspots stay invisible until pointed at, so the room is explored rather than labelled. */
+/* Hotspots stay invisible until pointed at, and then the object itself is outlined inside the scene
+   rather than boxed — see src/art/outline.ts. A box says nothing about what is clickable when the
+   object is not a rectangle, and around the sunflower it was four times the plant's area. Keyboard
+   focus keeps the global outline, which is a keyboard user's only cue. */
 .hotspot:hover,
 .hotspot:focus-visible {
-  border-color: var(--ochre-light);
-  background: rgb(224 169 85 / 0.08);
+  border-color: transparent;
+  background: transparent;
 }
 .hotspot-label {
   position: absolute;
@@ -263,11 +266,6 @@ p {
 .f-sun-b { opacity: 0; animation: show-second-half 0.7s linear infinite; }
 .f-sun-a { animation: show-first-half 0.7s linear infinite; }
 
-/* Hotspots over objects that are not rectangles. The box would be several times the size of the
-   thing inside it, so these highlight the object itself instead and draw no box of their own.
-   Keyboard focus still gets the global outline, which is the only visible cue a keyboard user has. */
-.hotspot-plain { cursor: pointer; }
-.hotspot-plain:hover { border-color: transparent; background: transparent; }
 
 /* Album glint: a brief flash every few seconds. */
 @keyframes glint { 0%, 87.99% { opacity: 0; } 88%, 93.99% { opacity: 1; } 94%, 100% { opacity: 0; } }

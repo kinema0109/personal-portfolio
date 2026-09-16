@@ -7,9 +7,14 @@
   border: 0;
   cursor: help;
 }
+/* A book or game spine is a rectangle its button matches exactly, so a thin outline is the right
+   cue. The three collectibles are irregular, so they outline their own silhouette in the scene. */
 .shelf-spine:is(:hover, :focus) {
   outline: 1px solid var(--ochre-light);
   outline-offset: 0;
+}
+.shelf-spine-figure:is(:hover, :focus) {
+  outline: none;
 }
 .shelf-spine:is(:hover, :focus) .hotspot-label {
   opacity: 1;

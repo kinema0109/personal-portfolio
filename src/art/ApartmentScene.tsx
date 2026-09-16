@@ -7,6 +7,7 @@ import { MasterBall } from './Figures'
 import { Fumo } from './Fumo'
 import { ReferenceDisplay } from './ReferenceDisplay'
 import { Sun, Sunflower } from './Sunflower'
+import { HALO, PICK_RIM, outlineOf, type Highlight } from './outline'
 import { REFRESHED_SPRITES } from './refreshedSprites'
 
 /**
@@ -108,6 +109,10 @@ const windowFront: Px[] = [
 const desk: Px[] = [
   [90, 104, 196, 4, '#95734d'], [90, 108, 196, 3, '#4d3c30'],
   [94, 111, 5, 35, '#493b2e'], [278, 111, 5, 35, '#493b2e'],
+]
+
+/** The drawer unit, kept apart from the desk so pointing at it can outline exactly this. */
+const drawerPx: Px[] = [
   [246, 112, 28, 31, '#584631'], [248, 113, 24, 13, '#70573a'],
   [248, 128, 24, 13, '#70573a'], [257, 118, 7, 1, '#c8a36e'],
   [257, 133, 7, 1, '#c8a36e'],
@@ -310,7 +315,10 @@ const deskItems: Px[] = [
   // Water glass beside the laptop.
   [248, 93, 1, 11, C.mist], [255, 93, 1, 11, C.mist],
   [249, 98, 6, 5, C.water], [249, 103, 6, 1, C.mist], [250, 96, 1, 6, C.cream],
-  // Fan on the left end of the desk, clear of the album and laptop.
+]
+
+/** The fan on the left end of the desk, clear of the album and laptop. */
+const fanPx: Px[] = [
   [95, 101, 18, 3, C.night], [103, 92, 2, 9, C.slate],
   [98, 74, 12, 1, C.slate], [96, 75, 16, 1, C.slate], [95, 76, 18, 15, C.slate],
   [96, 91, 16, 1, C.slate], [98, 92, 12, 1, C.slate], [97, 77, 14, 13, C.night],
@@ -364,7 +372,7 @@ function WallFrame({ x, y, w, h, backing = '#101b27' }: { x: number; y: number; 
  * Personal references grouped by theme (owner-approved, see docs/DESIGN_CONTRACT.md):
  * the tactics-RPG blades share the wall, the Warhammer minis share the lit figure bay, the Fire Emblem games fill the bottom bay.
  */
-function ReferenceDisplays() {
+function ReferenceDisplays({ highlight }: { highlight: Highlight }) {
   return (
     <g>
       {/* Personal faction print in the free wall bay; clear of the head and speech bubble. */}
@@ -414,12 +422,18 @@ function ReferenceDisplays() {
       </defs>
       <ellipse cx={319.8} cy={107.4} rx={10.5} ry={1.3} fill="#05080c" opacity={0.55} />
       <ellipse cx={346.6} cy={107.4} rx={10} ry={1.3} fill="#05080c" opacity={0.55} />
-      <ReferenceDisplay kind="seer" x={309.3} y={74} width={21} height={34} />
-      <ReferenceDisplay kind="alpha" x={334.6} y={77} width={24} height={31} />
+      <g filter={highlight === 'seer' ? `url(#${PICK_RIM})` : undefined}>
+        <ReferenceDisplay kind="seer" x={309.3} y={74} width={21} height={34} />
+      </g>
+      <g filter={highlight === 'alpha' ? `url(#${PICK_RIM})` : undefined}>
+        <ReferenceDisplay kind="alpha" x={334.6} y={77} width={24} height={31} />
+      </g>
       <ellipse cx={371} cy={106.9} rx={9} ry={1.6} fill="#221c18" />
       <ellipse cx={371} cy={106} rx={9} ry={1.5} fill="#4a3d30" />
       <ellipse cx={371} cy={106} rx={5} ry={0.8} fill="#11151c" opacity={0.65} />
-      <MasterBall />
+      <g filter={highlight === 'master-ball' ? `url(#${PICK_RIM})` : undefined}>
+        <MasterBall />
+      </g>
       {/* The light is drawn over the minis, so the backing and any leftover photo backdrop brighten together. */}
       <rect x={307} y={71} width={76} height={37} fill="url(#figure-bay-light)" />
       <rect x={309} y={71} width={72} height={1} fill="#f2d29a" opacity={0.4} />
@@ -474,6 +488,13 @@ const albumPx: Px[] = [
   [138, 98, 6, 1, C.slateLight], [138, 100, 7, 1, C.slateLight],
 ]
 
+/** Rims for the objects the visitor can point at, built once from the objects themselves. */
+const OUTLINES = {
+  laptop: outlineOf(laptopFrame),
+  drawer: outlineOf(drawerPx),
+  fan: outlineOf(fanPx),
+} as const
+
 /** Small cross-shaped glint on the album's top corner. */
 const glintPx: Px[] = [[150, 82, 1, 5, C.cream], [148, 84, 5, 1, C.cream]]
 
@@ -506,8 +527,8 @@ interface ApartmentSceneProps {
   charge: number
   /** How fast the desk fan is turning, or whether it is off. */
   fanSpeed: FanSpeed
-  /** Whether the visitor is pointing at the sunflower, which outlines the plant itself. */
-  flowerHighlight: boolean
+  /** What the visitor is pointing at, so that object can outline itself rather than show a box. */
+  highlight: Highlight
 }
 
 /** One sun lying on the floor. `collecting` plays it up and out before Scene drops it. */
@@ -519,7 +540,7 @@ export interface DroppedSun {
   state: 'idle' | 'taken' | 'fading'
 }
 
-export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charge, fanSpeed, flowerHighlight }: ApartmentSceneProps) {
+export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charge, fanSpeed, highlight }: ApartmentSceneProps) {
   return (
     <svg
       className="pixel-svg"
@@ -530,6 +551,17 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charg
       focusable="false"
     >
       <defs>
+        {/* Rims a sprite by growing its own alpha, for the collectibles that are images rather
+            than rectangles. Radius is in scene units, so it matches the one-unit rims elsewhere. */}
+        <filter id={PICK_RIM}>
+          <feMorphology in="SourceAlpha" operator="dilate" radius="1" result="fat" />
+          <feFlood floodColor={HALO} result="colour" />
+          <feComposite in="colour" in2="fat" operator="in" result="rim" />
+          <feMerge>
+            <feMergeNode in="rim" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
         <pattern id="apt-wall" width="16" height="16" patternUnits="userSpaceOnUse">
           <rect x="8" y="8" width="1" height="1" fill={C.wallDark} />
         </pattern>
@@ -555,19 +587,22 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charg
       <PixelRects px={windowFront} />
 
       {/* Potted sunflower in the daylight, and any sun it has dropped. */}
-      <Sunflower highlight={flowerHighlight} />
+      <Sunflower highlight={highlight === 'flower'} />
       {suns.map((sun) => (
         <Sun key={sun.id} x={sun.x} y={sun.y} state={sun.state} />
       ))}
 
-      <ReferenceDisplays />
+      <ReferenceDisplays highlight={highlight} />
 
+      {highlight === 'drawer' && <PixelRects px={OUTLINES.drawer} />}
       <PixelRects px={desk} />
+      <PixelRects px={drawerPx} />
       <PixelRects px={cables} />
       <PixelRects px={paintCase} />
       <PixelRects px={tower} />
       <PixelRects px={towerGlowA} className="f-rgb-a" />
       <PixelRects px={towerGlowB} className="f-rgb-b" />
+      {highlight === 'laptop' && <PixelRects px={OUTLINES.laptop} />}
       <PixelRects px={laptopFrame} />
       <Screen mode={screen} />
 
@@ -584,7 +619,10 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charg
 
       <PixelRects px={chair} />
       <PixelRects px={deskItems} />
+      {highlight === 'fan' && <PixelRects px={OUTLINES.fan} />}
+      <PixelRects px={fanPx} />
       <PixelRects px={notebookPx} />
+      {highlight === 'album' && <PixelRects px={outlineOf(albumPx)} />}
       <PixelRects px={albumPx} />
       {sparkle && <PixelRects px={glintPx} className="f-glint" />}
       <g transform="translate(-174 2)" className={`fan fan-${fanSpeed}`} data-fan={fanSpeed}>

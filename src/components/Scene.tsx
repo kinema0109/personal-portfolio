@@ -69,7 +69,14 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
   const [suns, setSuns] = useState<readonly DroppedSun[]>([])
   const [charge, setCharge] = useState(0)
   const [fanStep, setFanStep] = useState(0)
-  const [flowerHighlight, setFlowerHighlight] = useState(false)
+  // What the pointer is over, so the object itself can be outlined instead of its click box.
+  const [highlight, setHighlight] = useState<string | null>(null)
+  const points = (id: string) => ({
+    onPointerEnter: () => setHighlight(id),
+    onPointerLeave: () => setHighlight((current) => (current === id ? null : current)),
+    onFocus: () => setHighlight(id),
+    onBlur: () => setHighlight((current) => (current === id ? null : current)),
+  })
   const fanSpeed = FAN_SPEEDS[fanStep]
   const nextSunId = useRef(0)
   const timers = useRef(new Map<number, number[]>())
@@ -208,7 +215,10 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
     const style = toScreen(spine)
     // Labels open towards the middle of the screen so long titles are not cut off at the edge.
     const alignEnd = style.left + style.width / 2 > size.w / 2
-    return isOffered(style) ? [{ key: spine.title, label: spine.label, style, alignEnd }] : []
+    // The three collectibles are irregular shapes, so they outline themselves; the book and game
+    // spines are rectangles their button already matches exactly, so they keep the thin outline.
+    const figure = spine.title in FIGURES
+    return isOffered(style) ? [{ key: spine.title, label: spine.label, style, alignEnd, figure }] : []
   })
 
   // The scene opens with a pixel iris centred on the uncovered part of the screen.
@@ -229,7 +239,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
             suns={suns}
             charge={charge}
             fanSpeed={fanSpeed}
-            flowerHighlight={flowerHighlight}
+            highlight={highlight}
           />
         </div>
       </figure>
@@ -241,8 +251,8 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
         </p>
       )}
 
-      {shelfLabels.map(({ key, label, style, alignEnd }) => (
-        <button key={key} type="button" tabIndex={-1} className="shelf-spine" style={style} aria-label={label}>
+      {shelfLabels.map(({ key, label, style, alignEnd, figure }) => (
+        <button key={key} type="button" tabIndex={-1} className={`shelf-spine${figure ? ' shelf-spine-figure' : ''}`} style={style} aria-label={label} {...(figure ? points(key) : {})}>
           <span className={`hotspot-label shelf-label${alignEnd ? ' align-end' : ''}`} aria-hidden="true">
             {label}
           </span>
@@ -255,6 +265,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
           className="hotspot"
           style={toScreen(FAN_BOX)}
           onClick={() => setFanStep((step) => (step + 1) % FAN_SPEEDS.length)}
+          {...points('fan')}
           aria-label={`${ui.fan}: ${fanSpeed}`}
         />
       )}
@@ -262,13 +273,10 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
       {isOffered(toScreen(SUNFLOWER_BOX)) && (
         <button
           type="button"
-          className="hotspot hotspot-plain"
+          className="hotspot"
           style={toScreen(SUNFLOWER_BOX)}
           onClick={dropSun}
-          onPointerEnter={() => setFlowerHighlight(true)}
-          onPointerLeave={() => setFlowerHighlight(false)}
-          onFocus={() => setFlowerHighlight(true)}
-          onBlur={() => setFlowerHighlight(false)}
+          {...points('flower')}
           aria-label={ui.sunflower}
         />
       )}
@@ -285,7 +293,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle }
       ))}
 
       {hotspots.map(({ id, style }) => (
-        <button key={id} type="button" className="hotspot" style={style} onClick={() => onHotspot(id)}>
+        <button key={id} type="button" className="hotspot" style={style} onClick={() => onHotspot(id)} {...points(id)}>
           <span className="hotspot-label">{ui.hotspots[id]}</span>
         </button>
       ))}

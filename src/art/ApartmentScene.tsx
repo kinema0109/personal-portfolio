@@ -115,21 +115,21 @@ const desk: Px[] = [
  * the desk's underside together.
  */
 const tower: Px[] = [
-  // Case, with a lighter top edge and feet.
-  [208, 118, 14, 28, '#24272f'],
-  [208, 118, 14, 1, '#343949'],
-  [208, 118, 1, 28, '#31353f'],
-  [209, 144, 3, 2, '#15171d'], [218, 144, 3, 2, '#15171d'],
+  // Case, with a lighter top edge and feet. It fills the desk's 35 units of clearance.
+  [206, 113, 18, 33, '#24272f'],
+  [206, 113, 18, 1, '#343949'],
+  [206, 113, 1, 33, '#31353f'],
+  [207, 144, 4, 2, '#15171d'], [219, 144, 4, 2, '#15171d'],
   // Glass side panel.
-  [210, 121, 10, 21, '#12151b'],
-  [210, 121, 10, 1, '#1d222c'],
+  [208, 116, 14, 26, '#12151b'],
+  [208, 116, 14, 1, '#1d222c'],
   // Cooler at the top, graphics card across the middle, drives below.
-  [212, 123, 6, 6, '#2b303c'], [213, 124, 4, 4, '#3b4252'], [214, 125, 2, 2, '#22262f'],
-  [211, 132, 8, 3, '#353b49'], [211, 132, 8, 1, '#464e60'],
-  [211, 137, 8, 2, '#2a2f3a'],
+  [210, 118, 8, 8, '#2b303c'], [211, 119, 6, 6, '#3b4252'], [213, 121, 2, 2, '#22262f'],
+  [209, 129, 12, 4, '#353b49'], [209, 129, 12, 1, '#464e60'],
+  [209, 136, 12, 3, '#2a2f3a'],
   // Front panel: power button and a drive slot.
-  [220, 120, 1, 1, '#6fb3a6'],
-  [220, 123, 1, 4, '#191c23'],
+  [222, 115, 1, 1, '#6fb3a6'],
+  [222, 118, 1, 5, '#191c23'],
 ]
 
 /**
@@ -143,8 +143,8 @@ const cables: Px[] = [
   [106, 143, 16, 3, '#2b2f38'], [106, 143, 16, 1, '#3c414d'],
   [108, 144, 1, 1, '#6fb3a6'],
   // The tower's lead, crossing the floor and dipping on the way.
-  [122, 144, 40, 1, '#15171d'], [161, 144, 1, 2, '#15171d'], [162, 145, 46, 1, '#15171d'],
-  [207, 141, 1, 5, '#15171d'],
+  [122, 144, 40, 1, '#15171d'], [161, 144, 1, 2, '#15171d'], [162, 145, 44, 1, '#15171d'],
+  [205, 141, 1, 5, '#15171d'],
 ]
 
 /**
@@ -175,10 +175,10 @@ const paintCase: Px[] = [
  * glass and kept dim: the lamp and the window are the bright things in this room, not the PC.
  */
 const towerGlowA: Px[] = [
-  [212, 130, 7, 1, '#357f92'], [218, 124, 1, 14, '#357f92'], [214, 129, 3, 1, '#23596a'],
+  [210, 127, 10, 1, '#357f92'], [220, 119, 1, 20, '#357f92'], [212, 126, 4, 1, '#23596a'],
 ]
 const towerGlowB: Px[] = [
-  [212, 130, 7, 1, '#7a4276'], [218, 124, 1, 14, '#7a4276'], [214, 129, 3, 1, '#552f54'],
+  [210, 127, 10, 1, '#7a4276'], [220, 119, 1, 20, '#7a4276'], [212, 126, 4, 1, '#552f54'],
 ]
 
 const laptopFrame: Px[] = [
@@ -273,25 +273,35 @@ const handA: Px[] = [[203, 97, 6, 4, C.skin]]
 const handB: Px[] = [[204, 96, 6, 4, C.skin]]
 
 /**
- * Office chair seen from behind. The base used to be one flat bar with three stubs under it, and the
- * middle stub sat directly under the column, so the whole thing read as a letter T. It is now a star
- * base: the column drops to a hub, the legs step down and outwards, and each one ends in a castor.
- * The pair angled towards the viewer ends lower and further in than the pair going straight out.
+ * Office chair seen from behind. Its castors used to stop at y=138 while the desk legs, the tower,
+ * the paint case and the power strip all stand on y=146, so it was the one thing in the room
+ * floating above the floor. The column is longer now and the base lands where everything else does.
  */
 const chair: Px[] = [
   [152, 90, 36, 2, C.slate], [150, 92, 40, 26, C.slate], [150, 92, 40, 2, C.slateLight],
   [150, 116, 40, 2, C.navy],
   // Gas column down to the hub.
-  [168, 118, 4, 11, C.night], [167, 127, 6, 2, C.night],
-  [164, 129, 12, 3, C.night],
-  // The two legs that run straight out to the sides.
-  [157, 131, 8, 2, C.night], [151, 133, 7, 2, C.night],
-  [175, 131, 8, 2, C.night], [182, 133, 7, 2, C.night],
-  [150, 135, 4, 2, '#0c0f16'], [186, 135, 4, 2, '#0c0f16'],
-  // The two legs angled towards the viewer, so they finish lower and closer in.
-  [161, 132, 6, 2, C.night], [158, 134, 6, 2, C.night],
-  [173, 132, 6, 2, C.night], [176, 134, 6, 2, C.night],
-  [157, 136, 4, 2, '#0c0f16'], [179, 136, 4, 2, '#0c0f16'],
+  [168, 118, 4, 16, '#2b3040'], [167, 132, 6, 2, '#2b3040'],
+  [164, 134, 12, 3, '#333a4d'], [164, 136, 12, 1, '#1e2230'],
+  // Two legs stepping down and out to castors on the floor.
+  [156, 136, 9, 2, '#333a4d'], [149, 138, 8, 2, '#333a4d'],
+  [175, 136, 9, 2, '#333a4d'], [183, 138, 8, 2, '#333a4d'],
+  [156, 137, 9, 1, '#1e2230'], [175, 137, 9, 1, '#1e2230'],
+  [146, 140, 5, 6, '#1e2230'], [189, 140, 5, 6, '#1e2230'],
+  [146, 140, 5, 1, '#454c63'], [189, 140, 5, 1, '#454c63'],
+]
+
+/**
+ * Thọ's legs, which the chair back hid completely. Seen from behind, a seated person shows very
+ * little: the shins disappear under the seat, so only the cuffs and the shoes are drawn, either side
+ * of the gas column so the chair is still readable between them. They stand on y=146 like the rest.
+ */
+const developerLegs: Px[] = [
+  [159, 134, 6, 8, '#39405e'], [176, 134, 6, 8, '#39405e'],
+  [159, 134, 1, 8, '#4a5271'], [181, 134, 1, 8, '#2b3149'],
+  [157, 141, 10, 5, '#26262f'], [174, 141, 10, 5, '#26262f'],
+  [157, 141, 10, 1, '#3d3d4c'], [174, 141, 10, 1, '#3d3d4c'],
+  [157, 145, 10, 1, '#101018'], [174, 145, 10, 1, '#101018'],
 ]
 
 const deskItems: Px[] = [
@@ -567,6 +577,7 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charg
       {!speaking && <PixelRects px={handB} className="f-type-b" />}
 
       <PixelRects px={chair} />
+      <PixelRects px={developerLegs} />
       <PixelRects px={deskItems} />
       <PixelRects px={notebookPx} />
       <PixelRects px={albumPx} />

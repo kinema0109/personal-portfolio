@@ -206,11 +206,13 @@ export interface LocaleContent {
     home: string
     next: string
     hotspots: Record<HotspotId, string>
-    /** Labels for the two sunflower click targets. Screen readers only; nothing is shown on screen. */
+    /** Labels for the plant and sun click targets. Screen readers only; nothing is shown on screen. */
     advance: string
     fan: string
     sunflower: string
     sun: string
+    sunshroom: string
+    sunshroomAsleep: string
     sceneDescription: string
     artNotice: string
     artNoticeDetail: string

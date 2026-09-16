@@ -7,6 +7,7 @@ import { MasterBall } from './Figures'
 import { Fumo } from './Fumo'
 import { ReferenceDisplay } from './ReferenceDisplay'
 import { Sun, Sunflower, type SunSize } from './Sunflower'
+import { SunShroom, type ShroomState } from './SunShroom'
 import { HALO, PICK_RIM, outlineOf, type Highlight } from './outline'
 import { REFRESHED_SPRITES } from './refreshedSprites'
 import type { Phase } from '../daylight/phase'
@@ -602,6 +603,8 @@ interface ApartmentSceneProps {
   sparkle: boolean
   /** Suns the visitor has shaken out of the sunflower and not collected yet. */
   suns: readonly DroppedSun[]
+  /** The Sun-shroom's size and the click counters that replay its animations. */
+  shroom: ShroomState
   /** Counts suns taken in. Changing it replays the flash, which is why it is a number. */
   charge: number
   /** How fast the desk fan is turning, or whether it is off. */
@@ -624,7 +627,7 @@ export interface DroppedSun {
   origin: { x: number; y: number }
 }
 
-export function ApartmentScene({ viewBox, phase, screen, speaking, sparkle, suns, charge, fanSpeed, highlight }: ApartmentSceneProps) {
+export function ApartmentScene({ viewBox, phase, screen, speaking, sparkle, suns, shroom, charge, fanSpeed, highlight }: ApartmentSceneProps) {
   const night = phase === 'night'
   const sunLayer = suns.map((sun) => (
     <Sun key={sun.id} x={sun.x} y={sun.y} size={sun.size} from={sun.origin} state={sun.state} />
@@ -700,6 +703,7 @@ export function ApartmentScene({ viewBox, phase, screen, speaking, sparkle, suns
       {/* Potted sunflower by the window, and any sun it has dropped. By night the suns are drawn
           after the dimming instead, so they still shine. */}
       <Sunflower highlight={highlight === 'flower'} />
+      <SunShroom shroom={shroom} asleep={!night} highlight={highlight === 'shroom'} />
       {!night && sunLayer}
 
       <ReferenceDisplays highlight={highlight} />

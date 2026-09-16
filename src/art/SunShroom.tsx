@@ -97,7 +97,7 @@ const smallEyesShut = at(SMALL.x, SMALL.y, [[3, 7, 1, 1, INK], [5, 7, 1, 1, INK]
 const zGlyph = (x: number, y: number, big: boolean): Px[] =>
   big
     ? [[x, y, 4, 1, Z_INK], [x + 2, y + 1, 1, 1, Z_INK], [x + 1, y + 2, 1, 1, Z_INK], [x, y + 3, 4, 1, Z_INK]]
-    : [[x, y, 3, 1, Z_INK], [x + 1, y + 1, 1, 1, Z_INK], [x, y + 2, 3, 1, Z_INK]]
+    : [[x, y, 3, 1, Z_INK], [x + 2, y + 1, 1, 1, Z_INK], [x, y + 2, 3, 1, Z_INK]]
 
 /** Where the Zs start, above the cap and to the right: a small one first, then a bigger one. */
 const zStart = (grown: boolean) => (grown ? [{ x: 75, y: 115 }, { x: 77, y: 109 }] : [{ x: 72, y: 122 }, { x: 74, y: 117 }])

@@ -16,6 +16,7 @@ import {
 import { layoutBookShelf } from '../art/BookShelf'
 import { FIGURES } from '../art/Figures'
 import { SUNFLOWER_BOX, SUNFLOWER_TOSS, SUN_FADE_MS, SUN_LIFE_MS, SUN_SIZE, SUN_SPOTS, SUN_TAKE_MS } from '../art/Sunflower'
+import { GROW_AFTER, SUNSHROOM_BOX, shroomToss } from '../art/SunShroom'
 import { layoutFireEmblemShelf } from '../art/GameShelf'
 import { frameCamera, type Camera, type Rect } from '../art/camera'
 import { site } from '../content/site'
@@ -60,6 +61,10 @@ const SHELF_SPINES = [
 /** Camera glides play as a few whole frames, like the rest of the pixel art. */
 const PAN_FRAMES = 5
 const PAN_FRAME_MS = 50
+/** Timer bucket for the Sun-shroom's flash-then-toss; sun ids start at 0, so this never collides. */
+const SHROOM_TIMER = -1
+/** The flash peaks here, and that is when the sun comes out. */
+const SHROOM_FLASH_MS = 180
 /** The free region is re-measured right after a panel opens or closes; moves within this window glide. */
 const PANEL_GLIDE_WINDOW_MS = 400
 
@@ -85,6 +90,10 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
   const fanSpeed = FAN_SPEEDS[fanStep]
   const nextSunId = useRef(0)
   const timers = useRef(new Map<number, number[]>())
+  const [shroomTaken, setShroomTaken] = useState(0)
+  const [shroomGrown, setShroomGrown] = useState(false)
+  const [shroomFlash, setShroomFlash] = useState(0)
+  const [shroomNudge, setShroomNudge] = useState(0)
 
   const clearTimers = (id: number) => {
     timers.current.get(id)?.forEach(clearTimeout)
@@ -122,11 +131,29 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
       return [...current, { id, x: spot.x, y: spot.y, state: 'idle', plant, size, origin }]
     })
 
+  // The Sun-shroom, as in the game: asleep by day, so a click only stirs it; awake at night, it
+  // lights up and spits out a sun, a small one until it has grown.
+  const shakeShroom = () => {
+    if (phase === 'day') {
+      setShroomNudge((n) => n + 1)
+      return
+    }
+    const grown = shroomGrown
+    setShroomFlash((n) => n + 1)
+    after(SHROOM_TIMER, SHROOM_FLASH_MS, () => dropSun('shroom', grown ? 'normal' : 'small', shroomToss(grown)))
+  }
+
   const takeSun = (sun: DroppedSun) => {
     clearTimers(sun.id)
     setState(sun.id, 'taken')
     setCharge((n) => n + 1)
     after(sun.id, SUN_TAKE_MS, () => drop(sun.id))
+    // Growth counts small suns collected while it is awake; one left to go out does not count.
+    if (sun.plant === 'shroom' && sun.size === 'small' && phase === 'night') {
+      const taken = shroomTaken + 1
+      setShroomTaken(taken)
+      if (taken >= GROW_AFTER) setShroomGrown(true)
+    }
   }
 
   useLayoutEffect(() => {
@@ -243,6 +270,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
             speaking={speaker === 'tho'}
             sparkle={sparkle}
             suns={suns}
+            shroom={{ grown: shroomGrown, flash: shroomFlash, nudge: shroomNudge }}
             charge={charge}
             fanSpeed={fanSpeed}
             highlight={highlight}
@@ -295,6 +323,17 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
           onClick={() => dropSun('sunflower', 'normal', SUNFLOWER_TOSS)}
           {...points('flower')}
           aria-label={ui.sunflower}
+        />
+      )}
+
+      {isOffered(toScreen(SUNSHROOM_BOX)) && (
+        <button
+          type="button"
+          className="hotspot"
+          style={toScreen(SUNSHROOM_BOX)}
+          onClick={shakeShroom}
+          {...points('shroom')}
+          aria-label={phase === 'night' ? ui.sunshroom : ui.sunshroomAsleep}
         />
       )}
 

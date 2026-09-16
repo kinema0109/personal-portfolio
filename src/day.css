@@ -1,0 +1,132 @@
+/* Day: the same UI in a light key, on the paper colour the CV panel already uses. Night is
+   styles.css exactly as it stands; this file only recolours. Every rule is scoped to
+   [data-phase='day'] on <html>, which outranks the base rules without !important.
+   The paper panels, the album viewer and the lightbox are already light or deliberately dark,
+   so they are left alone. */
+:root[data-phase='day'] {
+  color-scheme: light;
+  --day-surface: rgb(239 230 207 / 0.95);
+  --day-surface-solid: #efe6cf;
+  --day-raised: rgb(250 244 230 / 0.92);
+  --day-text: #1f2640;
+  --day-muted: #4a5470;
+  --day-edge: #8a7a5a;
+  --day-ring: #c9bb98;
+  --day-accent: #8a6130;
+}
+
+:root[data-phase='day'] :focus-visible {
+  outline-color: var(--day-accent);
+}
+
+/* Top bar */
+:root[data-phase='day'] .topbar {
+  background: linear-gradient(180deg, rgb(239 230 207 / 0.97), rgb(234 223 195 / 0.88));
+  border-bottom-color: rgb(138 122 90 / 0.55);
+}
+:root[data-phase='day'] .brand-name {
+  color: var(--day-text);
+}
+:root[data-phase='day'] .brand-role,
+:root[data-phase='day'] .nav-sound {
+  color: var(--day-muted);
+}
+:root[data-phase='day'] .nav-btn {
+  background: var(--day-raised);
+  border-color: var(--day-edge);
+  color: var(--day-text);
+}
+:root[data-phase='day'] .nav-btn:hover {
+  border-color: var(--red);
+}
+:root[data-phase='day'] .nav-sound[aria-pressed='true'] {
+  color: var(--day-text);
+  border-color: var(--day-text);
+}
+:root[data-phase='day'] .nav-btn[aria-current='page'],
+:root[data-phase='day'] .nav-btn.lang-btn[aria-pressed='true'] {
+  background: var(--day-text);
+  border-color: var(--day-text);
+  color: var(--cream);
+}
+
+/* Dialogue */
+:root[data-phase='day'] .dialogue {
+  background: var(--day-surface);
+  border-color: var(--day-edge);
+  box-shadow: 0 0 0 2px var(--day-ring), inset 0 0 0 1px var(--cream-dim);
+}
+:root[data-phase='day'] .speaker {
+  color: var(--day-accent);
+}
+:root[data-phase='day'] .lines {
+  color: var(--day-text);
+}
+:root[data-phase='day'] .lines > p {
+  text-shadow: none;
+}
+:root[data-phase='day'] .lines.status-placeholder,
+:root[data-phase='day'] .tag,
+:root[data-phase='day'] .tag-placeholder,
+:root[data-phase='day'] .tag-source,
+:root[data-phase='day'] .controls .btn {
+  color: var(--day-muted);
+}
+:root[data-phase='day'] .tag-draft {
+  color: var(--red-dark);
+  background: rgb(163 82 74 / 0.12);
+}
+:root[data-phase='day'] .controls .btn:hover:not(:disabled) {
+  color: var(--day-text);
+}
+:root[data-phase='day'] .portrait {
+  border-color: var(--day-edge);
+  box-shadow: 0 0 0 2px var(--day-ring);
+}
+:root[data-phase='day'] .portrait-tag {
+  background: var(--day-surface-solid);
+  border-color: var(--day-edge);
+  color: var(--day-muted);
+}
+
+/* Choices */
+:root[data-phase='day'] .choice-menu {
+  background: rgb(234 223 195 / 0.92);
+  border-color: var(--day-edge);
+  box-shadow: 0 0 0 2px var(--day-ring);
+}
+:root[data-phase='day'] .choice {
+  background: var(--day-raised);
+  border-color: var(--day-edge);
+  color: var(--day-text);
+}
+:root[data-phase='day'] .choice-key,
+:root[data-phase='day'] .choice-hint {
+  color: var(--day-muted);
+}
+:root[data-phase='day'] .choices > li:first-child .choice {
+  background: var(--day-text);
+  color: var(--cream);
+}
+:root[data-phase='day'] .choices > li:first-child .choice-key,
+:root[data-phase='day'] .choices > li:first-child .choice-hint {
+  color: var(--cream-dim);
+}
+:root[data-phase='day'] .choices > li > .choice:is(:hover, :focus-visible) {
+  background: var(--ochre-light);
+  color: var(--night);
+}
+:root[data-phase='day'] .choices > li > .choice:is(:hover, :focus-visible) :is(.choice-key, .choice-hint) {
+  color: var(--night);
+}
+
+/* Labels drawn over the room */
+:root[data-phase='day'] .hotspot-label,
+:root[data-phase='day'] .art-notice {
+  background: var(--day-surface-solid);
+  color: var(--day-text);
+}
+
+:root[data-phase='day'] :is(.doc, .dlg-main, .lines, .choice-menu) {
+  scrollbar-color: var(--day-edge) transparent;
+}

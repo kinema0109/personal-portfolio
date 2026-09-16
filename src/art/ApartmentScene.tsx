@@ -3,7 +3,7 @@ import { C, type Px } from './palette'
 import { PixelRects } from './PixelRects'
 import { FireEmblemShelf } from './GameShelf'
 import { LimbusBookShelf } from './BookShelf'
-import { Figure } from './Figures'
+import { MasterBall } from './Figures'
 import { Fumo } from './Fumo'
 import { ReferenceDisplay } from './ReferenceDisplay'
 import { Sun, Sunflower } from './Sunflower'
@@ -402,12 +402,12 @@ function ReferenceDisplays() {
       </defs>
       <ellipse cx={319.8} cy={107.4} rx={10.5} ry={1.3} fill="#05080c" opacity={0.55} />
       <ellipse cx={346.6} cy={107.4} rx={10} ry={1.3} fill="#05080c" opacity={0.55} />
-      <Figure kind="seer" />
-      <Figure kind="alpha" />
+      <ReferenceDisplay kind="seer" x={309.3} y={74} width={21} height={34} />
+      <ReferenceDisplay kind="alpha" x={334.6} y={77} width={24} height={31} />
       <ellipse cx={371} cy={106.9} rx={9} ry={1.6} fill="#221c18" />
       <ellipse cx={371} cy={106} rx={9} ry={1.5} fill="#4a3d30" />
       <ellipse cx={371} cy={106} rx={5} ry={0.8} fill="#11151c" opacity={0.65} />
-      <Figure kind="master-ball" />
+      <MasterBall />
       {/* The light is drawn over the minis, so the backing and any leftover photo backdrop brighten together. */}
       <rect x={307} y={71} width={76} height={37} fill="url(#figure-bay-light)" />
       <rect x={309} y={71} width={72} height={1} fill="#f2d29a" opacity={0.4} />

@@ -14,9 +14,7 @@ try {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.locator('[data-reference="gran"]').waitFor()
     // Catches a missing replacement, broken asset URL, or sprite clipped by the UI.
-    // The three collectibles are drawn in code now, so they have no image to decode; they are
-    // checked separately below.
-    for (const kind of ['alhazard', 'langrisser', 'gran', 'armageddon']) {
+    for (const kind of ['alhazard', 'langrisser', 'gran', 'armageddon', 'seer', 'alpha']) {
       const ref = page.locator(`[data-reference="${kind}"]`)
       assert.equal(await ref.count(), 1, `${kind} must be displayed`)
       const result = await ref.evaluate(async e => {
@@ -29,7 +27,8 @@ try {
       })
       assert.ok(result.width > 0 && result.visible, `${kind} must load and fit the room`)
     }
-    for (const kind of ['seer', 'alpha', 'master-ball']) {
+    // The Master Ball is drawn in code, so it has no image to decode.
+    for (const kind of ['master-ball']) {
       const figure = page.locator(`[data-figure="${kind}"]`)
       assert.equal(await figure.count(), 1, `${kind} must be displayed`)
       const fits = await figure.evaluate((e) => {

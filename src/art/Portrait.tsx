@@ -12,79 +12,59 @@ import { PixelRects } from './PixelRects'
  * as one pixel of the room. The old portrait was 16×16, which could not hold a face with glasses —
  * the eyes and the frames landed on the same row.
  *
- * REJECTED DRAFT — the pixels below are being redrawn; see docs/handoffs/2026-09-16-portrait.md.
- * The grid, the frame size, the talking frame and the wiring are settled. The drawing is not: it
- * reads as blocky slabs rather than a face. Do not take it as the reference for anything.
+ * Photo-led revision: swept hair and exposed forehead, broad face, added light frames.
+ * Grid, frame size and talking wiring are unchanged. Visual likeness awaits owner review.
  */
 
-const HAIR = '#221d21'
-const HAIR_LIT = '#332b30'
-const SKIN = '#d3a077'
-const SKIN_SHADE = '#b57f59'
-const SKIN_LIT = '#e2b48c'
-const BROW = '#2c2328'
-const GLASS = '#2b2b35'
-const GLASS_LIT = '#4b4b5a'
-const EYE = '#241c1c'
-const LIP = '#b07a6a'
-const SHIRT = C.red
-const SHIRT_DARK = C.redDark
+const HAIR = '#202027'
+const HAIR_LIT = '#34333a'
+const SKIN = '#dfac8e'
+const SKIN_SHADE = '#c39077'
+const SKIN_LIT = '#e9ba9b'
+const GLASS = '#675653'
+const EYE = '#352c2c'
+const LIP = '#ab7771'
 
 const THO: Px[] = [
   [0, 0, 24, 24, C.slate],
+  // Sloped shoulders and a shallow sweater neckline, not a column neck.
+  [6, 20, 12, 4, C.red], [3, 21, 18, 3, C.red],
+  [1, 23, 22, 1, C.red], [9, 18, 6, 3, SKIN_SHADE],
+  [10, 19, 4, 2, SKIN], [8, 21, 2, 1, C.redDark],
+  [10, 22, 4, 1, C.redDark], [14, 21, 2, 1, C.redDark],
 
-  // Shirt and collar, behind everything.
-  [3, 20, 18, 4, SHIRT],
-  [3, 20, 18, 1, '#b05a50'],
-  [9, 20, 2, 4, SHIRT_DARK], [13, 20, 2, 4, SHIRT_DARK],
+  // Short swept hair, wider at the crown, exposing the forehead.
+  [8, 2, 8, 1, HAIR], [6, 3, 11, 1, HAIR],
+  [5, 4, 13, 3, HAIR], [4, 6, 15, 3, HAIR],
+  [7, 3, 6, 1, HAIR_LIT], [6, 4, 4, 1, HAIR_LIT],
+  // Broad face narrowing gradually to the chin.
+  [8, 6, 8, 1, SKIN], [6, 7, 11, 2, SKIN],
+  [6, 9, 12, 7, SKIN], [7, 16, 10, 2, SKIN],
+  [8, 18, 8, 1, SKIN_SHADE], [9, 18, 6, 1, SKIN],
+  [7, 7, 3, 2, SKIN_LIT], [6, 9, 1, 6, SKIN_LIT],
+  [17, 9, 1, 6, SKIN_SHADE], [16, 15, 1, 2, SKIN_SHADE],
+  [7, 16, 1, 1, SKIN_SHADE],
+  // Ears and slim temples. No hair crossing the forehead.
+  [4, 10, 2, 3, SKIN_SHADE], [18, 10, 1, 3, SKIN_SHADE],
+  [5, 7, 1, 3, HAIR], [17, 7, 1, 2, HAIR],
 
-  // Neck.
-  [10, 18, 4, 3, SKIN_SHADE],
-
-  // Skull: hair stops at row 7 and never crosses the forehead.
-  [9, 2, 6, 1, HAIR], [8, 3, 8, 1, HAIR], [7, 4, 10, 4, HAIR],
-  [9, 3, 4, 1, HAIR_LIT],
-
-  // Face.
-  [8, 8, 8, 2, SKIN],
-  [7, 10, 10, 6, SKIN],
-  [8, 16, 8, 2, SKIN],
-  [10, 18, 4, 1, SKIN],
-  [8, 8, 3, 1, SKIN_LIT], [7, 10, 1, 4, SKIN_LIT],
-
-  // A single column of hair at each temple, and the ears below it.
-  [7, 8, 1, 2, HAIR], [16, 8, 1, 2, HAIR],
-  [6, 11, 1, 3, SKIN], [17, 11, 1, 3, SKIN],
-  [6, 13, 1, 1, SKIN_SHADE], [17, 13, 1, 1, SKIN_SHADE],
-
-  // Brows, with a clear row of skin between them and the frames.
-  [8, 9, 3, 1, BROW], [13, 9, 3, 1, BROW],
-
-  /*
-   * Glasses. The two lenses are set apart with skin showing between them: drawn edge to edge the
-   * top rims join into one bar across the face, which is what the first two attempts looked like.
-   * The bridge is a single row, so the skin above and below it still reads.
-   */
-  [6, 11, 5, 1, GLASS], [6, 13, 5, 1, GLASS],
-  [6, 12, 1, 1, GLASS], [10, 12, 1, 1, GLASS],
-  [13, 11, 5, 1, GLASS], [13, 13, 5, 1, GLASS],
-  [13, 12, 1, 1, GLASS], [17, 12, 1, 1, GLASS],
-  [11, 12, 2, 1, GLASS],
-  [7, 11, 3, 1, GLASS_LIT], [14, 11, 2, 1, GLASS_LIT],
-
-  // Eyes, with skin still visible inside each lens.
-  [7, 12, 2, 1, EYE], [15, 12, 2, 1, EYE],
-
-  // Nose.
-  [11, 14, 2, 1, SKIN_SHADE], [12, 15, 1, 1, '#9c6a48'],
-
-  // Mouth, closed.
-  [10, 17, 4, 1, LIP],
+  // Brows remain distinct from the subdued thin frames.
+  [7, 9, 3, 1, '#70534a'], [14, 9, 3, 1, '#70534a'],
+  // Two 5x4 lenses: 3x2 skin interiors and a two-pixel bridge on one row.
+  [6, 10, 5, 1, GLASS], [6, 11, 1, 2, GLASS],
+  [10, 11, 1, 2, GLASS], [7, 13, 3, 1, GLASS],
+  [13, 10, 5, 1, GLASS], [13, 11, 1, 2, GLASS],
+  [17, 11, 1, 2, GLASS], [14, 13, 3, 1, GLASS],
+  [11, 11, 2, 1, GLASS],
+  [8, 11, 1, 1, EYE], [15, 11, 1, 1, EYE],
+  // Small nose and restrained closed lips embedded in the lower face.
+  [12, 13, 1, 2, SKIN_LIT], [11, 15, 2, 1, SKIN_SHADE],
+  [10, 17, 4, 1, LIP], [11, 18, 2, 1, '#d29a89'],
 ]
 
-/** The open-mouth frame, drawn over the portrait while a line appears. */
+/** Same mouth position; lower lip stays on the face, above the neck. */
 const THO_MOUTH: Px[] = [
-  [10, 17, 4, 1, '#7a4a44'],
+  [10, 17, 4, 1, '#79524c'],
   [11, 18, 2, 1, LIP],
 ]
 

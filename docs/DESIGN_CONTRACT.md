@@ -144,3 +144,15 @@ Handed to Codex, who redrew it the same day: a broad lamp-facing plane and a mid
 rear skull into three values, and the cheek, ear and a side-on lens make a profile instead of a skin
 stripe. Accepted. The lesson worth keeping is the process one — the draft was judged at 5× and the
 owner saw it at 1:1, which is the only size that counts.
+
+## 2026-09-16 — the figure's torso, after the head
+
+With the head fixed, the body underneath it was the next thing that read as a placeholder: a 36×34
+block of red with a flat collar spanning the whole width, and an arm that was two rectangles. Codex
+reshaped it — shoulders that slope in four steps, a back that narrows and then widens at the hips, a
+short collar hugging the nape instead of crossing the shoulders, a shaded left sleeve behind the
+chair, and a forearm with a shadow along its underside reaching to the keyboard.
+
+The hover rim is still `outlineOf([...developerBody, ...developerArm])`, so it took the new
+silhouette for free. Everything below the chair's backrest is hidden anyway, which is why the torso
+spends its detail on the shoulders and the collar.

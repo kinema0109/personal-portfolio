@@ -292,9 +292,15 @@ const HAIR_LIT = '#59505a'
 const GLASS = '#675653'
 
 const developerBody: Px[] = [
-  [152, 86, 6, 16, C.redDark],
-  [158, 74, 32, 2, C.red], [156, 76, 36, 34, C.red], [156, 76, 4, 34, C.redDark],
-  [164, 76, 20, 3, C.redDark],
+  // Sloping shoulders, a fitted back and the shaded left sleeve behind the chair.
+  [165, 74, 19, 2, C.red], [161, 76, 26, 2, C.red],
+  [158, 78, 32, 3, C.red], [157, 81, 34, 9, C.red],
+  [159, 90, 31, 20, C.red],
+  [157, 81, 3, 5, C.redDark], [155, 86, 4, 16, C.redDark],
+  // A short curved collar hugs the nape instead of spanning the shoulders.
+  [168, 75, 2, 3, C.redDark], [170, 77, 10, 2, C.redDark],
+  [180, 75, 2, 3, C.redDark],
+  [185, 84, 2, 7, C.redDark], [187, 91, 3, 10, C.redDark],
   // Neck first; the hair falls over it.
   [170, 70, 10, 7, C.skinShade], [172, 70, 6, 4, C.skin],
   // Hair: a crown that steps in, and a nape that stops above the collar.
@@ -315,7 +321,12 @@ const developerBody: Px[] = [
   [179, 62, 4, 1, GLASS], [183, 61, 4, 1, GLASS],
   [183, 62, 1, 2, GLASS], [186, 62, 1, 2, GLASS], [184, 64, 2, 1, GLASS],
 ]
-const developerArm: Px[] = [[188, 80, 6, 14, C.red], [190, 94, 14, 5, C.red]]
+const developerArm: Px[] = [
+  [188, 81, 4, 4, C.red], [189, 85, 5, 9, C.red],
+  [190, 94, 14, 5, C.red],
+  [188, 88, 2, 7, C.redDark], [190, 97, 12, 2, C.redDark],
+  [202, 94, 2, 5, C.redDark],
+]
 const handA: Px[] = [[203, 97, 6, 4, C.skin]]
 const handB: Px[] = [[204, 96, 6, 4, C.skin]]
 

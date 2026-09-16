@@ -19,6 +19,8 @@ export interface View {
   stepIndex: number
   stepCount: number
   choices: readonly Choice[]
+  /** The choice list is this screen's purpose; clicking away from it goes back. */
+  picker: boolean
   panel: PanelView | null
   /** Active top-level section. */
   section: Section
@@ -58,8 +60,10 @@ function buildBase(loc: Location, content: Content): Omit<View, 'screen'> {
         step: node.steps[stepIndex],
         stepIndex,
         stepCount: node.steps.length,
-        // Visual-novel convention: the choice menu only appears once the last line has been read.
-        choices: stepIndex === node.steps.length - 1 ? node.choices : [],
+        // Visual-novel convention: the choice menu waits for the last line — unless the list is
+        // what the reader came for, in which case making them read first is just an obstacle.
+        choices: node.picker || stepIndex === node.steps.length - 1 ? node.choices : [],
+        picker: node.picker === true,
         panel: null,
         section: SECTION_BY_NODE[node.id],
       }
@@ -75,6 +79,7 @@ function buildBase(loc: Location, content: Content): Omit<View, 'screen'> {
       return {
         ...single({ speaker: 'tho', lines: text.views.project(p, Boolean(p.relatedNode)), status: 'ready', source: 'CV' }),
         choices,
+        picker: false,
         panel: { kind: 'project', projectId: p.id },
         section: 'projects',
       }
@@ -83,6 +88,7 @@ function buildBase(loc: Location, content: Content): Omit<View, 'screen'> {
     case 'archive':
       return {
         ...single({ speaker: 'tho', lines: text.views.archive, status: 'ready' }),
+        picker: true,
         choices: content.projects.map((p) => ({
           label: p.name,
           hint: `${p.company} · ${p.role}`,
@@ -99,6 +105,7 @@ function buildBase(loc: Location, content: Content): Omit<View, 'screen'> {
             ? { speaker: 'note', lines: text.views.galleryEmpty, status: 'placeholder' }
             : { speaker: 'tho', lines: text.views.gallery, status: 'ready' },
         ),
+        picker: false,
         choices: [{ label: text.choices.outside, target: { kind: 'node', id: 'outside' } }],
         panel: { kind: 'gallery' },
         section: 'gallery',
@@ -107,6 +114,7 @@ function buildBase(loc: Location, content: Content): Omit<View, 'screen'> {
     case 'cv':
       return {
         ...single({ speaker: 'tho', lines: text.views.cv, status: 'ready' }),
+        picker: false,
         choices: [{ label: text.choices.seeFeatured, target: { kind: 'node', id: 'work' } }],
         panel: { kind: 'cv' },
         section: 'cv',

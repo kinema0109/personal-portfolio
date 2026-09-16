@@ -67,6 +67,12 @@ export interface StoryNode {
   id: NodeId
   steps: readonly [DialogueStep, ...DialogueStep[]]
   choices: readonly Choice[]
+  /**
+   * True when the choice list is what the reader came for, not an afterthought to the lines.
+   * Such a node shows its list from the first line instead of holding it back until the last, and
+   * the list behaves as the top of the screen stack: clicking away from it dismisses it.
+   */
+  picker?: boolean
 }
 
 /** Language-independent project facts. */

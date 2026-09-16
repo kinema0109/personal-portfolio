@@ -60,8 +60,32 @@ try {
   await page.waitForTimeout(500)
   assert.equal(await page.locator('#cv-title').count(), 0, 'Escape must close the panel')
 
+  // A picker shows its list from the first line, and clicking away from it dismisses it.
+  await page.reload()
+  await page.waitForTimeout(1200)
+  const listen = page.getByRole('button', { name: 'Keep listening' })
+  for (let i = 0; i < 6 && (await listen.count()); i++) {
+    await listen.click()
+    await page.waitForTimeout(250)
+  }
+  const before = await page.locator('.choices > li').count()
+  await page.locator('.choices button').first().click()
+  await page.waitForTimeout(500)
+  const listed = await page.locator('.choices > li').count()
+  const onFirstLine = await page.evaluate(() => {
+    const next = document.querySelector('.btn-next')
+    return next !== null
+  })
+  assert.ok(listed > 0, 'a picker must list its choices straight away')
+  assert.ok(onFirstLine, 'and must do so while there are still lines left to read')
+  const backdrop = page.locator('.picker-backdrop')
+  assert.equal(await backdrop.count(), 1, 'a picker must cover the room while it is up')
+  await backdrop.click({ position: { x: 200, y: 200 } })
+  await page.waitForTimeout(500)
+  assert.equal(await page.locator('.choices > li').count(), before, 'clicking away must dismiss it')
+
   assert.deepEqual(errors, [])
-  console.log('interactions: clicking Thọ advances, a panel backs out of itself, and focus lands inside it PASS')
+  console.log('interactions: advance by Thọ, panel Back and focus, picker shows at once and dismisses PASS')
 } finally {
   await browser.close()
 }

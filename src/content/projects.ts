@@ -15,7 +15,7 @@ export const PROJECTS: readonly ProjectInfo[] = [
     start: '03/2025',
     end: null,
     featured: true,
-    technologies: ['Vue.js', 'Python', 'Django', 'PostgreSQL', 'MongoDB', 'GCP', 'Docker'],
+    technologies: ['TypeScript', 'JavaScript', 'Vue.js', 'Python', 'Django', 'PostgreSQL', 'MongoDB', 'GCP', 'Docker'],
     relatedNode: 'how-migration',
   },
   {
@@ -25,7 +25,7 @@ export const PROJECTS: readonly ProjectInfo[] = [
     start: '03/2025',
     end: null,
     featured: true,
-    technologies: ['React', 'Python', 'Django', 'PostgreSQL', 'Tailwind', 'Claude Code', 'BMAD AI framework'],
+    technologies: ['TypeScript', 'JavaScript', 'React', 'Python', 'Django', 'PostgreSQL', 'Tailwind', 'Claude Code', 'BMAD AI framework'],
     relatedNode: 'how-roles',
   },
   {
@@ -35,7 +35,7 @@ export const PROJECTS: readonly ProjectInfo[] = [
     start: '03/2025',
     end: null,
     featured: true,
-    technologies: ['NestJS', 'React', 'MongoDB', 'WooCommerce webhooks', 'Chart.js'],
+    technologies: ['TypeScript', 'JavaScript', 'NestJS', 'React', 'MongoDB', 'WooCommerce webhooks', 'Chart.js'],
     relatedNode: 'how-events',
   },
   {
@@ -45,7 +45,7 @@ export const PROJECTS: readonly ProjectInfo[] = [
     start: '03/2025',
     end: null,
     featured: false,
-    technologies: ['Next.js', 'TypeScript', 'React', 'Django', 'Tailwind', 'VWO'],
+    technologies: ['JavaScript', 'Next.js', 'TypeScript', 'React', 'Django', 'Tailwind', 'VWO'],
   },
   {
     id: 'suzu',
@@ -54,7 +54,7 @@ export const PROJECTS: readonly ProjectInfo[] = [
     start: '03/2024',
     end: '03/2025',
     featured: false,
-    technologies: ['Next.js', 'TypeScript', 'Supabase', 'PostgreSQL', 'WebSockets', 'Vercel'],
+    technologies: ['JavaScript', 'Next.js', 'TypeScript', 'Supabase', 'PostgreSQL', 'WebSockets', 'Vercel'],
   },
   {
     id: 'ikara-admin',
@@ -63,7 +63,7 @@ export const PROJECTS: readonly ProjectInfo[] = [
     start: '12/2022',
     end: '03/2024',
     featured: false,
-    technologies: ['Java', 'React', 'Jenkins'],
+    technologies: ['TypeScript', 'JavaScript', 'Java', 'React', 'Jenkins'],
   },
   {
     id: 'yokara',
@@ -72,7 +72,7 @@ export const PROJECTS: readonly ProjectInfo[] = [
     start: '12/2022',
     end: '03/2024',
     featured: false,
-    technologies: ['Express', 'Firebase', 'MongoDB', 'JWT', 'Flutter', 'Swift'],
+    technologies: ['TypeScript', 'JavaScript', 'Express', 'Firebase', 'MongoDB', 'JWT', 'Flutter', 'Swift'],
   },
 ]
 

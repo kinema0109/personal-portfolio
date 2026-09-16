@@ -365,23 +365,37 @@ p {
   pointer-events: auto;
 }
 
-/* Back out of an open panel without aiming at the dialogue's corner. */
+/* Back out of an open panel without aiming at the dialogue's corner. An icon, in the flow above
+   the paper rather than stuck over it: a sticky label sat on the panel's own text as it scrolled. */
 .doc-back {
-  position: sticky;
-  top: 0;
-  z-index: 2;
+  flex: none;
   align-self: flex-start;
-  margin: 0 0 -2px auto;
-  padding: 3px 10px;
+  width: 26px;
+  height: 26px;
+  margin: 0 0 6px;
+  padding: 0;
+  display: grid;
+  place-items: center;
   background: var(--night);
   border: 2px solid var(--cream-dim);
   color: var(--cream);
-  font-family: var(--font-label);
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1;
   cursor: pointer;
 }
 .doc-back:hover, .doc-back:focus-visible { border-color: var(--ochre-light); color: var(--ochre-light); }
+
+/* Covers the room while a picker is up, so a stray click dismisses the list instead of
+   reaching a hotspot behind it. Invisible on purpose: the list is the only thing to look at. */
+.picker-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  cursor: default;
+}
 
 .doc {
   grid-column: 1;

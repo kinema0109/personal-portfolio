@@ -22,7 +22,7 @@ export type SkillGroupId = 'languages' | 'frontend' | 'backend' | 'data' | 'deli
  * by substring. Keep this in step with the `technologies` arrays in projects.ts.
  */
 export const SKILL_GROUPS: readonly { id: SkillGroupId; items: readonly string[] }[] = [
-  { id: 'languages', items: ['TypeScript', 'Python', 'Java', 'Swift'] },
+  { id: 'languages', items: ['TypeScript', 'JavaScript', 'Python', 'Java', 'Swift'] },
   { id: 'frontend', items: ['React', 'Next.js', 'Vue.js', 'Tailwind', 'Chart.js', 'Flutter'] },
   { id: 'backend', items: ['NestJS', 'Django', 'Express', 'WebSockets', 'JWT'] },
   { id: 'data', items: ['PostgreSQL', 'MongoDB', 'Supabase', 'Firebase'] },

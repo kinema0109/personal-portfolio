@@ -53,6 +53,9 @@ export function buildStory(
     // ── Branch 1: work ────────────────────────────────────────────
     {
       id: 'work',
+      // The reader clicked "see the projects", so the list is there from the first line rather
+      // than three lines later.
+      picker: true,
       steps: [tho(s.work[0], 'CV'), tho(s.work[1], 'CV'), tho(s.workOverview(archivedCount))],
       choices: [
         ...projectChoices,

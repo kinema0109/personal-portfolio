@@ -6,8 +6,10 @@ import {
   DRAWER_BOX,
   FIRE_EMBLEM_SHELF,
   LAPTOP_BOX,
+  LIMBUS_SHELF,
   type ScreenMode,
 } from '../art/ApartmentScene'
+import { layoutBookShelf } from '../art/BookShelf'
 import { layoutFireEmblemShelf } from '../art/GameShelf'
 import { frameCamera, type Camera, type Rect } from '../art/camera'
 import { site } from '../content/site'
@@ -38,8 +40,11 @@ interface SceneProps {
   sparkle: boolean
 }
 
-/** Game spines on the cabinet's bottom shelf; each names itself on hover, focus or tap. */
-const SHELF_SPINES = layoutFireEmblemShelf(FIRE_EMBLEM_SHELF.x, FIRE_EMBLEM_SHELF.floor)
+/** Spines that name themselves on hover, focus or tap: the games in the cabinet and the books over the desk. */
+const SHELF_SPINES = [
+  ...layoutFireEmblemShelf(FIRE_EMBLEM_SHELF.x, FIRE_EMBLEM_SHELF.floor),
+  ...layoutBookShelf(LIMBUS_SHELF.x, LIMBUS_SHELF.floor),
+]
 
 /** Camera glides play as a few whole frames, like the rest of the pixel art. */
 const PAN_FRAMES = 5

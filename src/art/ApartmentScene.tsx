@@ -2,6 +2,7 @@ import type { SceneFocus } from './camera'
 import { C, type Px } from './palette'
 import { PixelRects } from './PixelRects'
 import { FireEmblemShelf } from './GameShelf'
+import { LimbusBookShelf } from './BookShelf'
 import { ReferenceDisplay } from './ReferenceDisplay'
 import { REFRESHED_SPRITES } from './refreshedSprites'
 
@@ -20,6 +21,9 @@ export const APARTMENT_FOCUS: SceneFocus = {
 
 /** Where the Fire Emblem row stands in the cabinet's bottom bay; Scene.tsx uses it to place the name labels. */
 export const FIRE_EMBLEM_SHELF = { x: 310, floor: 136 } as const
+
+/** Where the sinners' books stand on the wall shelf over the desk; Scene.tsx uses it for the name labels. */
+export const LIMBUS_SHELF = { x: 120, floor: 46 } as const
 
 /** The point the two framed blades cross at. */
 const SWORD_CROSS = { x: 229, y: 40 } as const
@@ -233,6 +237,9 @@ function ReferenceDisplays() {
       <ReferenceDisplay kind="gran" x={260} y={16} width={24} height={49} />
       <PixelRects px={[[260, 82, 2, 4, '#806747'], [282, 82, 2, 4, '#806747'], [259, 85, 4, 1, '#5c4a33'], [281, 85, 4, 1, '#5c4a33']]} />
       <ReferenceDisplay kind="armageddon" x={250} y={75} width={44} height={9} />
+
+      {/* Over the desk: the book behind each Limbus Company sinner, named on hover or tap. */}
+      <LimbusBookShelf x={LIMBUS_SHELF.x} floor={LIMBUS_SHELF.floor} />
 
       <PixelRects px={cabinet} />
       {/* Figure bay: the tallest bay, with a warm shelf light so the dark minis read against the backing.

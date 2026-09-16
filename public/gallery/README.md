@@ -9,12 +9,15 @@ Untouched supplied sources are stored in references/album/ at the repo root.
 Analysis and exact generation prompts: docs/ALBUM_IMPLEMENTATION.md.
 Original authors/owners retain their artwork; the portfolio does not claim authorship.
 The album shows pictures only (no visible titles or captions); `alt` text in `src/content/gallery.ts` is for screen readers.
-The six originally approved PNGs and thirteen additional runtime PNGs belong in version control; unselected variants and references/album/ stay local.
+The album served by the site is the WebP set (quality 95, same pixel dimensions), exported by scripts/export-album-webp.mjs.
+Only the .webp files are committed: the PNGs here are the generation output and stay local, like references/album/ and the unselected variants.
 
 Put the pixel-art pictures for the album in this folder, then list each one in
 `src/content/gallery.ts`:
 
-    { file: 'gallery/rooftop.png', alt: 'Pixel art of a rooftop at night' }
+    { file: 'gallery/rooftop.webp', alt: 'Pixel art of a rooftop at night' }
+
+Add the PNG here, list it with the .webp name, then run the export script.
 
 Export pixel art at its native size or an exact multiple (2×, 3×, …). The app draws it
 with `image-rendering: pixelated`, so a smoothed upscale will look blurry.

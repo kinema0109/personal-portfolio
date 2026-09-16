@@ -1,5 +1,9 @@
 # Album source analysis and generation
 
+## WebP delivery — 2026-09-16
+
+The 19 album pictures are served as WebP (quality 95, exported by scripts/export-album-webp.mjs); pixel dimensions are unchanged, so the pixel-art grid is intact. Chosen after comparing 3x crops of the dithered (19-nagash), flat-white (10-group-portrait) and saturated (07-white-haired-portrait) images plus the two lowest-PSNR files against the PNGs: no visible difference, worst PSNR 35.1 dB, total 33.4 MB -> 6.4 MB (81% smaller). Quality 85 was rejected: visible halos around dark outlines on white. Downscaling was rejected: the non-integer ratio would blur the pixel grid. The generated PNGs stay local and are git-ignored.
+
 ## Additional pages and selected duel — 2026-09-16
 
 Owner requested attachment 2 to replace current album page 11 (the frozen duel, NOT the file numbered 11-artanis). Exact prior generated 4:3 image exec-c97746bf-5c9f-4506-ac4e-7a651d6a4fb0.png matches the attachment and is copied unchanged to public/gallery/12-frozen-duel-selected.png. The wide alternative remains on disk but is not displayed. This overrides the earlier wide-duel framing decision. Artanis and the original approved six pictures are unchanged.

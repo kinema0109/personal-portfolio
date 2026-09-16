@@ -7,3 +7,6 @@ artifacts/
 .vscode/*
 !.vscode/extensions.json
 .idea
+
+# Album source PNGs: the site serves the WebP set exported by scripts/export-album-webp.mjs
+public/gallery/*.png

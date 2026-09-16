@@ -11,6 +11,7 @@ import { site } from './content/site'
 import type { HotspotId, ProjectId, Target } from './content/types'
 import { useBlip } from './hooks/useBlip'
 import { useFreeRegion } from './hooks/useFreeRegion'
+import { usePhase } from './daylight/PhaseProvider'
 import { LOCALES } from './i18n/locale'
 import { useLocale } from './i18n/LocaleProvider'
 import {
@@ -53,6 +54,7 @@ export default function App() {
   const [nav, dispatch] = useReducer(reducer, initialNav)
   const [soundOn, setSoundOn] = useState(false)
   const blip = useBlip(soundOn)
+  const { phase, toggle: togglePhase } = usePhase()
   const [gallerySeen, setGallerySeen] = useState(readGallerySeen)
 
   const appRef = useRef<HTMLDivElement>(null)
@@ -176,6 +178,18 @@ export default function App() {
               ))}
             </div>
           )}
+          {/* The name stays "Night mode" and only the pressed state flips, so a screen reader hears one
+              control changing state rather than a label that swaps under it. */}
+          <button
+            type="button"
+            className="nav-btn nav-phase"
+            aria-pressed={phase === 'night'}
+            aria-label={ui.phase}
+            onClick={togglePhase}
+          >
+            <span aria-hidden="true">{phase === 'night' ? '☾ ' : '☀ '}</span>
+            <span className="nav-phase-text">{phase === 'night' ? ui.phaseNight : ui.phaseDay}</span>
+          </button>
           <button
             type="button"
             className="nav-btn nav-sound"

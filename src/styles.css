@@ -939,6 +939,7 @@ p {
 @media (max-width: 599px) {
   .brand-role,
   .nav-sound-text,
+  .nav-phase-text,
   .art-notice-detail {
     display: none;
   }

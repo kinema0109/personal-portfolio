@@ -194,6 +194,10 @@ export interface LocaleContent {
     sound: string
     soundOn: string
     soundOff: string
+    /** Top-bar day/night switch: a fixed accessible name, and the visible text for each phase. */
+    phase: string
+    phaseDay: string
+    phaseNight: string
     details: string
     dialogue: string
     choices: string

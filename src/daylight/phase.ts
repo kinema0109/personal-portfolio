@@ -6,9 +6,6 @@ export type { Phase }
 /** A day/night choice made by hand, kept only while it differs from what the clock says. */
 export const PHASE_KEY = 'tho-vn:phase'
 
-/** Browser chrome colour per phase: the night UI's background and the day UI's paper. */
-const THEME_COLOR: Record<Phase, string> = { day: '#efe6cf', night: '#161a2b' }
-
 const here = (now: Date) => placeFor(Intl.DateTimeFormat().resolvedOptions().timeZone, now.getTimezoneOffset())
 
 /** Day or night where the visitor is, from their own clock and time zone. No network. */
@@ -51,8 +48,7 @@ export function initialPhase(now = new Date()): { phase: Phase; override: Phase 
   return { phase: saved, override: saveOverride(saved, now) }
 }
 
-/** Puts the phase on <html> for CSS and on the browser's chrome colour. */
+/** Puts the phase on <html>. The UI keeps its colours in both phases; only the room dims at night. */
 export function applyPhase(phase: Phase): void {
   document.documentElement.dataset.phase = phase
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLOR[phase])
 }

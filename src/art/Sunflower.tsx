@@ -35,7 +35,8 @@ export const SUNFLOWER_BOX = { x: 26, y: 85, w: 27, h: 61 } as const
 
 /** Where a dropped sun can land, in the order they are used. All on the floor around the pot. */
 export const SUN_SPOTS: readonly { x: number; y: number }[] = [
-  { x: 56, y: 130 },
+  // Clear of the Sun-shroom's pot at x 63–76, between it and the desk leg.
+  { x: 80, y: 132 },
   { x: 8, y: 134 },
   { x: 62, y: 146 },
   { x: 14, y: 150 },
@@ -49,7 +50,10 @@ export const SUN_SIZE = 14
  * Where a sun is tossed from: the top-left a sun would have if it sat centred on the flower's face.
  * Every drop starts here, arcs up over the plant and falls to its spot on the floor.
  */
-const HEAD = { x: 39 - SUN_SIZE / 2, y: 98 - SUN_SIZE / 2 }
+export const SUNFLOWER_TOSS = { x: 39 - SUN_SIZE / 2, y: 98 - SUN_SIZE / 2 }
+
+/** A Sun-shroom gives small suns until it has grown: half the size, as in the game. */
+export type SunSize = 'small' | 'normal'
 
 /** Where a taken sun flies: Thọ's chest, so it reads as him soaking the sun up. */
 const CHEST = { x: 174 - SUN_SIZE / 2, y: 90 - SUN_SIZE / 2 }
@@ -160,6 +164,21 @@ const sunCore = (x: number, y: number): Px[] => [
   [x + 3, y + 10, 9, 1, SUN_RAY], [x + 4, y + 11, 7, 1, SUN_RAY], [x + 5, y + 12, 5, 1, SUN_RAY],
 ]
 
+/** The small sun: 7 units across, drawn in the middle of the same 14-unit spot a normal sun uses. */
+const smallSunCore = (x: number, y: number): Px[] => [
+  [x + 2, y, 3, 1, SUN_CORE], [x + 1, y + 1, 5, 1, SUN_CORE], [x, y + 2, 7, 3, SUN_CORE],
+  [x + 1, y + 5, 5, 1, SUN_RAY], [x + 2, y + 6, 3, 1, SUN_RAY],
+  [x + 2, y + 1, 2, 1, SUN_HOT], [x + 1, y + 2, 2, 2, SUN_HOT],
+]
+const smallRaysA = (x: number, y: number): Px[] => [
+  [x + 3, y - 2, 1, 1, SUN_RAY], [x + 3, y + 8, 1, 1, SUN_RAY],
+  [x - 2, y + 3, 1, 1, SUN_RAY], [x + 8, y + 3, 1, 1, SUN_RAY],
+]
+const smallRaysB = (x: number, y: number): Px[] => [
+  [x - 1, y - 1, 1, 1, SUN_RAY], [x + 7, y - 1, 1, 1, SUN_RAY],
+  [x - 1, y + 7, 1, 1, SUN_RAY], [x + 7, y + 7, 1, 1, SUN_RAY],
+]
+
 /** Two ray sets, shown in turn, so the sun shimmers instead of sitting still. */
 const sunRaysA = (x: number, y: number): Px[] => [
   [x + 6, y, 2, 2, SUN_RAY], [x + 6, y + 12, 2, 2, SUN_RAY],
@@ -173,24 +192,39 @@ const sunRaysB = (x: number, y: number): Px[] => [
 
 /**
  * One dropped sun. It is drawn at its landing spot and every movement is a transform away from it,
- * so the arcs are described per sun in these offsets and the keyframes stay shared.
+ * so the arcs are described per sun in these offsets and the keyframes stay shared. `from` is where
+ * the sun sits as it leaves the plant, which differs between the Sunflower and the Sun-shroom.
+ * A small sun keeps the 14-unit spot, so both kinds share the landing spots and the click target.
  */
-export function Sun({ x, y, state }: { x: number; y: number; state: 'idle' | 'taken' | 'fading' }) {
+export function Sun({
+  x,
+  y,
+  size,
+  from,
+  state,
+}: {
+  x: number
+  y: number
+  size: SunSize
+  from: { x: number; y: number }
+  state: 'idle' | 'taken' | 'fading'
+}) {
   const arc = {
-    '--sun-from-x': `${HEAD.x - x}px`,
-    '--sun-from-y': `${HEAD.y - y}px`,
-    // Apex: part way across, and well above both the flower and the floor.
-    '--sun-peak-x': `${(HEAD.x - x) * 0.55}px`,
-    '--sun-peak-y': `${HEAD.y - y - 14}px`,
+    '--sun-from-x': `${from.x - x}px`,
+    '--sun-from-y': `${from.y - y}px`,
+    // Apex: part way across, and well above both the plant and the floor.
+    '--sun-peak-x': `${(from.x - x) * 0.55}px`,
+    '--sun-peak-y': `${from.y - y - 14}px`,
     '--sun-to-x': `${CHEST.x - x}px`,
     '--sun-to-y': `${CHEST.y - y}px`,
   } as CSSProperties
   const phase = state === 'taken' ? ' is-taken' : state === 'fading' ? ' is-fading' : ''
+  const small = size === 'small'
   return (
-    <g className={`f-sun${phase}`} style={arc} data-sun={state}>
-      <PixelRects px={sunCore(x, y)} />
-      <PixelRects px={sunRaysA(x, y)} className="f-sun-a" />
-      <PixelRects px={sunRaysB(x, y)} className="f-sun-b" />
+    <g className={`f-sun${phase}`} style={arc} data-sun={state} data-sun-size={size}>
+      <PixelRects px={small ? smallSunCore(x + 3, y + 3) : sunCore(x, y)} />
+      <PixelRects px={small ? smallRaysA(x + 3, y + 3) : sunRaysA(x, y)} className="f-sun-a" />
+      <PixelRects px={small ? smallRaysB(x + 3, y + 3) : sunRaysB(x, y)} className="f-sun-b" />
     </g>
   )
 }

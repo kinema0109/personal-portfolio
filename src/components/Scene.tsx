@@ -15,7 +15,7 @@ import {
 } from '../art/ApartmentScene'
 import { layoutBookShelf } from '../art/BookShelf'
 import { FIGURES } from '../art/Figures'
-import { SUNFLOWER_BOX, SUN_FADE_MS, SUN_LIFE_MS, SUN_SIZE, SUN_SPOTS, SUN_TAKE_MS } from '../art/Sunflower'
+import { SUNFLOWER_BOX, SUNFLOWER_TOSS, SUN_FADE_MS, SUN_LIFE_MS, SUN_SIZE, SUN_SPOTS, SUN_TAKE_MS } from '../art/Sunflower'
 import { layoutFireEmblemShelf } from '../art/GameShelf'
 import { frameCamera, type Camera, type Rect } from '../art/camera'
 import { site } from '../content/site'
@@ -107,9 +107,9 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
     return () => all.forEach((handles) => handles.forEach(clearTimeout))
   }, [])
 
-  // Plants vs. Zombies: the flower spits out a sun, a sun left alone goes out on its own, and a sun
-  // that is taken flies into Thọ. There is no counter and no score, so the only state is the suns.
-  const dropSun = () =>
+  // Plants vs. Zombies: a plant spits out a sun, a sun left alone goes out on its own, and a sun that
+  // is taken flies into Thọ. There is no counter and no score, so the only state is the suns.
+  const dropSun = (plant: DroppedSun['plant'], size: DroppedSun['size'], origin: DroppedSun['origin']) =>
     setSuns((current) => {
       const taken = new Set(current.map((sun) => `${sun.x},${sun.y}`))
       const spot = SUN_SPOTS.find((s) => !taken.has(`${s.x},${s.y}`))
@@ -119,14 +119,14 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
         setState(id, 'fading')
         after(id, SUN_FADE_MS, () => drop(id))
       })
-      return [...current, { id, x: spot.x, y: spot.y, state: 'idle' }]
+      return [...current, { id, x: spot.x, y: spot.y, state: 'idle', plant, size, origin }]
     })
 
-  const takeSun = (id: number) => {
-    clearTimers(id)
-    setState(id, 'taken')
+  const takeSun = (sun: DroppedSun) => {
+    clearTimers(sun.id)
+    setState(sun.id, 'taken')
     setCharge((n) => n + 1)
-    after(id, SUN_TAKE_MS, () => drop(id))
+    after(sun.id, SUN_TAKE_MS, () => drop(sun.id))
   }
 
   useLayoutEffect(() => {
@@ -292,7 +292,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
           type="button"
           className="hotspot"
           style={toScreen(SUNFLOWER_BOX)}
-          onClick={dropSun}
+          onClick={() => dropSun('sunflower', 'normal', SUNFLOWER_TOSS)}
           {...points('flower')}
           aria-label={ui.sunflower}
         />
@@ -304,7 +304,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
           type="button"
           className="hotspot"
           style={toScreen({ x: sun.x, y: sun.y, w: SUN_SIZE, h: SUN_SIZE })}
-          onClick={() => takeSun(sun.id)}
+          onClick={() => takeSun(sun)}
           aria-label={ui.sun}
         />
       ))}

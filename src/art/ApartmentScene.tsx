@@ -6,7 +6,7 @@ import { LimbusBookShelf } from './BookShelf'
 import { MasterBall } from './Figures'
 import { Fumo } from './Fumo'
 import { ReferenceDisplay } from './ReferenceDisplay'
-import { Sun, Sunflower } from './Sunflower'
+import { Sun, Sunflower, type SunSize } from './Sunflower'
 import { HALO, PICK_RIM, outlineOf, type Highlight } from './outline'
 import { REFRESHED_SPRITES } from './refreshedSprites'
 import type { Phase } from '../daylight/phase'
@@ -617,11 +617,18 @@ export interface DroppedSun {
   y: number
   /** idle: lying on the floor · taken: flying into Thọ · fading: left too long and going out. */
   state: 'idle' | 'taken' | 'fading'
+  /** Which plant dropped it. Only the Sun-shroom's small suns count towards its growth. */
+  plant: 'sunflower' | 'shroom'
+  size: SunSize
+  /** Where the sun sits as it leaves the plant, so the toss starts from the right head. */
+  origin: { x: number; y: number }
 }
 
 export function ApartmentScene({ viewBox, phase, screen, speaking, sparkle, suns, charge, fanSpeed, highlight }: ApartmentSceneProps) {
   const night = phase === 'night'
-  const sunLayer = suns.map((sun) => <Sun key={sun.id} x={sun.x} y={sun.y} state={sun.state} />)
+  const sunLayer = suns.map((sun) => (
+    <Sun key={sun.id} x={sun.x} y={sun.y} size={sun.size} from={sun.origin} state={sun.state} />
+  ))
   return (
     <svg
       className="pixel-svg"

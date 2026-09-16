@@ -13,7 +13,7 @@ import { REFRESHED_SPRITES } from './refreshedSprites'
 /**
  * Room layout with separate work and display zones, drawn in code. Scene pixels: the room core spans 0–320 × 0–180,
  * and wall/floor extend in every direction so the scene can fill any screen.
- * The developer figure is a generic placeholder.
+ * The figure at the desk is Thọ, seen from behind, drawn to match the portrait in the dialogue box.
  */
 
 export type ScreenMode = 'code' | 'diagram' | 'game' | 'docs'
@@ -274,14 +274,38 @@ function Screen({ mode }: { mode: ScreenMode }) {
   }
 }
 
-/** Placeholder human seen from behind at three-quarters. */
+/**
+ * Thọ at the desk, seen from behind at three-quarters — the same man as the portrait in the
+ * dialogue box, so the two have to agree: the same swept hair catching the lamp on the left of the
+ * crown, the same glasses, the same red sweater.
+ *
+ * The head used to be a 20×18 rectangle of hair with a slab of cheek beside it, which read as a
+ * helmet. What fixes it is the silhouette, not the detail: the crown steps in over three rows, the
+ * hair stops short at the nape so the neck shows, and the sliver of face tapers to a jaw instead of
+ * standing there as a slab. The ear stays under the hair — at this size it only made a stripe — and
+ * the glasses arm comes out of the hair over the temple. One pixel row, but it is the thing that
+ * says the man at the desk is the man in the portrait.
+ */
+const HAIR_LIT = '#34333a'
+const GLASS = '#675653'
+
 const developerBody: Px[] = [
   [152, 86, 6, 16, C.redDark],
   [158, 74, 32, 2, C.red], [156, 76, 36, 34, C.red], [156, 76, 4, 34, C.redDark],
   [164, 76, 20, 3, C.redDark],
-  [170, 72, 10, 5, C.skinShade],
-  [168, 52, 14, 2, C.hair], [165, 54, 20, 18, C.hair], [167, 72, 14, 2, C.hair],
-  [182, 60, 4, 10, C.skin], [185, 62, 1, 6, C.skinShade], [180, 62, 2, 5, C.skin],
+  // Neck first; the hair falls over it.
+  [170, 70, 10, 7, C.skinShade], [172, 70, 6, 4, C.skin],
+  // Hair: a crown that steps in, and a nape that stops above the collar.
+  [169, 52, 12, 1, C.hair], [167, 53, 16, 1, C.hair], [166, 54, 18, 1, C.hair],
+  [165, 55, 20, 14, C.hair], [166, 69, 18, 2, C.hair], [167, 71, 15, 1, C.hair],
+  [168, 72, 13, 2, C.hair],
+  // The sweep the portrait has, lit from the lamp above and to the left.
+  [170, 53, 9, 1, HAIR_LIT], [167, 55, 7, 1, HAIR_LIT], [166, 56, 4, 2, HAIR_LIT],
+  // The quarter of the face that clears the skull, tapering to the jaw.
+  [182, 59, 5, 7, C.skin], [182, 66, 4, 3, C.skin], [183, 69, 2, 1, C.skinShade],
+  [186, 61, 1, 5, C.skinShade], [185, 66, 1, 3, C.skinShade],
+  // Glasses: the arm coming out of the hair over the temple. The ear stays under the hair.
+  [182, 61, 4, 1, GLASS],
 ]
 const developerArm: Px[] = [[188, 80, 6, 14, C.red], [190, 94, 14, 5, C.red]]
 const handA: Px[] = [[203, 97, 6, 4, C.skin]]

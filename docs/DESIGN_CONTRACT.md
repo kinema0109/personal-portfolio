@@ -121,3 +121,16 @@ Served from `public/art/derived/`, regenerated with `npm install --no-save sharp
 ## Unlocked design surface
 
 The rest of the room and portfolio remains open to improve using the existing project direction: walls, window/city, desk, laptop screen, chair, books, plants, lighting, dialogue UI, copy, navigation, project panels, motion, and responsive behavior. Changes must not obscure, replace, or break interactions with locked references.
+
+## 2026-09-16 — the man at the desk matches the portrait
+
+Codex's portrait gave Thọ a face; the figure at the desk still had the placeholder head — a 20×18
+rectangle of hair with a slab of cheek beside it, which read as a helmet. Redrawn to agree with the
+portrait: the crown steps in over three rows and the skull rounds off at the bottom, the hair stops
+short at the nape so the neck shows, the sliver of face tapers to a jaw instead of standing there as
+a slab, and the same lit sweep catches the lamp on the left of the crown. The glasses arm runs out
+of the hair over the temple — one pixel row, and the only thing on the figure that says he wears
+them. The ear stays under the hair; at 20 units wide it only ever made a stripe.
+
+The hover rim comes from `outlineOf([...developerBody, ...developerArm])`, so it followed the new
+silhouette without being touched.

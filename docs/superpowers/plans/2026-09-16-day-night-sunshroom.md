@@ -1204,7 +1204,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 In `src/art/Sunflower.tsx`, in `SUN_SPOTS`, replace `{ x: 56, y: 130 },` with:
 
 ```ts
-  // Clear of the Sun-shroom at x 62–77, between it and the desk leg.
+  // Clear of the Sun-shroom's pot at x 63–76, between it and the desk leg.
   { x: 80, y: 132 },
 ```
 
@@ -1426,8 +1426,8 @@ const Z_INK = '#eadfc3'
 /** Small suns collected at night before it grows. */
 export const GROW_AFTER = 3
 
-/** Click target over the grown plant and the air just above it, in scene units. */
-export const SUNSHROOM_BOX = { x: 60, y: 124, w: 20, h: 22 } as const
+/** Click target over the pot, the grown plant and the air just above it, in scene units. */
+export const SUNSHROOM_BOX = { x: 60, y: 114, w: 20, h: 32 } as const
 
 /** What Scene keeps about the Sun-shroom and hands down for drawing. */
 export interface ShroomState {
@@ -1439,17 +1439,32 @@ export interface ShroomState {
 }
 
 /**
- * Where its sun sits as it leaves the plant: centred on the cap. Both sizes stand on the floor line,
- * so the small cap is lower.
+ * Where its sun sits as it leaves the plant: centred on the cap. Both sizes sit on the soil in the
+ * pot, so the small cap is lower.
  */
 export const shroomToss = (grown: boolean) =>
-  grown ? { x: 70 - SUN_SIZE / 2, y: 134 - SUN_SIZE / 2 } : { x: 70 - SUN_SIZE / 2, y: 139 - SUN_SIZE / 2 }
+  grown ? { x: 70 - SUN_SIZE / 2, y: 124 - SUN_SIZE / 2 } : { x: 70 - SUN_SIZE / 2, y: 129 - SUN_SIZE / 2 }
 
 const at = (ox: number, oy: number, px: readonly Px[]): Px[] =>
   px.map(([x, y, w, h, fill]) => [ox + x, oy + y, w, h, fill] as Px)
 
-/* Grown: 16 × 16 at x 62–77, y 130–145, so its base sits on the floor line like the pot beside it. */
-const GROWN = { x: 62, y: 130 }
+/**
+ * Its own pot, in the Sunflower pot's colours and about two thirds its width: 14 across at the rim,
+ * 10 tall, standing on the floor line at x 63–76. The soil top is y 136, which is where the plant sits.
+ */
+const POT = '#946b50'
+const POT_RIM = '#b28b64'
+const POT_SHADE = '#7b5740'
+const pot: Px[] = [
+  [64, 138, 12, 6, POT],
+  [65, 144, 10, 2, POT_SHADE],
+  [64, 138, 1, 6, POT_SHADE], [74, 138, 2, 6, POT_SHADE],
+  [63, 136, 14, 2, POT_RIM],
+  [65, 136, 10, 1, '#4a3526'],
+]
+
+/* Grown: 16 × 16 at x 62–77, y 120–135, its stem planted in the pot's soil. */
+const GROWN = { x: 62, y: 120 }
 const grownBody = at(GROWN.x, GROWN.y, [
   // Cap: the silhouette in the outline colour, then the fill one unit in.
   [5, 0, 6, 1, OUT], [3, 1, 10, 1, OUT], [2, 2, 12, 1, OUT], [1, 3, 14, 2, OUT], [0, 5, 16, 3, OUT], [1, 8, 14, 1, OUT],
@@ -1466,8 +1481,9 @@ const grownEyesOpen = at(GROWN.x, GROWN.y, [[6, 10, 1, 2, INK], [9, 10, 1, 2, IN
 const grownEyesShut = at(GROWN.x, GROWN.y, [[5, 11, 2, 1, INK], [9, 11, 2, 1, INK]])
 const grownMouth = at(GROWN.x, GROWN.y, [[7, 13, 2, 1, INK]])
 
-/* Small: 9 × 9 at x 66–74, y 137–145. Drawn on its own, because halving the grown one breaks the grid. */
-const SMALL = { x: 66, y: 137 }
+/* Small: 9 × 9 at x 66–74, y 127–135, in the same pot. Drawn on its own, because halving the grown one
+   breaks the grid. */
+const SMALL = { x: 66, y: 127 }
 const smallBody = at(SMALL.x, SMALL.y, [
   [2, 0, 5, 1, OUT], [1, 1, 7, 1, OUT], [0, 2, 9, 2, OUT], [1, 4, 7, 1, OUT],
   [2, 1, 5, 1, CAP], [1, 2, 7, 1, CAP], [1, 3, 7, 1, CAP_SHADE],
@@ -1485,7 +1501,7 @@ const zGlyph = (x: number, y: number, big: boolean): Px[] =>
     : [[x, y, 3, 1, Z_INK], [x + 1, y + 1, 1, 1, Z_INK], [x, y + 2, 3, 1, Z_INK]]
 
 /** Where the Zs start, above the cap and to the right: a small one first, then a bigger one. */
-const zStart = (grown: boolean) => (grown ? [{ x: 75, y: 125 }, { x: 77, y: 119 }] : [{ x: 72, y: 132 }, { x: 74, y: 127 }])
+const zStart = (grown: boolean) => (grown ? [{ x: 75, y: 115 }, { x: 77, y: 109 }] : [{ x: 72, y: 122 }, { x: 74, y: 117 }])
 
 export function SunShroom({
   shroom,
@@ -1503,6 +1519,9 @@ export function SunShroom({
   const motion = asleep ? (nudge > 0 ? 'f-shroom-nudge' : undefined) : 'f-shroom-sway'
   return (
     <g data-plant="sunshroom" data-grown={grown} data-asleep={asleep}>
+      {/* The pot stays put: it neither grows nor sways, and its rim is part of the hover outline. */}
+      {highlight && <PixelRects px={outlineOf(pot)} />}
+      <PixelRects px={pot} />
       {/* Growing plays once, when the grown plant first appears. */}
       <g key={grown ? 'grown' : 'small'} className={grown ? 'f-grow' : undefined}>
         <g key={`nudge-${nudge}`} className={motion}>
@@ -1749,7 +1768,7 @@ Run: `npm run build`
 Expected: `✓ built`.
 
 With the dev server running on a desktop-width window, compare against the spec's Behaviour table:
-- **Day:** a small sleeping Sun-shroom right of the Sunflower's pot, Zs rising. Pointing at it shows a one-unit rim. Clicking gives a shake and an extra Z, and no sun.
+- **Day:** a small sleeping Sun-shroom in its own small pot right of the Sunflower's pot, Zs rising. Pointing at it shows a one-unit rim. Clicking gives a shake and an extra Z, and no sun.
 - **Night (toggle):** it sways and blinks. Clicking makes it flash and toss a small sun from its cap onto a free spot. Collect three small suns and it grows over about a second. The next click gives a normal-size sun.
 - **Clash check:** the Sunflower still works in both phases, and no sun lands on the Sun-shroom.
 
@@ -1892,7 +1911,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 Append to `docs/DESIGN_CONTRACT.md`, after the last dated paragraph, separated by a blank line:
 
 ```markdown
-2026-09-16 owner-approved day and night, and the Sun-shroom: **the room follows the visitor's own day and night.** Auto reads the browser's time zone, places the visitor at that zone's principal city (`src/daylight/zoneCoords.ts`, generated from tzdb by `scripts/build-zone-coords.mjs`) and asks whether the sun is above the horizon there (`src/daylight/solar.ts`). There is no IP lookup and no network call. A top-bar button swaps day and night; the choice is kept in `tho-vn:phase` only while it differs from the clock. **Day** is the daylight view described above with a light cream UI (`src/day.css`); **night** brings back the original night view (moon, twinkling stars, blinking city lights, moonlight on the floor) and dims the room with a navy layer that leaves the window, laptop screen, tower glow and lamp bright. The locked references keep their identity; only the light over them changes. The **Sun-shroom** from Plants vs. Zombies (`src/art/SunShroom.tsx`) stands on the floor line at x 62–77, right of the Sunflower's pot. The sun spot that was at (56, 130) moved to (80, 132) to make room. As in the game it sleeps by day (shut eyes, rising Zs, no sun) and works at night: small suns at half size, and after the visitor collects three of them it grows and gives normal suns. The game's two-minute timer was replaced on purpose, since visits are shorter. Growth is not saved. Like the Sunflower it is a desktop and landscape feature. Checked by `scripts/verify-daylight.mjs` and `scripts/verify-sunshroom.mjs`; `verify-hover.mjs` pins day because the night dimming shifts the rim colour it measures.
+2026-09-16 owner-approved day and night, and the Sun-shroom: **the room follows the visitor's own day and night.** Auto reads the browser's time zone, places the visitor at that zone's principal city (`src/daylight/zoneCoords.ts`, generated from tzdb by `scripts/build-zone-coords.mjs`) and asks whether the sun is above the horizon there (`src/daylight/solar.ts`). There is no IP lookup and no network call. A top-bar button swaps day and night; the choice is kept in `tho-vn:phase` only while it differs from the clock. **Day** is the daylight view described above with a light cream UI (`src/day.css`); **night** brings back the original night view (moon, twinkling stars, blinking city lights, moonlight on the floor) and dims the room with a navy layer that leaves the window, laptop screen, tower glow and lamp bright. The locked references keep their identity; only the light over them changes. The **Sun-shroom** from Plants vs. Zombies (`src/art/SunShroom.tsx`) sits in its own small pot right of the Sunflower's, in the same pot colours and about two thirds the width (rim x 63–76, 10 tall, on the floor line y = 146). The sun spot that was at (56, 130) moved to (80, 132) to make room. As in the game it sleeps by day (shut eyes, rising Zs, no sun) and works at night: small suns at half size, and after the visitor collects three of them it grows and gives normal suns. The game's two-minute timer was replaced on purpose, since visits are shorter. Growth is not saved. Like the Sunflower it is a desktop and landscape feature. Checked by `scripts/verify-daylight.mjs` and `scripts/verify-sunshroom.mjs`; `verify-hover.mjs` pins day because the night dimming shifts the rim colour it measures.
 ```
 
 - [ ] **Step 2: Record the deviations in the spec**

@@ -86,7 +86,7 @@ Sun-shroom facts (PvZ1; plantsvszombies.fandom.com/wiki/Sun-shroom_(PvZ); commun
 
 ### Placement
 
-- On the floor to the right of the Sunflower's pot, about x 62–78, with its feet on the room's floor line y = 146.
+- In its own small pot on the floor to the right of the Sunflower's pot (owner request: "a pot, but smaller"). The pot uses the Sunflower pot's colours at about two thirds its width: rim x 63–76, 10 units tall, standing on the room's floor line y = 146. The plant sits on its soil at y = 136, so the grown plant spans y 120–135 and the small one y 127–135.
 - `SUN_SPOTS` entry `{ x: 56, y: 130 }` overlaps that spot and moves to free floor between the shroom and the desk leg (x 94). The exact coordinates are picked on a screenshot.
 - Both plants share `SUN_SPOTS`, the cap on the number of suns, the fade timing and the flight into Thọ.
 - Like the Sunflower, it is cropped away on portrait phones and tablets, so it is a desktop and landscape feature.
@@ -94,6 +94,7 @@ Sun-shroom facts (PvZ1; plantsvszombies.fandom.com/wiki/Sun-shroom_(PvZ); commun
 ### Drawing (`src/art/SunShroom.tsx`)
 
 - Code-drawn `Px` rectangles, matching `Sunflower.tsx`.
+- The pot is static: it does not sway or grow, and it is included in the hover outline.
 - Grown sprite about 16 × 16. Small sprite about 9 × 9, drawn separately rather than scaled, because a 0.5 scale breaks the pixel grid.
 - Awake face: two vertical eyes with glints and a small smile. Asleep face: two short curved lines.
 - A `ZZZ` group of small cream "Z" glyphs that rises up and to the right in steps and loops. It is shown only while asleep.

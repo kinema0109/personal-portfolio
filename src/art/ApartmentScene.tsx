@@ -691,9 +691,8 @@ export function ApartmentScene({ viewBox, phase, screen, speaking, sparkle, suns
       </g>
       <PixelRects px={windowFront} />
 
-      {/* Potted sunflower and Sun-shroom by the window. Their suns are drawn last, above the night
-          dimming, so they still shine; drawing them in one place also keeps a phase switch from
-          remounting them and replaying their toss. */}
+      {/* Potted sunflower and Sun-shroom by the window. Their suns are drawn last and in one
+          place, so a phase switch never remounts them and replays their toss. */}
       <Sunflower highlight={highlight === 'flower'} />
       <SunShroom shroom={shroom} asleep={!night} highlight={highlight === 'shroom'} />
 

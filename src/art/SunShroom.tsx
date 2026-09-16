@@ -93,11 +93,19 @@ const smallBody = at(SMALL.x, SMALL.y, [
 const smallEyesOpen = at(SMALL.x, SMALL.y, [[3, 6, 1, 1, INK], [5, 6, 1, 1, INK]])
 const smallEyesShut = at(SMALL.x, SMALL.y, [[3, 7, 1, 1, INK], [5, 7, 1, 1, INK]])
 
-/** A "Z" in whole pixels: 3 × 3, or 4 × 4 for the larger one that follows it. */
+/**
+ * A "Z" in whole pixels, 3 × 4 or 4 × 4 for the larger one that follows it. Both need a diagonal of
+ * two steps; a 3 × 3 Z has room for one, and reads as a bracket.
+ */
 const zGlyph = (x: number, y: number, big: boolean): Px[] =>
   big
     ? [[x, y, 4, 1, Z_INK], [x + 2, y + 1, 1, 1, Z_INK], [x + 1, y + 2, 1, 1, Z_INK], [x, y + 3, 4, 1, Z_INK]]
-    : [[x, y, 3, 1, Z_INK], [x + 2, y + 1, 1, 1, Z_INK], [x, y + 2, 3, 1, Z_INK]]
+    : [[x, y, 3, 1, Z_INK], [x + 2, y + 1, 1, 1, Z_INK], [x, y + 2, 1, 1, Z_INK], [x, y + 3, 3, 1, Z_INK]]
+
+/** The soil line in the pot. The plant's rim stops here, so it never paints a cream line across the soil. */
+const SOIL_Y = 136
+const plantRim = (px: readonly Px[]): Px[] =>
+  outlineOf(px).flatMap(([x, y, w, h, fill]) => (y >= SOIL_Y ? [] : [[x, y, w, Math.min(h, SOIL_Y - y), fill] as Px]))
 
 /** Where the Zs start, above the cap and to the right: a small one first, then a bigger one. */
 const zStart = (grown: boolean) => (grown ? [{ x: 75, y: 115 }, { x: 77, y: 109 }] : [{ x: 72, y: 122 }, { x: 74, y: 117 }])
@@ -124,11 +132,12 @@ export function SunShroom({
       {/* Growing plays once, when the grown plant first appears. */}
       <g key={grown ? 'grown' : 'small'} className={grown ? 'f-grow' : undefined}>
         <g key={`nudge-${nudge}`} className={motion}>
-          {highlight && <PixelRects px={outlineOf(body)} />}
+          {highlight && <PixelRects px={plantRim(body)} />}
           <PixelRects px={body} />
           <PixelRects px={eyes} className={asleep ? undefined : 'f-blink'} />
           {grown && !asleep && <PixelRects px={grownMouth} />}
-          {flash > 0 && !asleep && (
+          {/* Mounted for as long as there has been a click, so switching the phase does not replay it. */}
+          {flash > 0 && (
             <g key={`flash-${flash}`} className="f-shroom-flash">
               <PixelRects px={body} />
             </g>

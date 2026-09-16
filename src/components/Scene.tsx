@@ -91,7 +91,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
   const nextSunId = useRef(0)
   const timers = useRef(new Map<number, number[]>())
   const [shroomTaken, setShroomTaken] = useState(0)
-  const [shroomGrown, setShroomGrown] = useState(false)
+  const shroomGrown = shroomTaken >= GROW_AFTER
   const [shroomFlash, setShroomFlash] = useState(0)
   const [shroomNudge, setShroomNudge] = useState(0)
 
@@ -100,9 +100,14 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
     timers.current.delete(id)
   }
   const after = (id: number, ms: number, run: () => void) => {
-    const handles = timers.current.get(id) ?? []
-    handles.push(window.setTimeout(run, ms))
-    timers.current.set(id, handles)
+    // A handle forgets itself once it has fired, so a bucket that is never cleared does not grow.
+    const handle = window.setTimeout(() => {
+      const left = (timers.current.get(id) ?? []).filter((h) => h !== handle)
+      if (left.length > 0) timers.current.set(id, left)
+      else timers.current.delete(id)
+      run()
+    }, ms)
+    timers.current.set(id, [...(timers.current.get(id) ?? []), handle])
   }
   const drop = (id: number) => {
     setSuns((current) => current.filter((sun) => sun.id !== id))
@@ -131,6 +136,10 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
       return [...current, { id, x: spot.x, y: spot.y, state: 'idle', plant, size, origin }]
     })
 
+  // A sleepy shake plays once per click. Forget the count when the phase changes, or going back to
+  // day would replay the last shake with nobody clicking.
+  useLayoutEffect(() => setShroomNudge(0), [phase])
+
   // The Sun-shroom, as in the game: asleep by day, so a click only stirs it; awake at night, it
   // lights up and spits out a sun, a small one until it has grown.
   const shakeShroom = () => {
@@ -150,9 +159,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
     after(sun.id, SUN_TAKE_MS, () => drop(sun.id))
     // Growth counts small suns collected while it is awake; one left to go out does not count.
     if (sun.plant === 'shroom' && sun.size === 'small' && phase === 'night') {
-      const taken = shroomTaken + 1
-      setShroomTaken(taken)
-      if (taken >= GROW_AFTER) setShroomGrown(true)
+      setShroomTaken((n) => n + 1)
     }
   }
 

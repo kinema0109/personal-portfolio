@@ -22,8 +22,8 @@ export const APARTMENT_FOCUS: SceneFocus = {
 /** Where the Fire Emblem row stands in the cabinet's bottom bay; Scene.tsx uses it to place the name labels. */
 export const FIRE_EMBLEM_SHELF = { x: 310, floor: 136 } as const
 
-/** Where the sinners' books stand on the wall shelf over the desk; Scene.tsx uses it for the name labels. */
-export const LIMBUS_SHELF = { x: 120, floor: 46 } as const
+/** Where the sinners' books stand in the cabinet's top bay; Scene.tsx uses it for the name labels. */
+export const LIMBUS_SHELF = { x: 309, floor: 66 } as const
 
 /** The point the two framed blades cross at. */
 const SWORD_CROSS = { x: 229, y: 40 } as const
@@ -238,9 +238,6 @@ function ReferenceDisplays() {
       <PixelRects px={[[260, 82, 2, 4, '#806747'], [282, 82, 2, 4, '#806747'], [259, 85, 4, 1, '#5c4a33'], [281, 85, 4, 1, '#5c4a33']]} />
       <ReferenceDisplay kind="armageddon" x={250} y={75} width={44} height={9} />
 
-      {/* Over the desk: the book behind each Limbus Company sinner, named on hover or tap. */}
-      <LimbusBookShelf x={LIMBUS_SHELF.x} floor={LIMBUS_SHELF.floor} />
-
       <PixelRects px={cabinet} />
       {/* Figure bay: the tallest bay, with a warm shelf light so the dark minis read against the backing.
           Both minis share one scale (0.45 scene units per source pixel) and their own painted bases stand on the bay floor (y 108).
@@ -263,11 +260,11 @@ function ReferenceDisplays() {
       {/* The light is drawn over the minis, so the backing and any leftover photo backdrop brighten together. */}
       <rect x={307} y={71} width={76} height={37} fill="url(#figure-bay-light)" />
       <rect x={309} y={71} width={72} height={1} fill="#f2d29a" opacity={0.4} />
-      {/* Top bays: books; headphones with the paint pots and brush. */}
+      {/* Top bay: the book behind each Limbus Company sinner on the left, named on hover or tap;
+          headphones with the paint pots and brush on the right. */}
+      <LimbusBookShelf x={LIMBUS_SHELF.x} floor={LIMBUS_SHELF.floor} />
       <PixelRects
         px={[
-          [311, 46, 4, 20, C.redDark], [316, 43, 4, 23, C.slate], [321, 48, 5, 18, C.ochreDark],
-          [327, 45, 4, 21, C.creamDim], [332, 51, 8, 15, C.tealDark],
           [351, 57, 5, 8, '#8090a3'], [366, 57, 5, 8, '#8090a3'],
           [374, 62, 3, 4, C.red], [374, 61, 3, 1, C.creamDim],
           [378, 63, 3, 3, C.tealDark], [378, 62, 3, 1, C.creamDim],

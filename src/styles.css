@@ -365,29 +365,10 @@ p {
   pointer-events: auto;
 }
 
-/* Back out of an open panel without aiming at the dialogue's corner. An icon, in the flow above
-   the paper rather than stuck over it: a sticky label sat on the panel's own text as it scrolled. */
-.doc-back {
-  flex: none;
-  align-self: flex-start;
-  width: 26px;
-  height: 26px;
-  margin: 0 0 6px;
-  padding: 0;
-  display: grid;
-  place-items: center;
-  background: var(--night);
-  border: 2px solid var(--cream-dim);
-  color: var(--cream);
-  font-size: 0.9rem;
-  line-height: 1;
-  cursor: pointer;
-}
-.doc-back:hover, .doc-back:focus-visible { border-color: var(--ochre-light); color: var(--ochre-light); }
 
-/* Covers the room while a picker is up, so a stray click dismisses the list instead of
-   reaching a hotspot behind it. Invisible on purpose: the list is the only thing to look at. */
-.picker-backdrop {
+/* Covers the room while a picker or a panel is up, so clicking off it closes it instead of
+   reaching a hotspot behind. Invisible on purpose: the thing on top is what there is to look at. */
+.dismiss-backdrop {
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -1268,9 +1249,14 @@ p {
 }
 .controls .btn {
   min-height: 24px;
-  border-color: var(--slate);
+  padding: 1px 8px;
+  background: transparent;
+  border-color: transparent;
   color: var(--mist);
   font-size: 0.68rem;
+}
+.controls .btn:is(:hover, :focus-visible):not(:disabled) {
+  border-color: var(--ochre-light);
 }
 .controls .btn:hover:not(:disabled) {
   color: var(--cream);

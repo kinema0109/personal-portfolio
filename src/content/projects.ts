@@ -15,7 +15,7 @@ export const PROJECTS: readonly ProjectInfo[] = [
     start: '03/2025',
     end: null,
     featured: true,
-    technologies: ['TypeScript', 'JavaScript', 'Vue.js', 'Python', 'Django', 'PostgreSQL', 'MongoDB', 'GCP', 'Docker'],
+    technologies: ['Microservices', 'TypeScript', 'JavaScript', 'Vue.js', 'Python', 'Django', 'PostgreSQL', 'MongoDB', 'GCP', 'Docker'],
     relatedNode: 'how-migration',
   },
   {
@@ -25,7 +25,7 @@ export const PROJECTS: readonly ProjectInfo[] = [
     start: '03/2025',
     end: null,
     featured: true,
-    technologies: ['TypeScript', 'JavaScript', 'React', 'Python', 'Django', 'PostgreSQL', 'Tailwind', 'Claude Code', 'BMAD AI framework'],
+    technologies: ['RBAC', 'TypeScript', 'JavaScript', 'React', 'Python', 'Django', 'PostgreSQL', 'Tailwind', 'Claude Code', 'BMAD AI framework'],
     relatedNode: 'how-roles',
   },
   {
@@ -35,7 +35,7 @@ export const PROJECTS: readonly ProjectInfo[] = [
     start: '03/2025',
     end: null,
     featured: true,
-    technologies: ['TypeScript', 'JavaScript', 'NestJS', 'React', 'MongoDB', 'WooCommerce webhooks', 'Chart.js'],
+    technologies: ['Schema design', 'Testing', 'TypeScript', 'JavaScript', 'NestJS', 'React', 'MongoDB', 'WooCommerce webhooks', 'Chart.js'],
     relatedNode: 'how-events',
   },
   {
@@ -72,7 +72,7 @@ export const PROJECTS: readonly ProjectInfo[] = [
     start: '12/2022',
     end: '03/2024',
     featured: false,
-    technologies: ['TypeScript', 'JavaScript', 'Express', 'Firebase', 'MongoDB', 'JWT', 'Flutter', 'Swift'],
+    technologies: ['Query optimization', 'TypeScript', 'JavaScript', 'Express', 'Firebase', 'MongoDB', 'JWT', 'Flutter', 'Swift'],
   },
 ]
 

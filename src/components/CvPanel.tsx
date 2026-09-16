@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { cvSummary } from '../content/cv'
-import { ALSO_USES, SKILL_GROUPS, skillsInGroup } from '../content/skills'
+import { ALSO_USES, FROM_CV, SKILL_GROUPS, skillsInGroup } from '../content/skills'
 import { formatPeriod } from '../content/projects'
 import { site } from '../content/site'
 import type { ProjectId } from '../content/types'
@@ -103,6 +103,13 @@ export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => v
               </section>
             )
           })}
+          {/* Two weaker tiers, kept apart and labelled, so a reader can tell what is backed by the
+              work above and what is only stated. */}
+          <section className="skill-group skill-group-also">
+            <h3>{labels.fromCv}</h3>
+            <p className="skill-also">{FROM_CV.join(' · ')}</p>
+            <p className="meta">{labels.fromCvNote}</p>
+          </section>
           <section className="skill-group skill-group-also">
             <h3>{labels.alsoUses}</h3>
             <p className="skill-also">{ALSO_USES.join(' · ')}</p>

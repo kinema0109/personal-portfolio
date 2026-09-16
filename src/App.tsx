@@ -191,32 +191,20 @@ export default function App() {
 
       {here.kind === 'gallery' && <GalleryPanel onClose={() => act({ type: 'back' })} />}
       <div className={`hud${view.panel && view.panel.kind !== 'gallery' ? ' has-panel' : ''}`}>
-        {view.panel && view.panel.kind !== 'gallery' && (
-          <aside className="doc" ref={docRef} key={key} tabIndex={-1} aria-label={ui.details}>
-            {/* The dialogue's own Back sits in its corner; a panel needs one where the reader is looking. */}
-            {backAllowed && (
-              <button
-                type="button"
-                className="doc-back"
-                onClick={() => act({ type: 'back' })}
-                aria-label={ui.back}
-                title={ui.back}
-              >
-                <span aria-hidden="true">←</span>
-              </button>
-            )}
-            <Panel panel={view.panel} onOpenProject={openProject} />
-          </aside>
-        )}
-        {/* A picker owns the screen while it is up, so clicking anywhere else dismisses it rather
-            than falling through to the room behind. */}
-        {view.picker && backAllowed && (
+        {/* Whatever is on top — a picker or a panel — owns the screen while it is up, so clicking
+            anywhere off it closes it rather than falling through to the room behind. */}
+        {(view.picker || view.panel !== null) && backAllowed && (
           <button
             type="button"
-            className="picker-backdrop"
+            className="dismiss-backdrop"
             aria-label={ui.back}
             onClick={() => act({ type: 'back' })}
           />
+        )}
+        {view.panel && view.panel.kind !== 'gallery' && (
+          <aside className="doc" ref={docRef} key={key} tabIndex={-1} aria-label={ui.details}>
+            <Panel panel={view.panel} onOpenProject={openProject} />
+          </aside>
         )}
         {/* Own key namespace: sharing the panel's key made React keep a stale panel on screen. */}
         <ChoiceMenu

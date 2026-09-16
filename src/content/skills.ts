@@ -15,7 +15,8 @@ import type { ProjectId } from './types'
  * difference between "here is where I used it" and "I have used this" stays visible.
  */
 
-export type SkillGroupId = 'languages' | 'frontend' | 'backend' | 'data' | 'delivery' | 'practice'
+export type SkillGroupId =
+  | 'languages' | 'frontend' | 'backend' | 'data' | 'delivery' | 'craft' | 'practice'
 
 /**
  * Each entry names a technology exactly as the projects list it, so the match is by name and never
@@ -27,16 +28,32 @@ export const SKILL_GROUPS: readonly { id: SkillGroupId; items: readonly string[]
   { id: 'backend', items: ['NestJS', 'Django', 'Express', 'WebSockets', 'JWT'] },
   { id: 'data', items: ['PostgreSQL', 'MongoDB', 'Supabase', 'Firebase'] },
   { id: 'delivery', items: ['Docker', 'GCP', 'Jenkins', 'Vercel'] },
-  { id: 'practice', items: ['Claude Code', 'BMAD AI framework', 'WooCommerce webhooks', 'VWO'] },
+  { id: 'craft', items: ['Microservices', 'RBAC', 'Schema design', 'Query optimization', 'Testing', 'WooCommerce webhooks'] },
+  { id: 'practice', items: ['Claude Code', 'BMAD AI framework', 'VWO'] },
 ]
 
-/** Named by the owner; no project on this site shows them, so they are shown apart from the rest. */
+/**
+ * The CV's competency list, minus everything a project here already evidences. These are real and
+ * on the CV, but no work shown on this site demonstrates them, so they are kept apart rather than
+ * mixed in where they would read as equally backed.
+ */
+export const FROM_CV: readonly string[] = [
+  'Redux',
+  'MySQL',
+  'HTML/CSS',
+  'REST API design',
+  'OAuth',
+  'OOP, design patterns, data structures',
+  'Git (Gitflow), Bitbucket, Jira',
+  'Agile',
+]
+
+/** Named by the owner, and not on the CV either. The weakest tier, and labelled as such. */
 export const ALSO_USES: readonly string[] = [
   'Kubernetes',
   'Redis',
   'Message queues',
   'Monitoring and logging',
-  'Microservices',
 ]
 
 export interface SkillEvidence {

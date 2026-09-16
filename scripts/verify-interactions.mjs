@@ -40,11 +40,12 @@ try {
   await page.getByRole('button', { name: 'Open CV' }).click()
   await page.waitForTimeout(600)
   assert.ok(await page.locator('#cv-title').count(), 'the CV must open')
-  const back = page.locator('.doc-back')
-  assert.equal(await back.count(), 1, 'an open panel must carry a Back of its own')
-  await back.click()
+  // Clicking off an open panel closes it, which is the first thing a reader tries.
+  const away = page.locator('.dismiss-backdrop')
+  assert.equal(await away.count(), 1, 'an open panel must be dismissible by clicking off it')
+  await away.click({ position: { x: 150, y: 150 } })
   await page.waitForTimeout(600)
-  assert.equal(await page.locator('#cv-title').count(), 0, 'Back must close the panel')
+  assert.equal(await page.locator('#cv-title').count(), 0, 'clicking away must close the panel')
 
   // An open panel is the top of the screen stack, so focus belongs inside it.
   await page.getByRole('button', { name: 'Open CV' }).click()
@@ -78,7 +79,7 @@ try {
   })
   assert.ok(listed > 0, 'a picker must list its choices straight away')
   assert.ok(onFirstLine, 'and must do so while there are still lines left to read')
-  const backdrop = page.locator('.picker-backdrop')
+  const backdrop = page.locator('.dismiss-backdrop')
   assert.equal(await backdrop.count(), 1, 'a picker must cover the room while it is up')
   await backdrop.click({ position: { x: 200, y: 200 } })
   await page.waitForTimeout(500)

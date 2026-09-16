@@ -7,7 +7,7 @@ import type { LocaleContent, Project, ProjectInfo } from './types'
  * Do not add screenshots, quotes or demo links that are not supplied.
  * Context, role and contributions for each language live in src/content/i18n/*.ts.
  */
-const PROJECTS: readonly ProjectInfo[] = [
+export const PROJECTS: readonly ProjectInfo[] = [
   {
     id: 'cbpo',
     name: 'CBPO',
@@ -15,7 +15,7 @@ const PROJECTS: readonly ProjectInfo[] = [
     start: '03/2025',
     end: null,
     featured: true,
-    technologies: ['Vue.js', 'Python/Django', 'PostgreSQL', 'MongoDB', 'GCP', 'Docker'],
+    technologies: ['Vue.js', 'Python', 'Django', 'PostgreSQL', 'MongoDB', 'GCP', 'Docker'],
     relatedNode: 'how-migration',
   },
   {
@@ -25,7 +25,7 @@ const PROJECTS: readonly ProjectInfo[] = [
     start: '03/2025',
     end: null,
     featured: true,
-    technologies: ['React', 'Python/Django', 'PostgreSQL', 'Tailwind', 'Claude Code', 'BMAD AI framework'],
+    technologies: ['React', 'Python', 'Django', 'PostgreSQL', 'Tailwind', 'Claude Code', 'BMAD AI framework'],
     relatedNode: 'how-roles',
   },
   {
@@ -54,7 +54,7 @@ const PROJECTS: readonly ProjectInfo[] = [
     start: '03/2024',
     end: '03/2025',
     featured: false,
-    technologies: ['Next.js', 'Supabase/PostgreSQL', 'WebSockets', 'Vercel'],
+    technologies: ['Next.js', 'TypeScript', 'Supabase', 'PostgreSQL', 'WebSockets', 'Vercel'],
   },
   {
     id: 'ikara-admin',

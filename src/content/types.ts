@@ -230,6 +230,13 @@ export interface LocaleContent {
       experience: string
       education: string
       contact: string
+      skills: string
+      skillGroups: Record<'languages' | 'frontend' | 'backend' | 'data' | 'delivery' | 'practice', string>
+      /** "Used in X, Y" under a skill; the projects are already formatted. */
+      usedIn: (projects: string) => string
+      since: (year: number) => string
+      alsoUses: string
+      alsoUsesNote: string
       languages: string
       gpa: (value: string) => string
       notProvided: string

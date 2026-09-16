@@ -1256,6 +1256,24 @@ p {
 }
 
 /* The collection preserves full-size originals independently of room framing. */
+/* Skills: grouped, each carrying the projects that used it. Deliberately no bars or ratings. */
+.skills { display: flex; flex-direction: column; gap: 14px; }
+.skill-group h3 {
+  margin: 0 0 6px;
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ochre);
+}
+.skill-group ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.skill-group li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
+.skill-group li strong { font-weight: 700; }
+.skill-group li .meta { font-size: 0.78rem; }
+.skill-also { margin: 0 0 4px; }
+.skill-group-also { padding-top: 10px; border-top: 1px dashed var(--slate); }
+
 .collection {
   width: min(960px, calc(100vw - 28px));
   max-width: none;

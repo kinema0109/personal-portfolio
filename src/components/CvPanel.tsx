@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { cvSummary } from '../content/cv'
+import { ALSO_USES, SKILL_GROUPS, skillsInGroup } from '../content/skills'
 import { formatPeriod } from '../content/projects'
 import { site } from '../content/site'
 import type { ProjectId } from '../content/types'
@@ -7,9 +8,10 @@ import { useCvFile } from '../hooks/useCvFile'
 import { useLocale } from '../i18n/LocaleProvider'
 import { Missing, StatusTag } from './StatusTag'
 
-type Tab = 'experience' | 'education' | 'contact'
+type Tab = 'experience' | 'skills' | 'education' | 'contact'
 
-const TABS: readonly Tab[] = ['experience', 'education', 'contact']
+/** Skills sit second: it is what a reader scanning for a match looks for first after the job list. */
+const TABS: readonly Tab[] = ['experience', 'skills', 'education', 'contact']
 
 export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => void }) {
   const { content } = useLocale()
@@ -72,6 +74,41 @@ export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => v
             </li>
           ))}
         </ul>
+      )}
+
+      {/* No bars, no percentages, no stars. Each skill carries where it was used and since when, all
+          of it read out of the project list, so nothing here can claim more than the work shows. */}
+      {tab === 'skills' && (
+        <div className="skills">
+          {SKILL_GROUPS.map((group) => {
+            const entries = skillsInGroup(group.id)
+            if (entries.length === 0) return null
+            return (
+              <section key={group.id} className="skill-group">
+                <h3>{labels.skillGroups[group.id]}</h3>
+                <ul>
+                  {entries.map((skill) => (
+                    <li key={skill.name}>
+                      <strong>{skill.name}</strong>
+                      <span className="meta">
+                        {labels.usedIn(
+                          skill.projectIds.map((id) => content.getProject(id).name).join(' · '),
+                        )}
+                        {' · '}
+                        {labels.since(skill.since)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )
+          })}
+          <section className="skill-group skill-group-also">
+            <h3>{labels.alsoUses}</h3>
+            <p className="skill-also">{ALSO_USES.join(' · ')}</p>
+            <p className="meta">{labels.alsoUsesNote}</p>
+          </section>
+        </div>
       )}
 
       {tab === 'education' && (

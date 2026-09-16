@@ -155,7 +155,8 @@ export interface LocaleContent {
     'how-migration': readonly [Lines, Lines, Lines, Lines]
     'how-events': readonly [Lines, Lines, Lines, Lines]
     'how-roles': readonly [Lines, Lines, Lines, Lines]
-    outside: readonly [Lines, Lines]
+    /** One step: the room is left to be explored rather than narrated. */
+    outside: readonly [Lines]
   }
 
   choices: {

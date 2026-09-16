@@ -45,7 +45,7 @@ export const en: LocaleContent = {
         'I still review, debug and test the result myself, so speed never costs code quality.',
       ],
       [
-        'I can also go deeper into three pieces of work from my CV.',
+        'I can also go deeper into three pieces of work.',
         'Pick one: moving production MongoDB from Atlas to self-hosted GCP, a real-time webhook pipeline, or role-based access control.',
       ],
     ],
@@ -99,7 +99,6 @@ export const en: LocaleContent = {
         'Outside work, I play a lot of games.',
         'I started back on the Famicom/NES and still play modern games today, gacha games included.',
       ],
-      ['See the album on my desk?', 'Open it for a small pixel-art gallery.'],
     ],
   },
 
@@ -127,12 +126,12 @@ export const en: LocaleContent = {
         : 'The panel shows what I built and the stack I used.',
     ],
     archive: [
-      'These are all the projects in my CV, newest first.',
+      'Every project I have worked on, newest first.',
       'Pick one to see its context, my role, what I contributed and the stack.',
     ],
     galleryEmpty: ['The album is empty for now.', 'Thọ will add the pixel-art pictures soon.'],
     gallery: ['A collection of artwork, reinterpreted as pixel art.', 'Use Next or the arrow keys to browse. Press Esc whenever you want to return.'],
-    cv: ['Here is a summary of my CV: experience, education and contact details.', 'Click a project name to open its details.'],
+    cv: ['Here is the short version: experience, skills, education and contact.', 'Click a project name to open its details.'],
   },
 
   projects: {
@@ -231,7 +230,7 @@ export const en: LocaleContent = {
     back: 'Back',
     home: 'Home',
     next: 'Next',
-    hotspots: { laptop: 'See projects', album: 'Open album', drawer: 'Open CV' },
+    hotspots: { laptop: 'See projects', album: 'Open album', drawer: 'Profile' },
     sceneDescription:
       'Pixel art of a small apartment on a bright day. Thọ works at a desk with a laptop, a photo album and a notebook, a desktop tower plugged in underneath it, and a potted sunflower on the floor by the window. On the wall, Alhazard and Langrisser cross in one frame, Gran Centurio hangs in a tall frame beside it, and Armageddon rests on pegs below. The display cabinet holds the books behind the Limbus Company sinners and two plushes on the top shelf, a Skaven Grey Seer, an Alpha Legion miniature and a Master Ball on the lit middle shelf, and every boxed Fire Emblem game along the bottom. Click the laptop, the album or the desk drawer to explore, or the sunflower for a sun.',
     artNotice: 'Placeholder art',
@@ -259,7 +258,7 @@ export const en: LocaleContent = {
       openPdf: 'Open CV (PDF)',
       notAdded: 'CV not added yet',
       checking: 'Checking…',
-      sections: 'CV sections',
+      sections: 'Profile sections',
       experience: 'Experience',
       education: 'Education',
       contact: 'Contact',

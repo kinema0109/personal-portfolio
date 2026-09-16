@@ -97,8 +97,8 @@ export function buildStory(
     // ── Branch 3: outside work ────────────────────────────────────
     {
       id: 'outside',
-      steps: [tho(s.outside[0], 'Thọ'), tho(s.outside[1])],
-      // No choice leads to the album: it only opens by clicking the album on the desk.
+      steps: [tho(s.outside[0], 'Thọ')],
+      // Nothing here points at the room's things. They are found by looking, not by being told.
       choices: [],
     },
   ]

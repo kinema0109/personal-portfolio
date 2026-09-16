@@ -37,7 +37,7 @@ try {
   // An open panel carries its own Back, and it goes back.
   await page.reload()
   await page.waitForTimeout(1200)
-  await page.getByRole('button', { name: 'Open CV' }).click()
+  await page.getByRole('button', { name: 'Profile' }).click()
   await page.waitForTimeout(600)
   assert.ok(await page.locator('#cv-title').count(), 'the CV must open')
   // Clicking off an open panel closes it, which is the first thing a reader tries.
@@ -48,7 +48,7 @@ try {
   assert.equal(await page.locator('#cv-title').count(), 0, 'clicking away must close the panel')
 
   // An open panel is the top of the screen stack, so focus belongs inside it.
-  await page.getByRole('button', { name: 'Open CV' }).click()
+  await page.getByRole('button', { name: 'Profile' }).click()
   await page.waitForTimeout(600)
   const focused = await page.evaluate(() => {
     const active = document.activeElement

@@ -4,7 +4,8 @@ import { mkdir } from 'node:fs/promises'
 import assert from 'node:assert/strict'
 const browser = await chromium.launch({channel:'msedge', headless:true})
 const errors = []
-const approvedFiles = ['01-storm-castle.png', '03-golden-field.png', '04-fractured-world.png', '05-starlit-rest-v2.png', '06-rain-confrontation.png', '07-white-haired-portrait.png']
+const approvedFiles = ['01-storm-castle.png', '03-golden-field.png', '04-fractured-world.png', '05-starlit-rest-v2.png', '06-rain-confrontation.png', '07-white-haired-portrait.png', '08-cradle.png', '09-garden-reunion.png', '10-group-portrait.png', '11-artanis.png', '12-frozen-duel-selected.png', '13-bedside.png', '14-resting-blades.png', '15-golden-warrior.png', '16-crimson-knight.png', '17-held-hand.png', '18-red-core.png', '19-nagash.png', '20-sunset-archer.png']
+const counter = index => `${String(index + 1).padStart(2, '0')} / ${String(approvedFiles.length).padStart(2, '0')}`
 await mkdir('artifacts', {recursive:true})
 try {
   for (const locale of ['en']) {
@@ -17,7 +18,7 @@ try {
       const open = async () => {
         await opener.click()
         await page.locator('.album-viewer[open]').waitFor()
-        assert.match(await page.locator('.album-number').innerText(), /01 \/ 06/)
+        assert.equal(await page.locator('.album-number').innerText(), counter(0))
       }
       await open()
       const source = await page.locator('.album-art img').getAttribute('src')
@@ -25,7 +26,7 @@ try {
       assert.equal(await page.locator('.album-art img').getAttribute('src'),source)
       for(let i=0;i<approvedFiles.length;i++) {
         await page.locator('.album-art img').evaluate(img => img.decode())
-        assert.match(await page.locator('.album-number').innerText(),new RegExp(`0${i+1} / 06`))
+        assert.equal(await page.locator('.album-number').innerText(), counter(i))
         assert((await page.locator('.album-art img').getAttribute('src')).endsWith('/' + approvedFiles[i]))
         const geometry = await page.locator('.album-viewer').evaluate(d => {
           const img=d.querySelector('img').getBoundingClientRect()
@@ -33,11 +34,12 @@ try {
           return {imgHeight:img.height, nextBottom:next.bottom, viewport:innerHeight, overflow:d.scrollHeight>d.clientHeight+1, focused:d.contains(document.activeElement)}
         })
         assert(geometry.imgHeight>60 && geometry.nextBottom<=height && !geometry.overflow && geometry.focused,JSON.stringify(geometry))
-        if(i<2) await page.screenshot({path:`artifacts/album-${size}-${i+1}.png`})
+        assert.equal(await page.locator('.album-art img').evaluate(img => getComputedStyle(img).objectFit), 'contain')
+        await page.screenshot({path:`artifacts/album-${size}-${i+1}.png`})
         if(i<approvedFiles.length-1) await page.locator('.album-next').click()
       }
       await page.keyboard.press('ArrowRight')
-      assert.match(await page.locator('.album-number').innerText(), /06 \/ 06/)
+      assert.equal(await page.locator('.album-number').innerText(), counter(approvedFiles.length - 1))
       await page.locator('.album-next').click()
       assert.equal(await page.locator('dialog[open]').count(),0)
       // Escape is available at every point, and reopening restarts at page one.
@@ -51,7 +53,7 @@ try {
       await page.locator('.album-close').click()
       assert.equal(await page.locator('dialog[open]').count(),0)
       await page.close()
-      console.log(`PASS ${locale} ${size}: 6 approved images in exact order, finish, boundaries, Escape on every page, close, focus, fit`)
+      console.log(`PASS ${locale} ${size}: ${approvedFiles.length} images in exact order, finish, boundaries, Escape on every page, close, focus, fit`)
     }
   }
   assert.deepEqual(errors,[])

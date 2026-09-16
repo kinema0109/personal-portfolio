@@ -130,7 +130,7 @@ export const en: LocaleContent = {
       'Pick one to see its context, my role, what I contributed and the stack.',
     ],
     galleryEmpty: ['The album is empty for now.', 'Thọ will add the pixel-art pictures soon.'],
-    gallery: ['Six pieces of artwork, reinterpreted as pixel art.', 'Use Next or the arrow keys to browse. Press Esc whenever you want to return.'],
+    gallery: ['A collection of artwork, reinterpreted as pixel art.', 'Use Next or the arrow keys to browse. Press Esc whenever you want to return.'],
     cv: ['Here is a summary of my CV: experience, education and contact details.', 'Click a project name to open its details.'],
   },
 

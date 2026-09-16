@@ -14,7 +14,9 @@ try {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.locator('[data-reference="gran"]').waitFor()
     // Catches a missing replacement, broken asset URL, or sprite clipped by the UI.
-    for (const kind of ['alhazard', 'langrisser', 'gran', 'seer', 'alpha', 'armageddon', 'master-ball']) {
+    // The three collectibles are drawn in code now, so they have no image to decode; they are
+    // checked separately below.
+    for (const kind of ['alhazard', 'langrisser', 'gran', 'armageddon']) {
       const ref = page.locator(`[data-reference="${kind}"]`)
       assert.equal(await ref.count(), 1, `${kind} must be displayed`)
       const result = await ref.evaluate(async e => {
@@ -26,6 +28,16 @@ try {
         return { width: bitmap.width, visible: box.left >= 0 && box.right <= innerWidth && box.top >= document.querySelector('.topbar').getBoundingClientRect().bottom && box.bottom <= document.querySelector('.dialogue').getBoundingClientRect().top }
       })
       assert.ok(result.width > 0 && result.visible, `${kind} must load and fit the room`)
+    }
+    for (const kind of ['seer', 'alpha', 'master-ball']) {
+      const figure = page.locator(`[data-figure="${kind}"]`)
+      assert.equal(await figure.count(), 1, `${kind} must be displayed`)
+      const fits = await figure.evaluate((e) => {
+        const box = e.getBoundingClientRect()
+        return box.width > 0 && box.top >= document.querySelector('.topbar').getBoundingClientRect().bottom
+          && box.bottom <= document.querySelector('.dialogue').getBoundingClientRect().top
+      })
+      assert.ok(fits, `${kind} must fit the room`)
     }
     await page.screenshot({ path: `artifacts/reference-refresh-${width}.png` })
     for (const [label, panel] of [['Open CV', '#cv-title'], ['Open album', '.album-viewer[open]']]) {

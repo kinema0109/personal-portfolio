@@ -11,6 +11,7 @@ import {
   type ScreenMode,
 } from '../art/ApartmentScene'
 import { layoutBookShelf } from '../art/BookShelf'
+import { FIGURES } from '../art/Figures'
 import { SUNFLOWER_BOX, SUN_FADE_MS, SUN_LIFE_MS, SUN_SIZE, SUN_SPOTS, SUN_TAKE_MS } from '../art/Sunflower'
 import { layoutFireEmblemShelf } from '../art/GameShelf'
 import { frameCamera, type Camera, type Rect } from '../art/camera'
@@ -46,6 +47,8 @@ interface SceneProps {
 const SHELF_SPINES = [
   ...layoutFireEmblemShelf(FIRE_EMBLEM_SHELF.x, FIRE_EMBLEM_SHELF.floor),
   ...layoutBookShelf(LIMBUS_SHELF.x, LIMBUS_SHELF.floor),
+  // The collectibles say a line of their own rather than naming themselves.
+  ...Object.entries(FIGURES).map(([kind, f]) => ({ title: kind, label: f.label, x: f.x, y: f.y, w: f.w, h: f.h })),
 ]
 
 /** Camera glides play as a few whole frames, like the rest of the pixel art. */

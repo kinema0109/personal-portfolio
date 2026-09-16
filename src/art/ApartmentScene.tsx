@@ -3,6 +3,7 @@ import { C, type Px } from './palette'
 import { PixelRects } from './PixelRects'
 import { FireEmblemShelf } from './GameShelf'
 import { LimbusBookShelf } from './BookShelf'
+import { Figure } from './Figures'
 import { Fumo } from './Fumo'
 import { ReferenceDisplay } from './ReferenceDisplay'
 import { Sun, Sunflower } from './Sunflower'
@@ -37,6 +38,9 @@ export const ALBUM_BOX = { x: 118, y: 84, w: 34, h: 21 } as const
 /** Other objects the visitor can discover by clicking; Scene.tsx places a button over each. */
 export const LAPTOP_BOX = { x: 192, y: 72, w: 52, h: 32 } as const
 export const DRAWER_BOX = { x: 246, y: 112, w: 28, h: 31 } as const
+
+/** Brass on the paint case latches. */
+const GOLD_CASE = '#c9a45c'
 
 const X0 = -800
 const XW = 1920
@@ -144,19 +148,26 @@ const cables: Px[] = [
 ]
 
 /**
- * Storage under the desk, standing to the right of the power strip so neither hides the other.
- * Two boxes, the lower one taped shut.
+ * Under the desk, where two plain cardboard boxes used to sit: the case the miniatures on the shelf
+ * were painted out of. It ties the painted figures to someone who actually paints, and it stands to
+ * the right of the power strip so neither hides the other.
  */
-const boxes: Px[] = [
-  [126, 130, 22, 16, '#8a6a45'],
-  [126, 130, 22, 1, '#a07f56'],
-  [126, 130, 1, 16, '#6d5236'], [146, 130, 2, 16, '#6d5236'],
-  [135, 130, 2, 16, '#6d5236'],
-  [126, 137, 22, 1, '#c9b48c'],
-  [130, 124, 15, 6, '#7d5f3e'],
-  [130, 124, 15, 1, '#93744d'],
-  [130, 124, 1, 6, '#63492f'], [143, 124, 2, 6, '#63492f'],
-  [136, 124, 2, 6, '#63492f'],
+const paintCase: Px[] = [
+  // Carry handle.
+  [133, 128, 8, 1, '#2e3a36'], [132, 129, 2, 2, '#2e3a36'], [140, 129, 2, 2, '#2e3a36'],
+  // Case body, split by the lid seam, with two brass latches.
+  [126, 131, 22, 15, '#3c4a45'],
+  [126, 131, 22, 1, '#50625b'],
+  [126, 137, 22, 1, '#26302d'], [126, 138, 22, 1, '#45554f'],
+  [126, 131, 1, 15, '#50625b'], [146, 131, 2, 15, '#2e3a36'],
+  [129, 136, 3, 3, GOLD_CASE], [142, 136, 3, 3, GOLD_CASE],
+  [130, 137, 1, 1, '#8a6a22'], [143, 137, 1, 1, '#8a6a22'],
+  // Two paint pots and a brush standing beside it.
+  [121, 140, 4, 6, '#2b2f38'], [121, 140, 4, 1, '#c4413a'],
+  [122, 143, 2, 2, '#c4413a'],
+  [128, 126, 4, 5, '#2b2f38'], [128, 126, 4, 1, '#3f8ba0'],
+  [129, 128, 2, 2, '#3f8ba0'],
+  [143, 123, 1, 8, '#6b4a2c'], [143, 121, 1, 2, '#c9b48c'],
 ]
 
 /**
@@ -391,13 +402,12 @@ function ReferenceDisplays() {
       </defs>
       <ellipse cx={319.8} cy={107.4} rx={10.5} ry={1.3} fill="#05080c" opacity={0.55} />
       <ellipse cx={346.6} cy={107.4} rx={10} ry={1.3} fill="#05080c" opacity={0.55} />
-      <ReferenceDisplay kind="seer" x={309.3} y={74} width={21} height={34} />
-      <ReferenceDisplay kind="alpha" x={334.6} y={77} width={24} height={31} />
+      <Figure kind="seer" />
+      <Figure kind="alpha" />
       <ellipse cx={371} cy={106.9} rx={9} ry={1.6} fill="#221c18" />
       <ellipse cx={371} cy={106} rx={9} ry={1.5} fill="#4a3d30" />
       <ellipse cx={371} cy={106} rx={5} ry={0.8} fill="#11151c" opacity={0.65} />
-      <image data-reference="master-ball" href={`${import.meta.env.BASE_URL}art/derived/master-ball-px.png`}
-        x={361} y={87} width={20} height={20} preserveAspectRatio="xMidYMid meet" style={{ imageRendering: 'pixelated' }} />
+      <Figure kind="master-ball" />
       {/* The light is drawn over the minis, so the backing and any leftover photo backdrop brighten together. */}
       <rect x={307} y={71} width={76} height={37} fill="url(#figure-bay-light)" />
       <rect x={309} y={71} width={72} height={1} fill="#f2d29a" opacity={0.4} />
@@ -538,7 +548,7 @@ export function ApartmentScene({ viewBox, screen, speaking, sparkle, suns, charg
 
       <PixelRects px={desk} />
       <PixelRects px={cables} />
-      <PixelRects px={boxes} />
+      <PixelRects px={paintCase} />
       <PixelRects px={tower} />
       <PixelRects px={towerGlowA} className="f-rgb-a" />
       <PixelRects px={towerGlowB} className="f-rgb-b" />

@@ -26,6 +26,21 @@ try {
       const source = await page.locator('.album-art img').getAttribute('src')
       await page.keyboard.press('ArrowLeft')
       assert.equal(await page.locator('.album-art img').getAttribute('src'),source)
+      // Facebook-style halves: the right half goes on, the left half goes back, neither passes an end,
+      // and a horizontal drag works like a swipe.
+      const art = await page.locator('.album-art').boundingBox()
+      const tap = side => page.mouse.click(art.x + art.width * (side === 'right' ? 0.8 : 0.2), art.y + art.height / 2)
+      const page_ = () => page.locator('.album-number').innerText()
+      await tap('left'); assert.equal(await page_(), counter(0))
+      await tap('right'); assert.equal(await page_(), counter(1))
+      await tap('left'); assert.equal(await page_(), counter(0))
+      await page.mouse.move(art.x + art.width * 0.6, art.y + art.height / 2)
+      await page.mouse.down()
+      await page.mouse.move(art.x + art.width * 0.3, art.y + art.height / 2, {steps:5})
+      await page.mouse.up()
+      assert.equal(await page_(), counter(1), 'a leftward drag goes to the next picture')
+      await page.keyboard.press('ArrowLeft')
+      assert.equal(await page_(), counter(0))
       for(let i=0;i<approvedFiles.length;i++) {
         await page.locator('.album-art img').evaluate(img => img.decode())
         assert.equal(await page.locator('.album-number').innerText(), counter(i))
@@ -42,6 +57,9 @@ try {
       }
       await page.keyboard.press('ArrowRight')
       assert.equal(await page.locator('.album-number').innerText(), counter(approvedFiles.length - 1))
+      await tap('right')
+      assert.equal(await page_(), counter(approvedFiles.length - 1), 'the right half does nothing on the last picture')
+      assert.equal(await page.locator('dialog[open]').count(), 1)
       await page.locator('.album-next').click()
       assert.equal(await page.locator('dialog[open]').count(),0)
       // Escape is available at every point, and reopening restarts at page one.

@@ -25,6 +25,7 @@ import type { HotspotId, SpeakerId } from '../content/types'
 import type { FreeRegion } from '../hooks/useFreeRegion'
 import { useLocale } from '../i18n/LocaleProvider'
 import { usePhase } from '../daylight/PhaseProvider'
+import { useZombie } from '../hooks/useZombie'
 import './shelf.css'
 
 /**
@@ -77,6 +78,7 @@ const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)'
 export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, onAdvance }: SceneProps) {
   const ui = useLocale().content.text.ui
   const { phase } = usePhase()
+  const zombie = useZombie(phase)
   const layerRef = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight })
   const [suns, setSuns] = useState<readonly DroppedSun[]>([])
@@ -294,6 +296,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
           <ApartmentScene
             viewBox={viewBox}
             phase={phase}
+            zombie={zombie}
             screen={screen}
             speaking={speaker === 'tho'}
             sparkle={sparkle}

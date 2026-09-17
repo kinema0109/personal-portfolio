@@ -8,6 +8,7 @@ import { Fumo } from './Fumo'
 import { ReferenceDisplay } from './ReferenceDisplay'
 import { Sun, Sunflower, type SunSize } from './Sunflower'
 import { SunShroom, type ShroomState } from './SunShroom'
+import { WINDOW_GLASS_CLIP, Zombie } from './Zombie'
 import { HALO, PICK_RIM, outlineOf, type Highlight } from './outline'
 import { REFRESHED_SPRITES } from './refreshedSprites'
 import type { Phase } from '../daylight/phase'
@@ -613,6 +614,8 @@ interface ApartmentSceneProps {
   viewBox: string
   /** Day or night where the visitor is; only the view through the window changes. */
   phase: Phase
+  /** Id of the zombie walk past the window in progress, or null. Only ever set at night. */
+  zombie: number | null
   screen: ScreenMode
   speaking: boolean
   /** Glint on the album. */
@@ -645,7 +648,7 @@ export interface DroppedSun {
   origin: { x: number; y: number }
 }
 
-export function ApartmentScene({ viewBox, phase, screen, speaking, sparkle, suns, shroom, charge, energy, fanSpeed, highlight }: ApartmentSceneProps) {
+export function ApartmentScene({ viewBox, phase, zombie, screen, speaking, sparkle, suns, shroom, charge, energy, fanSpeed, highlight }: ApartmentSceneProps) {
   const night = phase === 'night'
   const tier = tierOf(energy.seconds)
   const top = glowTop(energy.seconds)
@@ -687,6 +690,10 @@ export function ApartmentScene({ viewBox, phase, screen, speaking, sparkle, suns
         <clipPath id={ENERGY_CLIP} clipPathUnits="userSpaceOnUse">
           <rect x={140} y={top} width={80} height={GLOW_WAIST - top} />
         </clipPath>
+        {/* The window glass, so a zombie walking past never shows outside the window. */}
+        <clipPath id={WINDOW_GLASS_CLIP} clipPathUnits="userSpaceOnUse">
+          <rect x={26} y={22} width={74} height={70} />
+        </clipPath>
       </defs>
 
       <PixelRects px={shell} />
@@ -709,6 +716,7 @@ export function ApartmentScene({ viewBox, phase, screen, speaking, sparkle, suns
             <PixelRects px={starsB} className="f-twinkle-2" />
             <PixelRects px={cityLightsA} />
             <PixelRects px={cityLightsB} className="f-city" />
+            {zombie !== null && <Zombie key={zombie} />}
           </>
         ) : (
           <PixelRects px={dayView} />

@@ -276,6 +276,16 @@ p {
 .f-sun-b { opacity: 0; animation: show-second-half 0.7s linear infinite; }
 .f-sun-a { animation: show-first-half 0.7s linear infinite; }
 
+/* Night zombie: steps from just past the right edge of the glass to just past the left, in whole
+   pixels, over the same 8 s as ZOMBIE_WALK_MS, shuffling between two frames as it goes. */
+@keyframes zombie-walk {
+  from { transform: translateX(0); }
+  to { transform: translateX(-88px); }
+}
+.f-zombie-walk { animation: zombie-walk 8s steps(88, end) both; }
+.f-zombie-a { animation: show-first-half 0.6s linear infinite; }
+.f-zombie-b { opacity: 0; animation: show-second-half 0.6s linear infinite; }
+
 /* Sun-shroom. Awake, it rocks on whole pixels and blinks now and then; asleep, it holds still under
    rising Zs. Everything steps, like the rest of the room. Reduced motion turns all of it off, which
    leaves one still Z over the sleeping plant. */

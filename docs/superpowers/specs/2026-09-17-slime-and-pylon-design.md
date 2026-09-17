@@ -1,6 +1,6 @@
 # A Terraria slime at the window, and a pylon that powers the room
 
-Status: approved by owner (2026-09-17)
+Status: approved by owner (2026-09-17), revised by owner the same day: with the power off the story stays on screen but disabled, and only the PC needs power (see "Off" below).
 
 ## 1. Terraria slime
 
@@ -15,8 +15,8 @@ A StarCraft Protoss pylon replaces the power strip under the desk. It is the roo
 
 ### Look
 
-- A gold base on the floor line under the desk, x 103–117. The strip and the cable down the wall are gone, and the tower's lead now starts at the pylon.
-- Above the base floats a blue crystal (x 107–113, y 123–137). It bobs one pixel and has a soft blue glow.
+- A gold base on the floor line under the desk, x 103–117. The strip, the cable down the wall and the wall socket above them are gone (above the pylon the socket read as a face), and the tower's lead now starts at the pylon.
+- Above the base floats a blue crystal (x 107–113, y 123–137). It bobs one pixel and has a soft blue glow: a faint stepped diamond one to two units past the crystal's own shape, not a box.
 
 ### States
 
@@ -24,15 +24,17 @@ A StarCraft Protoss pylon replaces the power strip under the desk. It is the roo
 - **Off:** clicking the pylon powers it down.
   - The crystal goes dark.
   - The PC screen goes black and the tower's RGB goes out.
-  - The desk fan stops and the ceiling bulb, with its faint cone of light, goes out.
-  - Thọ stops typing and the energy build bar is hidden. Sun energy can still be collected.
+  - The desk fan stops and the ceiling bulb, with its faint cone of light, goes out. The fan cannot be switched (its button reads "Desk fan: off").
+  - Thọ stops typing, his speech bubble goes, and the energy build bar is hidden. Sun energy can still be collected and still drains, but the build holds where it is until power returns.
   - The room's colours are otherwise unchanged; there is no dimming layer.
-  - **The whole visual novel goes away:** the dialogue box, the choices and any panel are hidden. The PC, album and drawer hotspots and the click-Thọ-to-advance target are unavailable, and the dialogue keyboard shortcuts do nothing. The room and the top bar stay.
-  - Above Thọ, a pixel caption reads "You must construct additional pylons." for about 3 s, and it is announced to screen readers.
+  - **The story stays on screen but is disabled.** The dialogue box and the choices remain where they are, dimmed to half opacity and `inert`: Next, the choices, Back and Home do nothing, clicking Thọ does not advance, and Enter, Space and 1–9 do nothing.
+  - **Only the PC needs power.** The "See projects" hotspot on the PC is unavailable. The album (Game Gallery) and the desk drawer (CV) still open, and their panels work normally, including closing by the backdrop, the Close button and Escape. Escape closes an open panel; with none open it does nothing.
+  - **The camera does not move** when the power goes or returns, because the HUD does not change size.
+  - Above Thọ, a pixel caption reads "You must construct additional pylons." for about 3 s. It is one always-mounted live region, so screen readers announce it, and it is clamped to stay wholly on screen with 8 px to spare, wrapping on narrow phones if it must.
 - **Warping in:** clicking the dark pylon plays a warp-in for about 1.5 s.
   - A blue ring pulses on the floor.
   - The crystal's wireframe appears, top half then bottom half.
-  - Then the pylon is solid and lit, and power returns: the visual novel comes back where it was and every electric thing works again.
+  - Then the pylon is solid and lit, and power returns: the story works again from where it was and every electric thing works again.
   - Clicks during the warp are ignored.
 - Under reduced motion there is no warp: the pylon comes on at once.
 - Power is not persisted. A reload starts with the pylon on.
@@ -40,15 +42,18 @@ A StarCraft Protoss pylon replaces the power strip under the desk. It is the roo
 ### Accessibility
 
 - The pylon button is labelled "Power down the pylon" when on and "Warp in the pylon" when off.
-- It has the room's one-unit hover rim on its silhouette.
-- It is offered at every breakpoint, because the pylon stands at x ≥ 101.
+- It has the room's one-unit hover rim on its silhouette. The crystal's part of the rim bobs with the crystal; during the warp only the base is outlined.
+- Its click box is x 99–122, y 119–147 (23 × 28), clear of the fan, the Sun-shroom and the sun spots.
+- It is offered at every breakpoint, because the pylon stands at x ≥ 99. It ignores the choice menu, whose top edge overlaps the pylon's foot on desktop, so power is always within reach.
 
 ## Verification
 
 - `scripts/verify-slime.mjs`: with the page clock controlled, a slime appears within 6 s by day and by night, moves left to right, and is clipped to the window glass.
 - `scripts/verify-pylon.mjs`:
-  - **Power down:** the pylon, screen, tower glow, fan, the HUD's absence, the room hotspots' absence and the caption.
-  - **Warp in:** the warping state, then everything back, including the HUD and the "See projects" hotspot.
-  - **Reduced motion:** power returns at once.
-  - **Screenshots:** off, warping and on.
+  - **Power down:** the pylon, screen, tower glow, fan (and its switch), bulb, speech bubble and caption; the HUD still present with the dialogue inert and dimmed; Enter, Space, 1, Escape and a click on Next change nothing; "See projects" absent, "Open Game Gallery" and "Profile" present; the camera unchanged.
+  - **Panels while off:** Profile opens the CV and Escape or the backdrop closes it; the album opens the gallery and Close closes it.
+  - **Caption:** wholly inside the viewport at 1440 × 900, 390 × 844 and 320 × 640, and gone about 3.2 s after power-down while its live region stays mounted.
+  - **Warp in:** the warping state, a second click ignored, power back within about 1.5 s of the first click, the story usable again.
+  - **Reduced motion:** with the choices up, they are inert while off; power returns at once with no warp.
+  - **Screenshots:** off (desktop, 390 and 320 wide), warping and on.
 - Existing checks still pass: `verify-zombie`, `verify-energy`, `verify-fan`, `verify-hover`, `verify-interactions`, `verify-project-screens`, `verify-room`, `verify-daylight`.

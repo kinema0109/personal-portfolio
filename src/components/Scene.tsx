@@ -26,6 +26,8 @@ import type { FreeRegion } from '../hooks/useFreeRegion'
 import { useLocale } from '../i18n/LocaleProvider'
 import { usePhase } from '../daylight/PhaseProvider'
 import { useZombie } from '../hooks/useZombie'
+import { useWalker } from '../hooks/useWalker'
+import { SLIME_TIMING } from '../art/Slime'
 import './shelf.css'
 
 /**
@@ -79,6 +81,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
   const ui = useLocale().content.text.ui
   const { phase } = usePhase()
   const zombie = useZombie(phase)
+  const slime = useWalker(true, SLIME_TIMING)
   const layerRef = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight })
   const [suns, setSuns] = useState<readonly DroppedSun[]>([])
@@ -297,6 +300,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
             viewBox={viewBox}
             phase={phase}
             zombie={zombie}
+            slime={slime}
             screen={screen}
             speaking={speaker === 'tho'}
             sparkle={sparkle}

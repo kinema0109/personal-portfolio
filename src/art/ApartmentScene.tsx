@@ -9,6 +9,7 @@ import { ReferenceDisplay } from './ReferenceDisplay'
 import { Sun, Sunflower, type SunSize } from './Sunflower'
 import { SunShroom, type ShroomState } from './SunShroom'
 import { WINDOW_GLASS_CLIP, Zombie } from './Zombie'
+import { Slime } from './Slime'
 import { ProjectScreen } from './ProjectScreens'
 import { HALO, PICK_RIM, outlineOf, type Highlight } from './outline'
 import { REFRESHED_SPRITES } from './refreshedSprites'
@@ -620,6 +621,8 @@ interface ApartmentSceneProps {
   phase: Phase
   /** Id of the zombie walk past the window in progress, or null. Only ever set at night. */
   zombie: number | null
+  /** Id of the slime hopping past the window in progress, or null. Day or night. */
+  slime: number | null
   screen: ScreenMode
   speaking: boolean
   /** Glint on the album. */
@@ -652,7 +655,7 @@ export interface DroppedSun {
   origin: { x: number; y: number }
 }
 
-export function ApartmentScene({ viewBox, phase, zombie, screen, speaking, sparkle, suns, shroom, charge, energy, fanSpeed, highlight }: ApartmentSceneProps) {
+export function ApartmentScene({ viewBox, phase, zombie, slime, screen, speaking, sparkle, suns, shroom, charge, energy, fanSpeed, highlight }: ApartmentSceneProps) {
   const night = phase === 'night'
   const tier = tierOf(energy.seconds)
   const top = glowTop(energy.seconds)
@@ -728,6 +731,7 @@ export function ApartmentScene({ viewBox, phase, zombie, screen, speaking, spark
         ) : (
           <PixelRects px={dayView} />
         )}
+        {slime !== null && <Slime key={slime} />}
         <PixelRects px={night ? nightMullions : dayMullions} />
       </g>
       <PixelRects px={windowFront} />

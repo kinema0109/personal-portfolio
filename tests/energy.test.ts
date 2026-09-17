@@ -54,6 +54,21 @@ test('the glow runs from the chair back to the shoulders, and any energy shows a
   assert.equal(glowTop(0.5), 89)
 })
 
+test('without power energy drains but the build holds where it is', () => {
+  const e = tick({ seconds: 30, build: 0.4, okFor: 0 }, 5, false)
+  assert.deepEqual(e, { seconds: 25, build: 0.4, okFor: 0 })
+  const ok = tick({ seconds: 30, build: 1, okFor: 0.5 }, 2, false)
+  assert.deepEqual(ok, { seconds: 28, build: 1, okFor: 0.5 }, 'the OK flash holds too')
+  // Power back: the build carries on from where it stopped (tier 2 fills in 7 s).
+  assert.equal(tick(e, 3.5).build, 0.4 + 3.5 / 7)
+})
+
+test('without power, running out of energy still drops an unfinished build', () => {
+  const e = tick({ seconds: 1, build: 0.4, okFor: 0 }, 2, false)
+  assert.deepEqual(e, { seconds: 0, build: 0, okFor: 0 })
+  assert.equal(tick(e, 0.5, false), e, 'an idle state is returned as is')
+})
+
 test('a clock stepping backwards does not refill energy', () => {
   assert.equal(tick({ seconds: 10, build: 0, okFor: 0 }, -30).seconds, 10)
 })

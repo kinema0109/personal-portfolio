@@ -325,20 +325,38 @@ p {
 .f-warp-top { opacity: 0; animation: warp-appear 1ms linear 0.4s both; }
 .f-warp-bottom { opacity: 0; animation: warp-appear 1ms linear 0.9s both; }
 
-/* Thọ's caption when the power goes, above his head in the room. */
+/* Thọ's caption when the power goes, above his head in the room. Scene.tsx sets left and top from its
+   measured size, so it can wrap on a narrow phone and still sit wholly on screen. */
 .pylon-line {
   position: absolute;
   z-index: 1;
+  box-sizing: border-box;
+  max-width: calc(100% - 16px);
+  width: max-content;
   margin: 0;
-  transform: translate(-50%, -110%);
   padding: 2px 8px;
-  white-space: nowrap;
   font-family: var(--font-label);
   font-size: 0.8rem;
+  text-align: center;
   color: var(--cream);
   background: var(--night);
   border: 2px solid #3fa7ff;
   pointer-events: none;
+}
+/* Between captions the live region stays mounted but takes no room and shows nothing. */
+.pylon-line.is-quiet {
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+/* With the room's power off the story stays on screen, dimmed; `inert` makes it unusable. */
+.dialogue.is-unpowered,
+.choice-menu.is-unpowered {
+  opacity: 0.5;
 }
 
 /* Sun-shroom. Awake, it rocks on whole pixels and blinks now and then; asleep, it holds still under

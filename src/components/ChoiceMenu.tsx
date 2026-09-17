@@ -6,18 +6,20 @@ interface ChoiceMenuProps {
   choices: readonly Choice[]
   onChoice: (choice: Choice) => void
   menuRef: Ref<HTMLElement>
+  /** With the room's power off the menu stays on screen, dimmed, and its choices do nothing. */
+  disabled?: boolean
 }
 
 /**
  * Choice menu shown above the textbox after the last line, as in visual novels.
  * It sits in its own HUD row, so the textbox never changes size when choices appear.
  */
-export function ChoiceMenu({ choices, onChoice, menuRef }: ChoiceMenuProps) {
+export function ChoiceMenu({ choices, onChoice, menuRef, disabled = false }: ChoiceMenuProps) {
   const ui = useLocale().content.text.ui
   if (choices.length === 0) return null
 
   return (
-    <nav ref={menuRef} className="choice-menu" aria-label={ui.choices}>
+    <nav ref={menuRef} className={`choice-menu${disabled ? ' is-unpowered' : ''}`} aria-label={ui.choices} inert={disabled}>
       <ol className="choices">
         {choices.map((choice, i) => (
           <li key={`${choice.label}-${i}`} style={{ '--i': i } as CSSProperties}>

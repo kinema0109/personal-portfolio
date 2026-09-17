@@ -46,11 +46,20 @@ export function tierOf(seconds: number): Tier {
 
 export const addSun = (e: Energy): Energy => ({ ...e, seconds: Math.min(ENERGY_MAX, e.seconds + ENERGY_PER_SUN) })
 
-/** Advances energy and the build by `dt` seconds. */
-export function tick(e: Energy, dt: number): Energy {
+/**
+ * Advances energy and the build by `dt` seconds. With `building` false (the room's power is off)
+ * energy still drains but the build and its OK flash hold where they are, unless energy runs out
+ * with no OK showing, which drops the unfinished build as it would with the power on.
+ */
+export function tick(e: Energy, dt: number, building = true): Energy {
   // A clock that steps backwards must not refill energy.
   const step = Math.max(0, dt)
   const seconds = Math.max(0, e.seconds - step)
+  if (!building) {
+    if (seconds === 0 && e.okFor === 0) return e.seconds === 0 && e.build === 0 ? e : { ...e, seconds, build: 0 }
+    // Nothing moves once energy is gone, so return the same object and let React skip the render.
+    return seconds === e.seconds ? e : { ...e, seconds }
+  }
   if (e.okFor > 0) {
     const okFor = Math.max(0, e.okFor - step)
     return { seconds, build: okFor > 0 ? 1 : 0, okFor }

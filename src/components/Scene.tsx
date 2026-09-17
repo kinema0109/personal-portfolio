@@ -78,6 +78,8 @@ const SHROOM_FLASH_MS = 180
 const ENERGY_TICK_MS = 500
 /** The free region is re-measured right after a panel opens or closes; moves within this window glide. */
 const PANEL_GLIDE_WINDOW_MS = 400
+/** Thọ's pylon caption keeps this far, in CSS px, from the edges of the screen. */
+const LINE_MARGIN = 8
 
 const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2)
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -99,16 +101,22 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
     const t = window.setTimeout(() => setPylonLine(false), PYLON_LINE_MS)
     return () => window.clearTimeout(t)
   }, [power])
+  const lineRef = useRef<HTMLParagraphElement>(null)
+  const [lineBox, setLineBox] = useState({ w: 0, h: 0 })
   const layerRef = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight })
   const [suns, setSuns] = useState<readonly DroppedSun[]>([])
   const [charge, setCharge] = useState(0)
   const [energy, setEnergy] = useState<Energy>(EMPTY_ENERGY)
   const energyActive = energy.seconds > 0 || energy.okFor > 0
+  // Read from the interval below without restarting it, so toggling the power does not lose a tick.
+  const poweredRef = useRef(powered)
+  poweredRef.current = powered
 
   // Energy drains and the build advances only while there is something to show, so an idle room
   // does not re-render twice a second. Elapsed time comes from the clock, not the tick count, because
-  // background tabs throttle intervals.
+  // background tabs throttle intervals. With the power off energy still drains, but the build on the
+  // dark PC holds where it is.
   useEffect(() => {
     if (!energyActive) return
     let last = performance.now()
@@ -116,7 +124,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
       const now = performance.now()
       const dt = (now - last) / 1000
       last = now
-      setEnergy((e) => tick(e, dt))
+      setEnergy((e) => tick(e, dt, poweredRef.current))
     }, ENERGY_TICK_MS)
     return () => window.clearInterval(id)
   }, [energyActive])
@@ -280,14 +288,17 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
     width: box.w * cam.scale,
     height: box.h * cam.scale,
   })
+  const isInside = (style: ReturnType<typeof toScreen>) =>
+    style.left >= free.left &&
+    style.top >= free.top &&
+    style.left + style.width <= free.left + free.width &&
+    style.top + style.height <= free.top + free.height
   const isOffered = (style: ReturnType<typeof toScreen>) => {
     const right = style.left + style.width
     const bottom = style.top + style.height
-    const inside =
-      style.left >= free.left && style.top >= free.top && right <= free.left + free.width && bottom <= free.top + free.height
     const underMenu =
       menu !== null && style.left < menu.right && right > menu.left && style.top < menu.bottom && bottom > menu.top
-    return inside && !underMenu
+    return isInside(style) && !underMenu
   }
   const hotspots = HOTSPOTS.flatMap(({ id, box }) => {
     const style = toScreen(box)
@@ -302,6 +313,20 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
     const figure = spine.title in FIGURES
     return isOffered(style) ? [{ key: spine.title, label: spine.label, style, alignEnd, figure }] : []
   })
+
+  // Thọ's caption: centred over his head, then clamped so all of it stays 8 px inside the screen and
+  // below the top bar. It may wrap on narrow phones, so its size is measured after every layout.
+  useLayoutEffect(() => {
+    const el = lineRef.current
+    if (!el || !pylonLine) return
+    const next = { w: el.offsetWidth, h: el.offsetHeight }
+    setLineBox((prev) => (prev.w === next.w && prev.h === next.h ? prev : next))
+  })
+  const head = toScreen(SPEAKER_BOX)
+  const lineStyle: CSSProperties = {
+    left: Math.max(LINE_MARGIN, Math.min(head.left + head.width / 2 - lineBox.w / 2, size.w - LINE_MARGIN - lineBox.w)),
+    top: Math.max(free.top + LINE_MARGIN, head.top - lineBox.h - 4),
+  }
 
   // The scene opens with a pixel iris centred on the uncovered part of the screen.
   const irisOrigin = {
@@ -320,7 +345,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
             slime={slime}
             power={power}
             screen={screen}
-            speaking={speaker === 'tho'}
+            speaking={powered && speaker === 'tho'}
             sparkle={sparkle}
             suns={suns}
             shroom={{ grown: shroomGrown, flash: shroomFlash, nudge: shroomNudge }}
@@ -363,9 +388,10 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
           type="button"
           className="hotspot"
           style={toScreen(FAN_BOX)}
-          onClick={() => setFanStep((step) => (step + 1) % FAN_SPEEDS.length)}
+          // Unpowered, the fan cannot be switched; it keeps its setting for when power returns.
+          onClick={powered ? () => setFanStep((step) => (step + 1) % FAN_SPEEDS.length) : undefined}
           {...points('fan')}
-          aria-label={`${ui.fan}: ${fanSpeed}`}
+          aria-label={`${ui.fan}: ${powered ? fanSpeed : 'off'}`}
         />
       )}
 
@@ -402,7 +428,10 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
         />
       ))}
 
-      {isOffered(toScreen(PYLON_BOX)) && (
+      {/* Power must always be within reach, so the pylon ignores the choice menu: on desktop the menu's
+          top edge sits on the floor line and overlaps the pylon's foot, and the rest of it stays
+          clickable above the menu. With the power off the menu is inert and lets clicks through. */}
+      {isInside(toScreen(PYLON_BOX)) && (
         <button
           type="button"
           className="hotspot"
@@ -414,17 +443,19 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
         />
       )}
 
-      {pylonLine && (
-        <p
-          className="pylon-line"
-          role="status"
-          style={{ left: toScreen(SPEAKER_BOX).left + toScreen(SPEAKER_BOX).width / 2, top: toScreen(SPEAKER_BOX).top }}
-        >
-          {ui.pylonLine}
-        </p>
-      )}
+      {/* One live region, always mounted, so screen readers announce the line when its text appears.
+          Placed over Thọ's head, but held 8 px inside the screen on either side. */}
+      <p
+        ref={lineRef}
+        className={`pylon-line${pylonLine ? '' : ' is-quiet'}`}
+        role="status"
+        style={pylonLine ? lineStyle : undefined}
+      >
+        {pylonLine ? ui.pylonLine : ''}
+      </p>
 
-      {powered && hotspots.map(({ id, style }) => (
+      {/* Only the PC needs power; the album and the drawer still open with it off. */}
+      {hotspots.filter(({ id }) => powered || id !== 'pc').map(({ id, style }) => (
         <button key={id} type="button" className="hotspot" style={style} onClick={() => onHotspot(id)} {...points(id)}>
           <span className="hotspot-label">{ui.hotspots[id]}</span>
         </button>

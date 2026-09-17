@@ -15,13 +15,15 @@ interface DialogueBoxProps {
   onNext: () => void
   onBack: () => void
   onHome: () => void
+  /** With the room's power off the box stays on screen, dimmed, and nothing in it responds. */
+  disabled?: boolean
 }
 
 /**
  * Fixed-size textbox: name row, portrait slot, text area sized to the longest step, and a reserved
  * advance slot. Nothing inside changes size between steps; choices live in ChoiceMenu.
  */
-export function DialogueBox({ view, revealKey, canGoBack, boxRef, linesRef, onNext, onBack, onHome }: DialogueBoxProps) {
+export function DialogueBox({ view, revealKey, canGoBack, boxRef, linesRef, onNext, onBack, onHome, disabled = false }: DialogueBoxProps) {
   const { text, allLines } = useLocale().content
   const ui = text.ui
   const { step, stepIndex, stepCount } = view
@@ -29,7 +31,13 @@ export function DialogueBox({ view, revealKey, canGoBack, boxRef, linesRef, onNe
   useStableTextHeight(linesRef, allLines)
 
   return (
-    <section ref={boxRef} className="dialogue" id="dialogue" aria-label={ui.dialogue}>
+    <section
+      ref={boxRef}
+      className={`dialogue${disabled ? ' is-unpowered' : ''}`}
+      id="dialogue"
+      aria-label={ui.dialogue}
+      inert={disabled}
+    >
       <div className="dlg-head">
         <span className="speaker">{text.speakers[step.speaker]}</span>
         <StatusTag status={step.status} />

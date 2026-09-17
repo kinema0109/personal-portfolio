@@ -57,25 +57,23 @@ export default function App() {
   const blip = useBlip(soundOn)
   const { phase, toggle: togglePhase } = usePhase()
   const [gallerySeen, setGallerySeen] = useState(readGallerySeen)
-  // The pylon under the desk is the room's power. Off, the visual novel steps aside and only the room
-  // is left; warping it back in takes a moment before power, and the story, return.
+  // The pylon under the desk is the room's power. Only the PC needs it: while it is off the story stays
+  // on screen but cannot be used, and the album and the drawer still open. Warping it back in takes a
+  // moment before power returns.
   const [power, setPower] = useState<Power>('on')
   const powered = power === 'on'
-  const warpTimer = useRef(0)
-  useEffect(() => () => window.clearTimeout(warpTimer.current), [])
   const togglePower = useCallback(() => {
     if (power === 'warping') return
     if (power === 'on') {
       setPower('off')
       return
     }
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setPower('on')
-      return
-    }
-    setPower('warping')
-    window.clearTimeout(warpTimer.current)
-    warpTimer.current = window.setTimeout(() => setPower('on'), WARP_MS)
+    setPower(window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'on' : 'warping')
+  }, [power])
+  useEffect(() => {
+    if (power !== 'warping') return
+    const t = window.setTimeout(() => setPower('on'), WARP_MS)
+    return () => window.clearTimeout(t)
   }, [power])
 
   const appRef = useRef<HTMLDivElement>(null)
@@ -91,10 +89,11 @@ export default function App() {
   const backAllowed = canGoBack(nav)
   const hasNext = view.stepIndex < view.stepCount - 1
 
-  // Text length changes with the language, so the free region is re-measured on a switch too.
+  // Text length changes with the language, so the free region is re-measured on a switch too. The power
+  // is not a dependency: the HUD stays put when the pylon goes off, so the room holds still.
   const region = useFreeRegion(
     { app: appRef, top: topRef, dialogue: dialogueRef, doc: docRef, menu: menuRef },
-    [key, locale, powered],
+    [key, locale],
   )
 
   const act = useCallback(
@@ -120,6 +119,13 @@ export default function App() {
   }, [here.kind, gallerySeen])
 
   // Move focus to the new dialogue so keyboard and screen-reader users follow along.
+  // Keyed on what is open rather than on `view.panel`, which is a new object on every render and would
+  // pull focus back into an open panel whenever App re-renders.
+  const panelKey = view.panel
+    ? view.panel.kind === 'project'
+      ? `project:${view.panel.projectId}`
+      : view.panel.kind
+    : null
   const firstRender = useRef(true)
   useEffect(() => {
     if (firstRender.current) {
@@ -129,20 +135,21 @@ export default function App() {
     if (here.kind === 'gallery') return
     // A panel is the top of the screen stack now, so focus goes into it; otherwise the reader is
     // left in the dialogue and has to tab across the room to reach what just opened.
-    const target = view.panel ? docRef.current : linesRef.current
+    const target = panelKey ? docRef.current : linesRef.current
     target?.focus({ preventScroll: true })
-  }, [key, view.panel])
+  }, [key, panelKey])
 
-  // Shortcuts: Enter/Space advance the dialogue, 1–9 pick a choice, Esc goes back.
+  // Shortcuts: Enter/Space advance the dialogue, 1–9 pick a choice, Esc goes back. While the power is
+  // off only Esc works, and only to close an open panel: the story itself cannot be moved.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (document.querySelector('dialog[open]')) return
-      if (!powered) return
       if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return
       if (e.key === 'Escape') {
-        act({ type: 'back' })
+        if (powered || panelKey !== null) act({ type: 'back' })
         return
       }
+      if (!powered) return
       if (e.key === 'Enter' || e.key === ' ') {
         // A focused control keeps its own Enter/Space behaviour.
         if (!hasNext || (e.target instanceof Element && e.target.closest('button, a, [role="button"]'))) return
@@ -158,7 +165,7 @@ export default function App() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [act, go, view.choices, hasNext, powered])
+  }, [act, go, view.choices, hasNext, powered, panelKey])
 
   return (
     <div className="app" ref={appRef}>
@@ -227,12 +234,12 @@ export default function App() {
         </div>
       </header>
 
-      {powered && here.kind === 'gallery' && <GalleryPanel onClose={() => act({ type: 'back' })} />}
-      {powered && (
+      {here.kind === 'gallery' && <GalleryPanel onClose={() => act({ type: 'back' })} />}
       <div className={`hud${view.panel && view.panel.kind !== 'gallery' ? ' has-panel' : ''}`}>
         {/* Whatever is on top — a picker or a panel — owns the screen while it is up, so clicking
-            anywhere off it closes it rather than falling through to the room behind. */}
-        {(view.picker || view.panel !== null) && backAllowed && (
+            anywhere off it closes it rather than falling through to the room behind. A picker is part
+            of the story, so with the power off it stops closing this way; a panel still does. */}
+        {((view.picker && powered) || view.panel !== null) && backAllowed && (
           <button
             type="button"
             className="dismiss-backdrop"
@@ -251,6 +258,7 @@ export default function App() {
           menuRef={menuRef}
           choices={view.choices}
           onChoice={(choice) => go(choice.target)}
+          disabled={!powered}
         />
         <DialogueBox
           view={view}
@@ -261,9 +269,9 @@ export default function App() {
           onNext={() => act({ type: 'next' })}
           onBack={() => act({ type: 'back' })}
           onHome={() => act({ type: 'home' })}
+          disabled={!powered}
         />
       </div>
-      )}
     </div>
   )
 }

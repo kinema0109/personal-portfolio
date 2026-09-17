@@ -1,6 +1,7 @@
 import type { ScreenMode } from '../art/ApartmentScene'
 import type { Content } from '../content'
 import { galleryItems } from '../content/gallery'
+import { PROJECTS } from '../content/projects'
 import type { Choice, DialogueStep, NodeId, ProjectId } from '../content/types'
 import type { Location } from './navigation'
 
@@ -45,9 +46,24 @@ const SCREEN_BY_SECTION: Record<Section, ScreenMode> = {
   gallery: 'docs',
 }
 
+/** The story node that tells how a project was built, back to the project, so it keeps its screen. */
+const PROJECT_BY_NODE: ReadonlyMap<NodeId, ProjectId> = new Map(
+  PROJECTS.flatMap((p) => (p.relatedNode ? [[p.relatedNode, p.id] as const] : [])),
+)
+
 export function buildView(loc: Location, content: Content): View {
   const base = buildBase(loc, content)
-  return { ...base, screen: SCREEN_BY_SECTION[base.section] }
+  return { ...base, screen: screenFor(loc, base) }
+}
+
+/** A project on screen shows its own diagram; everywhere else the section decides. */
+function screenFor(loc: Location, base: Omit<View, 'screen'>): ScreenMode {
+  if (base.panel?.kind === 'project') return `project:${base.panel.projectId}`
+  if (loc.kind === 'node') {
+    const project = PROJECT_BY_NODE.get(loc.id)
+    if (project) return `project:${project}`
+  }
+  return SCREEN_BY_SECTION[base.section]
 }
 
 function buildBase(loc: Location, content: Content): Omit<View, 'screen'> {

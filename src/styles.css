@@ -218,6 +218,13 @@ p {
 .f-dot-2 { animation: dot 1.2s linear 0.3s infinite; }
 .f-dot-3 { animation: dot 1.2s linear 0.6s infinite; }
 
+/* Project screens: a dot of data runs along each line of the diagram, in whole-pixel steps. */
+@keyframes data-flow {
+  from { transform: translate(0, 0); }
+  to { transform: translate(var(--data-dx, 0), var(--data-dy, 0)); }
+}
+.f-data { animation: data-flow 1.2s steps(4, end) infinite; }
+
 /* Portrait mouth flaps a few times while a new line appears, then rests closed. */
 .f-talk { opacity: 0; animation: show-second-half 180ms linear; animation-iteration-count: var(--talk, 4); }
 

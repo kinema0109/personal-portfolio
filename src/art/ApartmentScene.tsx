@@ -9,9 +9,11 @@ import { ReferenceDisplay } from './ReferenceDisplay'
 import { Sun, Sunflower, type SunSize } from './Sunflower'
 import { SunShroom, type ShroomState } from './SunShroom'
 import { WINDOW_GLASS_CLIP, Zombie } from './Zombie'
+import { ProjectScreen } from './ProjectScreens'
 import { HALO, PICK_RIM, outlineOf, type Highlight } from './outline'
 import { REFRESHED_SPRITES } from './refreshedSprites'
 import type { Phase } from '../daylight/phase'
+import type { ProjectId } from '../content/types'
 import { GLOW_WAIST, glowTop, tierOf, type Energy } from '../state/energy'
 
 /**
@@ -20,7 +22,8 @@ import { GLOW_WAIST, glowTop, tierOf, type Energy } from '../state/energy'
  * The figure at the desk is Thọ, seen from behind, drawn to match the portrait in the dialogue box.
  */
 
-export type ScreenMode = 'code' | 'diagram' | 'game' | 'docs'
+/** A section's screen, or the architecture diagram of one project while it is on screen. */
+export type ScreenMode = 'code' | 'diagram' | 'game' | 'docs' | `project:${ProjectId}`
 
 export const APARTMENT_FOCUS: SceneFocus = {
   primary: { x: 86, y: 8, w: 308, h: 146 },
@@ -234,6 +237,7 @@ const pcFrame: Px[] = [
 ]
 
 function Screen({ mode }: { mode: ScreenMode }) {
+  if (mode.startsWith('project:')) return <ProjectScreen id={mode.slice('project:'.length) as ProjectId} />
   switch (mode) {
     case 'code':
       return (
@@ -742,7 +746,9 @@ export function ApartmentScene({ viewBox, phase, zombie, screen, speaking, spark
       <PixelRects px={towerGlowB} className="f-rgb-b" />
       {highlight === 'pc' && <PixelRects px={OUTLINES.pc} />}
       <PixelRects px={pcFrame} />
-      <Screen mode={screen} />
+      <g data-screen={screen}>
+        <Screen mode={screen} />
+      </g>
       {/* The build Thọ is running: it fills at the pace of his energy and flashes OK when done. */}
       {(energy.build > 0 || energy.okFor > 0) && (
         <g className="f-build" data-build={Math.round(energy.build * 100)}>

@@ -28,6 +28,12 @@ export const galleryItems: readonly GalleryItem[] = [
   { file: 'gallery/18-red-core.webp', alt: 'A party and a white dog face a towering spiked dark mass with a glowing red core above castle rooftops.' },
   { file: 'gallery/19-nagash.webp', alt: 'Nagash raises a book and a long staff amid turquoise spirits, floating books, lightning and dark ruins.' },
   { file: 'gallery/20-battlefield-duel.webp', alt: 'Two armed fighters face each other across a muddy battlefield, with distant soldiers, small fires and an overcast sky.' },
+  { file: 'gallery/21-vs-hector.webp', alt: 'A blue-scarfed swordsman confronts a purple winged hooded adversary.' },
+  { file: 'gallery/22-moon-lord.webp', alt: 'Four armored heroes face the Moon Lord beneath a starry sky and four celestial pillars.' },
+  { file: 'gallery/23-monika.webp', alt: 'Monika rests her chin on her hands at a desk in a warmly lit classroom.' },
+  { file: 'gallery/24-radiance.webp', alt: 'A small horned knight faces a vast crowned winged being against golden light.' },
+  { file: 'gallery/25-dante-vergil.webp', alt: 'Dante and Vergil fight back to back amid red crystalline demonic scenery.' },
+  { file: 'gallery/26-reaching-sky.webp', alt: 'A dark-haired man in a suit reaches toward the bright sky above trees and city buildings.' },
 ]
 
 export function galleryUrl(item: GalleryItem): string {

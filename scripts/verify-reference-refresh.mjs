@@ -64,7 +64,7 @@ try {
     }
 
     await page.screenshot({ path: `artifacts/reference-refresh-${width}.png` })
-    for (const [label, panel] of [['Profile', '#cv-title'], ['Open album', '.album-viewer[open]']]) {
+    for (const [label, panel] of [['Profile', '#cv-title'], ['Open Game Gallery', '.album-viewer[open]']]) {
       await page.goto(process.env.ROOM_URL || 'http://127.0.0.1:5181')
       await page.getByRole('button', { name: label, exact: true }).click()
       await page.locator(panel).waitFor()

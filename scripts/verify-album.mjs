@@ -5,6 +5,7 @@ import assert from 'node:assert/strict'
 const browser = await chromium.launch({channel:'msedge', headless:true})
 const errors = []
 const approvedFiles = ['01-storm-castle.webp', '03-golden-field.webp', '04-fractured-world.webp', '05-starlit-rest-v2.webp', '06-rain-confrontation.webp', '07-white-haired-portrait.webp', '08-cradle.webp', '09-garden-reunion.webp', '10-group-portrait.webp', '11-artanis.webp', '12-frozen-duel-selected.webp', '13-bedside.webp', '14-resting-blades.webp', '15-golden-warrior.webp', '16-crimson-knight.webp', '17-held-hand.webp', '18-red-core.webp', '19-nagash.webp', '20-battlefield-duel.webp']
+approvedFiles.push('21-vs-hector.webp', '22-moon-lord.webp', '23-monika.webp', '24-radiance.webp', '25-dante-vergil.webp', '26-reaching-sky.webp')
 const counter = index => `${String(index + 1).padStart(2, '0')} / ${String(approvedFiles.length).padStart(2, '0')}`
 await mkdir('artifacts', {recursive:true})
 try {
@@ -14,13 +15,14 @@ try {
       page.on('pageerror', e => errors.push(e.message))
       await page.addInitScript(l => localStorage.setItem('tho-vn:locale',l), locale)
       await page.goto('http://127.0.0.1:5181')
-      const opener = page.getByRole('button', {name:{vi:'Mở album',en:'Open album',ja:'アルバムを開く'}[locale],exact:true})
+      const opener = page.getByRole('button', {name:{vi:'Mở album',en:'Open Game Gallery',ja:'アルバムを開く'}[locale],exact:true})
       const open = async () => {
         await opener.click()
         await page.locator('.album-viewer[open]').waitFor()
         assert.equal(await page.locator('.album-number').innerText(), counter(0))
       }
       await open()
+      assert.equal(await page.locator('#album-title').innerText(), 'Game Gallery')
       const source = await page.locator('.album-art img').getAttribute('src')
       await page.keyboard.press('ArrowLeft')
       assert.equal(await page.locator('.album-art img').getAttribute('src'),source)

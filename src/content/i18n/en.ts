@@ -233,7 +233,7 @@ export const en: LocaleContent = {
     back: 'Back',
     home: 'Home',
     next: 'Next',
-    hotspots: { laptop: 'See projects', album: 'Open album', drawer: 'Profile' },
+    hotspots: { laptop: 'See projects', album: 'Open Game Gallery', drawer: 'Profile' },
     sceneDescription:
       'Pixel art of a small apartment that follows the visitor’s own day and night. Thọ works at a desk with a laptop, a photo album and a notebook, a desktop tower plugged in underneath it, and a potted sunflower and a Sun-shroom on the floor by the window; the Sun-shroom sleeps by day. On the wall, Alhazard and Langrisser cross in one frame, Gran Centurio hangs in a tall frame beside it, and Armageddon rests on pegs below. The display cabinet holds the books behind the Limbus Company sinners and two plushes on the top shelf, a Skaven Grey Seer, an Alpha Legion miniature and a Master Ball on the lit middle shelf, and every boxed Fire Emblem game along the bottom. Click the laptop, the album or the desk drawer to explore, or the plants for a sun.',
     artNotice: 'Placeholder art',
@@ -288,10 +288,10 @@ export const en: LocaleContent = {
     gallery: {
       finish: 'Finish',
       lastPage: 'You have reached the last picture.',
-      keyHint: '← → Browse · Esc Close album',
-      loadError: 'The picture could not load. You can still browse or close the album.',
-      eyebrow: 'Gallery',
-      title: 'Pixel art album',
+      keyHint: '← → Browse · Esc Close gallery',
+      loadError: 'The picture could not load. You can still browse or close the gallery.',
+      eyebrow: 'Pixel art',
+      title: 'Game Gallery',
       noPictures: 'No pictures yet',
       prev: 'Prev',
       next: 'Next',

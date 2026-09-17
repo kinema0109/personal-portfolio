@@ -5,6 +5,7 @@ import { formatPeriod } from '../content/projects'
 import { site } from '../content/site'
 import type { ProjectId } from '../content/types'
 import { useLocale } from '../i18n/LocaleProvider'
+import { ContactIcon } from './ContactIcon'
 import { Missing, StatusTag } from './StatusTag'
 
 type Tab = 'experience' | 'skills' | 'education' | 'contact'
@@ -134,22 +135,31 @@ export function CvPanel({ onOpenProject }: { onOpenProject: (id: ProjectId) => v
       )}
 
       {tab === 'contact' && (
-        <dl className="detail-list contact-list">
+        // Full addresses are too long for the panel, so each contact is an icon and a short name; the
+        // address itself is in the link's title and accessible name.
+        <ul className="contact-links">
           {site.contact.map((item) => (
-            <div key={item.id}>
-              <dt>{labels.contactLabels[item.id]}</dt>
-              <dd>
-                {item.value === null ? (
-                  <Missing>{labels.notProvided}</Missing>
-                ) : (
-                  <a href={item.kind === 'email' ? `mailto:${item.value}` : item.value} rel="noopener">
-                    {item.value}
-                  </a>
-                )}
-              </dd>
-            </div>
+            <li key={item.id}>
+              {item.value === null ? (
+                <Missing>
+                  {labels.contactLabels[item.id]}: {labels.notProvided}
+                </Missing>
+              ) : (
+                <a
+                  className="contact-link"
+                  href={item.kind === 'email' ? `mailto:${item.value}` : item.value}
+                  target={item.kind === 'url' ? '_blank' : undefined}
+                  rel="noopener"
+                  title={decodeURI(item.value)}
+                  aria-label={`${labels.contactLabels[item.id]}: ${decodeURI(item.value)}`}
+                >
+                  <ContactIcon id={item.id} />
+                  <span>{labels.contactLabels[item.id]}</span>
+                </a>
+              )}
+            </li>
           ))}
-        </dl>
+        </ul>
       )}
     </section>
   )

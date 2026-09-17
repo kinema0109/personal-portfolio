@@ -91,9 +91,9 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
   // background tabs throttle intervals.
   useEffect(() => {
     if (!energyActive) return
-    let last = Date.now()
+    let last = performance.now()
     const id = window.setInterval(() => {
-      const now = Date.now()
+      const now = performance.now()
       const dt = (now - last) / 1000
       last = now
       setEnergy((e) => tick(e, dt))

@@ -14,7 +14,7 @@ import { HALO, PICK_RIM, outlineOf, type Highlight } from './outline'
 import { REFRESHED_SPRITES } from './refreshedSprites'
 import type { Phase } from '../daylight/phase'
 import type { ProjectId } from '../content/types'
-import { GLOW_WAIST, glowTop, tierOf, type Energy } from '../state/energy'
+import { GLOW_BOTTOM, GLOW_NECK, glowTop, tierOf, type Energy } from '../state/energy'
 
 /**
  * Room layout with separate work and display zones, drawn in code. Scene pixels: the room core spans 0–320 × 0–180,
@@ -656,6 +656,7 @@ export function ApartmentScene({ viewBox, phase, zombie, screen, speaking, spark
   const night = phase === 'night'
   const tier = tierOf(energy.seconds)
   const top = glowTop(energy.seconds)
+  const neckTop = Math.max(top, GLOW_NECK.below)
   const sunLayer = suns.map((sun) => (
     <Sun key={sun.id} x={sun.x} y={sun.y} size={sun.size} from={sun.origin} state={sun.state} />
   ))
@@ -692,7 +693,9 @@ export function ApartmentScene({ viewBox, phase, zombie, screen, speaking, spark
         </pattern>
         {/* The glow inside Thọ rises from the waist to the shoulders with his energy. */}
         <clipPath id={ENERGY_CLIP} clipPathUnits="userSpaceOnUse">
-          <rect x={140} y={top} width={80} height={GLOW_WAIST - top} />
+          <rect x={140} y={top} width={GLOW_NECK.x - 140} height={GLOW_BOTTOM - top} />
+          <rect x={GLOW_NECK.x} y={neckTop} width={GLOW_NECK.width} height={GLOW_BOTTOM - neckTop} />
+          <rect x={GLOW_NECK.x + GLOW_NECK.width} y={top} width={220 - GLOW_NECK.x - GLOW_NECK.width} height={GLOW_BOTTOM - top} />
         </clipPath>
         {/* The window glass, so a zombie walking past never shows outside the window. */}
         <clipPath id={WINDOW_GLASS_CLIP} clipPathUnits="userSpaceOnUse">
@@ -757,13 +760,17 @@ export function ApartmentScene({ viewBox, phase, zombie, screen, speaking, spark
         </g>
       )}
 
-      {highlight === 'speaker' && <PixelRects px={OUTLINES.speaker} className="f-breathe" />}
-      <PixelRects px={developerBody} className="f-breathe" />
-      {energy.seconds > 0 && (
-        <g className="f-energy" clipPath={`url(#${ENERGY_CLIP})`} data-glow-top={top}>
-          <PixelRects px={developerBody} className="f-breathe" />
-        </g>
-      )}
+      {/* One breathing group for the body, its hover rim and its glow, so they rise and fall in step;
+          separate groups start their animations at different times and show a seam on the shoulders. */}
+      <g className="f-breathe">
+        {highlight === 'speaker' && <PixelRects px={OUTLINES.speaker} />}
+        <PixelRects px={developerBody} />
+        {energy.seconds > 0 && (
+          <g className="f-energy" clipPath={`url(#${ENERGY_CLIP})`} data-glow-top={top}>
+            <PixelRects px={developerBody} />
+          </g>
+        )}
+      </g>
       {charge > 0 && (
         <g key={charge} className="f-charge" aria-hidden="true">
           <PixelRects px={developerBody} />

@@ -47,8 +47,13 @@ test('running out of energy mid-build hides the bar', () => {
   assert.equal(e.build, 0)
 })
 
-test('the glow reaches the shoulders at full energy and is gone at none', () => {
+test('the glow runs from the chair back to the shoulders, and any energy shows a row', () => {
   assert.equal(glowTop(60), 74)
-  assert.equal(glowTop(30), 92)
-  assert.equal(glowTop(0), 110)
+  assert.equal(glowTop(30), 82)
+  assert.equal(glowTop(0), 90)
+  assert.equal(glowTop(0.5), 89)
+})
+
+test('a clock stepping backwards does not refill energy', () => {
+  assert.equal(tick({ seconds: 10, build: 0, okFor: 0 }, -30).seconds, 10)
 })

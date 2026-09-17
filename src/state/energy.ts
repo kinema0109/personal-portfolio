@@ -24,9 +24,16 @@ export const ENERGY_MAX = 60
 export const BUILD_SECONDS = [0, 12, 7, 4] as const
 export const OK_SECONDS = 1
 
-/** Where the glow sits inside Thọ, in scene units: shoulders at the top, waist at the bottom. */
+/**
+ * Where the glow's level runs inside Thọ, in scene units. The chair back hides him from y 90 down,
+ * so the level runs from there (empty) to the shoulders (full); below it everything glows.
+ */
 export const GLOW_SHOULDERS = 74
-export const GLOW_WAIST = 110
+export const GLOW_WAIST = 90
+/** The glow's clip reaches past the bottom of the sprite, and past its one-unit breath. */
+export const GLOW_BOTTOM = 112
+/** The neck shows between the collar pieces; the glow stops below it so it never tints his skin. */
+export const GLOW_NECK = { x: 170, width: 10, below: 77 } as const
 
 export type Tier = 0 | 1 | 2 | 3
 
@@ -41,17 +48,22 @@ export const addSun = (e: Energy): Energy => ({ ...e, seconds: Math.min(ENERGY_M
 
 /** Advances energy and the build by `dt` seconds. */
 export function tick(e: Energy, dt: number): Energy {
-  const seconds = Math.max(0, e.seconds - dt)
+  // A clock that steps backwards must not refill energy.
+  const step = Math.max(0, dt)
+  const seconds = Math.max(0, e.seconds - step)
   if (e.okFor > 0) {
-    const okFor = Math.max(0, e.okFor - dt)
+    const okFor = Math.max(0, e.okFor - step)
     return { seconds, build: okFor > 0 ? 1 : 0, okFor }
   }
   const tier = tierOf(e.seconds)
   if (tier === 0 || seconds === 0) return { seconds, build: 0, okFor: 0 }
-  const build = e.build + dt / BUILD_SECONDS[tier]
+  const build = e.build + step / BUILD_SECONDS[tier]
   return build >= 1 ? { seconds, build: 1, okFor: OK_SECONDS } : { seconds, build, okFor: 0 }
 }
 
-/** The top edge of the glow in whole scene units: at the shoulders when full, at the waist when empty. */
+/**
+ * The top edge of the glow in whole scene units: at the shoulders when full, at the chair back when
+ * empty. Rounded up, so any energy at all shows at least one row.
+ */
 export const glowTop = (seconds: number): number =>
-  GLOW_WAIST - Math.round(((GLOW_WAIST - GLOW_SHOULDERS) * Math.min(seconds, ENERGY_MAX)) / ENERGY_MAX)
+  GLOW_WAIST - Math.ceil(((GLOW_WAIST - GLOW_SHOULDERS) * Math.min(Math.max(seconds, 0), ENERGY_MAX)) / ENERGY_MAX)

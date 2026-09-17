@@ -45,6 +45,7 @@ try {
   await collectOne()
   assert.equal(await tier(), 1, 'one sun gives tier 1')
   const lowGlow = await glowTopOf()
+  assert.ok(lowGlow < 90, `one sun already glows above the chair back (${lowGlow})`)
   assert.equal(await codeDuration(), '3.5s')
 
   await collectOne()
@@ -61,7 +62,7 @@ try {
 
   // Draining: after 21 more seconds the tier has dropped and the glow is lower.
   await page.clock.runFor(21000)
-  assert.ok((await tier()) < 3, 'energy drains over time')
+  assert.equal(await tier(), 2, 'energy drains over time, one tier per 20 s')
   assert.ok((await glowTopOf()) > highGlow, 'the glow sinks as energy drains')
   await page.screenshot({ path: 'artifacts/energy-draining.png' })
 

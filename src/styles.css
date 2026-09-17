@@ -271,7 +271,7 @@ p {
 .f-charge { opacity: 0; animation: charge-flash 420ms linear both; }
 .f-charge rect { fill: #ffe27a; }
 /* Energy from suns: the same warm light as the collect flash, held inside Thọ at the level left. */
-.f-energy { opacity: 0.45; }
+.f-energy { opacity: 0.3; }
 .f-energy rect { fill: #ffe27a; }
 /* More energy, faster work: typing and the code on the screen speed up by tier. */
 .energy-1 .f-type-a, .energy-1 .f-type-b { animation-duration: 1.6s; }

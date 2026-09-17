@@ -13,7 +13,7 @@ type Section = 'home' | 'projects' | 'how' | 'outside' | 'cv' | 'gallery'
 
 /** Everything the screen needs for one location. */
 export interface View {
-  /** What the laptop in the scene shows. */
+  /** What the PC screen in the scene shows. */
   screen: ScreenMode
   step: DialogueStep
   stepIndex: number

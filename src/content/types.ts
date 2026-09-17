@@ -46,7 +46,7 @@ export type ProjectId =
   | 'yokara'
 
 /** Objects in the room that open a destination. */
-export type HotspotId = 'laptop' | 'album' | 'drawer'
+export type HotspotId = 'pc' | 'album' | 'drawer'
 
 /** Where a choice leads. */
 export type Target =

@@ -41,7 +41,7 @@ const SWORD_CROSS = { x: 229, y: 40 } as const
 export const ALBUM_BOX = { x: 118, y: 84, w: 34, h: 21 } as const
 
 /** Other objects the visitor can discover by clicking; Scene.tsx places a button over each. */
-export const LAPTOP_BOX = { x: 192, y: 72, w: 52, h: 32 } as const
+export const PC_BOX = { x: 192, y: 72, w: 52, h: 32 } as const
 export const DRAWER_BOX = { x: 246, y: 112, w: 28, h: 31 } as const
 
 /** Thọ at the desk. Clicking him advances the story, so the reader never has to aim at the textbox. */
@@ -156,7 +156,7 @@ const drawerPx: Px[] = [
 ]
 
 /**
- * The desktop tower, under the screen it drives: the laptop sits at x 192–244, so the case stands at
+ * The desktop tower, under the screen it drives: the PC sits at x 192–244, so the case stands at
  * x 208–222 rather than on the far side of the chair where it used to be. Its lead runs along the
  * floor to a power strip by the wall socket at x 110–115, which is also what ties the two halves of
  * the desk's underside together.
@@ -228,7 +228,7 @@ const towerGlowB: Px[] = [
   [210, 127, 10, 1, '#7a4276'], [220, 119, 1, 20, '#7a4276'], [212, 126, 4, 1, '#552f54'],
 ]
 
-const laptopFrame: Px[] = [
+const pcFrame: Px[] = [
   [196, 72, 44, 30, C.night],
   [194, 101, 48, 1, C.mist], [192, 102, 52, 2, C.slateLight],
 ]
@@ -390,12 +390,12 @@ const chair: Px[] = [
 ]
 
 const deskItems: Px[] = [
-  // Water glass beside the laptop.
+  // Water glass beside the PC.
   [248, 93, 1, 11, C.mist], [255, 93, 1, 11, C.mist],
   [249, 98, 6, 5, C.water], [249, 103, 6, 1, C.mist], [250, 96, 1, 6, C.cream],
 ]
 
-/** The fan on the left end of the desk, clear of the album and laptop. */
+/** The fan on the left end of the desk, clear of the album and PC. */
 const fanPx: Px[] = [
   [95, 101, 18, 3, C.night], [103, 92, 2, 9, C.slate],
   [98, 74, 12, 1, C.slate], [96, 75, 16, 1, C.slate], [95, 76, 18, 15, C.slate],
@@ -568,7 +568,7 @@ const albumPx: Px[] = [
 
 /** Rims for the objects the visitor can point at, built once from the objects themselves. */
 const OUTLINES = {
-  laptop: outlineOf(laptopFrame),
+  pc: outlineOf(pcFrame),
   drawer: outlineOf(drawerPx),
   fan: outlineOf(fanPx),
   speaker: outlineOf([...developerBody, ...developerArm]),
@@ -740,8 +740,8 @@ export function ApartmentScene({ viewBox, phase, zombie, screen, speaking, spark
       <PixelRects px={tower} />
       <PixelRects px={towerGlowA} className="f-rgb-a" />
       <PixelRects px={towerGlowB} className="f-rgb-b" />
-      {highlight === 'laptop' && <PixelRects px={OUTLINES.laptop} />}
-      <PixelRects px={laptopFrame} />
+      {highlight === 'pc' && <PixelRects px={OUTLINES.pc} />}
+      <PixelRects px={pcFrame} />
       <Screen mode={screen} />
       {/* The build Thọ is running: it fills at the pace of his energy and flashes OK when done. */}
       {(energy.build > 0 || energy.okFor > 0) && (

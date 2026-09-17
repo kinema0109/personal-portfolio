@@ -5,7 +5,7 @@ import {
   ApartmentScene,
   DRAWER_BOX,
   FIRE_EMBLEM_SHELF,
-  LAPTOP_BOX,
+  PC_BOX,
   FAN_BOX,
   FAN_SPEEDS,
   SPEAKER_BOX,
@@ -33,7 +33,7 @@ import './shelf.css'
  * The sword frame and display cabinet are personal references only and stay non-interactive.
  */
 const HOTSPOTS: readonly { id: HotspotId; box: Rect }[] = [
-  { id: 'laptop', box: LAPTOP_BOX },
+  { id: 'pc', box: PC_BOX },
   { id: 'album', box: ALBUM_BOX },
   { id: 'drawer', box: DRAWER_BOX },
 ]

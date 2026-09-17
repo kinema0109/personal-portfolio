@@ -43,7 +43,7 @@ function readGallerySeen(): boolean {
 
 /** Projects, CV and the album are found by clicking objects in the room. */
 const HOTSPOT_TARGETS: Record<HotspotId, Target> = {
-  laptop: { kind: 'node', id: 'work' },
+  pc: { kind: 'node', id: 'work' },
   album: { kind: 'gallery' },
   drawer: { kind: 'cv' },
 }

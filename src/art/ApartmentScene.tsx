@@ -11,6 +11,7 @@ import { SunShroom, type ShroomState } from './SunShroom'
 import { HALO, PICK_RIM, outlineOf, type Highlight } from './outline'
 import { REFRESHED_SPRITES } from './refreshedSprites'
 import type { Phase } from '../daylight/phase'
+import { GLOW_WAIST, glowTop, tierOf, type Energy } from '../state/energy'
 
 /**
  * Room layout with separate work and display zones, drawn in code. Scene pixels: the room core spans 0–320 × 0–180,
@@ -592,6 +593,22 @@ export function SpeechBubble({ x, y }: { x: number; y: number }) {
   )
 }
 
+/** Clip id for the energy glow inside Thọ. */
+const ENERGY_CLIP = 'apt-energy-fill'
+
+/** A small "OK ✓" plate in the middle of the PC screen, shown for a moment when a build completes. */
+const OK_BADGE: Px[] = [
+  [207, 83, 23, 9, C.night],
+  // O
+  [210, 85, 3, 1, C.cream], [210, 89, 3, 1, C.cream], [210, 86, 1, 3, C.cream], [212, 86, 1, 3, C.cream],
+  // K
+  [214, 85, 1, 5, C.cream], [215, 87, 1, 1, C.cream], [216, 86, 1, 1, C.cream], [216, 85, 1, 1, C.cream],
+  [216, 88, 1, 1, C.cream], [216, 89, 1, 1, C.cream],
+  // ✓
+  [220, 87, 1, 1, '#7fc97f'], [221, 88, 1, 1, '#7fc97f'], [222, 87, 1, 1, '#7fc97f'],
+  [223, 86, 1, 1, '#7fc97f'], [224, 85, 1, 1, '#7fc97f'],
+]
+
 interface ApartmentSceneProps {
   viewBox: string
   /** Day or night where the visitor is; only the view through the window changes. */
@@ -606,6 +623,8 @@ interface ApartmentSceneProps {
   shroom: ShroomState
   /** Counts suns taken in. Changing it replays the flash, which is why it is a number. */
   charge: number
+  /** Energy from collected suns: the glow inside Thọ, how fast he works, and the build on the screen. */
+  energy: Energy
   /** How fast the desk fan is turning, or whether it is off. */
   fanSpeed: FanSpeed
   /** What the visitor is pointing at, so that object can outline itself rather than show a box. */
@@ -626,14 +645,17 @@ export interface DroppedSun {
   origin: { x: number; y: number }
 }
 
-export function ApartmentScene({ viewBox, phase, screen, speaking, sparkle, suns, shroom, charge, fanSpeed, highlight }: ApartmentSceneProps) {
+export function ApartmentScene({ viewBox, phase, screen, speaking, sparkle, suns, shroom, charge, energy, fanSpeed, highlight }: ApartmentSceneProps) {
   const night = phase === 'night'
+  const tier = tierOf(energy.seconds)
+  const top = glowTop(energy.seconds)
   const sunLayer = suns.map((sun) => (
     <Sun key={sun.id} x={sun.x} y={sun.y} size={sun.size} from={sun.origin} state={sun.state} />
   ))
   return (
     <svg
-      className="pixel-svg"
+      className={`pixel-svg energy-${tier}`}
+      data-energy-tier={tier}
       viewBox={viewBox}
       preserveAspectRatio="xMidYMid slice"
       shapeRendering="crispEdges"
@@ -661,6 +683,10 @@ export function ApartmentScene({ viewBox, phase, screen, speaking, sparkle, suns
           <rect x="20" y="0" width="1" height="14" fill={C.night} />
           <rect x="65" y="15" width="1" height="14" fill={C.night} />
         </pattern>
+        {/* The glow inside Thọ rises from the waist to the shoulders with his energy. */}
+        <clipPath id={ENERGY_CLIP} clipPathUnits="userSpaceOnUse">
+          <rect x={140} y={top} width={80} height={GLOW_WAIST - top} />
+        </clipPath>
       </defs>
 
       <PixelRects px={shell} />
@@ -709,9 +735,21 @@ export function ApartmentScene({ viewBox, phase, screen, speaking, sparkle, suns
       {highlight === 'laptop' && <PixelRects px={OUTLINES.laptop} />}
       <PixelRects px={laptopFrame} />
       <Screen mode={screen} />
+      {/* The build Thọ is running: it fills at the pace of his energy and flashes OK when done. */}
+      {(energy.build > 0 || energy.okFor > 0) && (
+        <g className="f-build" data-build={Math.round(energy.build * 100)}>
+          <rect x={198} y={99} width={Math.max(1, Math.round(40 * energy.build))} height={1} fill={C.ochre} />
+          {energy.okFor > 0 && <PixelRects px={OK_BADGE} />}
+        </g>
+      )}
 
       {highlight === 'speaker' && <PixelRects px={OUTLINES.speaker} className="f-breathe" />}
       <PixelRects px={developerBody} className="f-breathe" />
+      {energy.seconds > 0 && (
+        <g className="f-energy" clipPath={`url(#${ENERGY_CLIP})`} data-glow-top={top}>
+          <PixelRects px={developerBody} className="f-breathe" />
+        </g>
+      )}
       {charge > 0 && (
         <g key={charge} className="f-charge" aria-hidden="true">
           <PixelRects px={developerBody} />
@@ -719,6 +757,11 @@ export function ApartmentScene({ viewBox, phase, screen, speaking, sparkle, suns
         </g>
       )}
       <PixelRects px={developerArm} />
+      {energy.seconds > 0 && (
+        <g className="f-energy" clipPath={`url(#${ENERGY_CLIP})`}>
+          <PixelRects px={developerArm} />
+        </g>
+      )}
       <PixelRects px={handA} className={speaking ? undefined : 'f-type-a'} />
       {!speaking && <PixelRects px={handB} className="f-type-b" />}
 

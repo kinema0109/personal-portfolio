@@ -17,6 +17,7 @@ import { layoutBookShelf } from '../art/BookShelf'
 import { FIGURES } from '../art/Figures'
 import { SUNFLOWER_BOX, SUNFLOWER_TOSS, SUN_FADE_MS, SUN_LIFE_MS, SUN_SIZE, SUN_SPOTS, SUN_TAKE_MS } from '../art/Sunflower'
 import { GROW_AFTER, SUNSHROOM_BOX, shroomToss } from '../art/SunShroom'
+import { EMPTY_ENERGY, addSun, tick, type Energy } from '../state/energy'
 import { layoutFireEmblemShelf } from '../art/GameShelf'
 import { frameCamera, type Camera, type Rect } from '../art/camera'
 import { site } from '../content/site'
@@ -65,6 +66,8 @@ const PAN_FRAME_MS = 50
 const SHROOM_TIMER = -1
 /** The flash peaks here, and that is when the sun comes out. */
 const SHROOM_FLASH_MS = 180
+/** How often energy drains and the build advances while either is active. */
+const ENERGY_TICK_MS = 500
 /** The free region is re-measured right after a panel opens or closes; moves within this window glide. */
 const PANEL_GLIDE_WINDOW_MS = 400
 
@@ -78,6 +81,23 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
   const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight })
   const [suns, setSuns] = useState<readonly DroppedSun[]>([])
   const [charge, setCharge] = useState(0)
+  const [energy, setEnergy] = useState<Energy>(EMPTY_ENERGY)
+  const energyActive = energy.seconds > 0 || energy.okFor > 0
+
+  // Energy drains and the build advances only while there is something to show, so an idle room
+  // does not re-render twice a second. Elapsed time comes from the clock, not the tick count, because
+  // background tabs throttle intervals.
+  useEffect(() => {
+    if (!energyActive) return
+    let last = Date.now()
+    const id = window.setInterval(() => {
+      const now = Date.now()
+      const dt = (now - last) / 1000
+      last = now
+      setEnergy((e) => tick(e, dt))
+    }, ENERGY_TICK_MS)
+    return () => window.clearInterval(id)
+  }, [energyActive])
   const [fanStep, setFanStep] = useState(0)
   // What the pointer is over, so the object itself can be outlined instead of its click box.
   const [highlight, setHighlight] = useState<string | null>(null)
@@ -156,6 +176,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
     clearTimers(sun.id)
     setState(sun.id, 'taken')
     setCharge((n) => n + 1)
+    setEnergy(addSun)
     after(sun.id, SUN_TAKE_MS, () => drop(sun.id))
     // Growth counts small suns collected while it is awake; one left to go out does not count.
     if (sun.plant === 'shroom' && sun.size === 'small' && phase === 'night') {
@@ -279,6 +300,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
             suns={suns}
             shroom={{ grown: shroomGrown, flash: shroomFlash, nudge: shroomNudge }}
             charge={charge}
+            energy={energy}
             fanSpeed={fanSpeed}
             highlight={highlight}
           />

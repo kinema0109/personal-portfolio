@@ -263,6 +263,16 @@ p {
 .f-sun.is-fading { animation: sun-fade 700ms steps(1, end) both; }
 .f-charge { opacity: 0; animation: charge-flash 420ms linear both; }
 .f-charge rect { fill: #ffe27a; }
+/* Energy from suns: the same warm light as the collect flash, held inside Thọ at the level left. */
+.f-energy { opacity: 0.45; }
+.f-energy rect { fill: #ffe27a; }
+/* More energy, faster work: typing and the code on the screen speed up by tier. */
+.energy-1 .f-type-a, .energy-1 .f-type-b { animation-duration: 1.6s; }
+.energy-2 .f-type-a, .energy-2 .f-type-b { animation-duration: 1.1s; }
+.energy-3 .f-type-a, .energy-3 .f-type-b { animation-duration: 0.7s; }
+.energy-1 .f-code-a, .energy-1 .f-code-b { animation-duration: 3.5s; }
+.energy-2 .f-code-a, .energy-2 .f-code-b { animation-duration: 2.2s; }
+.energy-3 .f-code-a, .energy-3 .f-code-b { animation-duration: 1.2s; }
 .f-sun-b { opacity: 0; animation: show-second-half 0.7s linear infinite; }
 .f-sun-a { animation: show-first-half 0.7s linear infinite; }
 
@@ -1138,6 +1148,10 @@ p {
 
 /* ── Reduced motion ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
+  /* The build is movement, so it is not shown; the glow's level still is. */
+  .f-build {
+    display: none;
+  }
   *,
   *::before,
   *::after {

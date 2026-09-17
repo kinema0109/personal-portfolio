@@ -15,8 +15,12 @@ export const WARP_MS = 1500
 /** How long Thọ's caption asking for pylons stays up. */
 export const PYLON_LINE_MS = 3000
 
-/** Click target over the pylon, in scene units. Scene.tsx places the button here. */
-export const PYLON_BOX = { x: 101, y: 121, w: 19, h: 26 } as const
+/**
+ * Click target over the pylon, in scene units. Scene.tsx places the button here. Padded past the art
+ * (x 103–117, y 123–146) to at least 23 × 28, so it is an easy target on a phone; it stays clear of the
+ * fan above (y ≤ 105), the Sun-shroom and the nearest sun spot (x ≤ 94).
+ */
+export const PYLON_BOX = { x: 99, y: 119, w: 23, h: 28 } as const
 
 const GLOW = '#3fa7ff'
 const WIRE = '#7fd4ff'
@@ -37,8 +41,16 @@ const crystalShape = (core: string, light: string, shade: string): Px[] => [
 const crystalLit = crystalShape(GLOW, '#b8e4ff', '#2a6fc0')
 const crystalDark = crystalShape('#3d4a5e', '#566378', '#2b3444')
 
-/** A soft halo behind the lit crystal. */
-const halo: Px[] = [[106, 124, 9, 13, GLOW]]
+/**
+ * A soft glow behind the lit crystal: a stepped diamond one to two units past the crystal's own shape,
+ * so it reads as light around the crystal rather than a box. Drawn as one group, so the overlapping
+ * steps share one opacity instead of stacking.
+ */
+const halo: Px[] = [
+  [109, 121, 3, 19, GLOW],
+  [107, 123, 7, 15, GLOW],
+  [105, 127, 11, 7, GLOW],
+]
 
 /** The crystal's edges only, split so the warp can draw the top first and the bottom second. */
 const wireTop: Px[] = [
@@ -51,13 +63,19 @@ const wireBottom: Px[] = [
 ]
 const warpRing: Px[] = [[99, 145, 23, 1, WIRE], [102, 144, 17, 1, GLOW]]
 
-const silhouette = outlineOf([...base(true), ...crystalLit])
+/**
+ * The hover rim, in two parts: the base's stays on the floor, and the crystal's is drawn inside the
+ * bobbing group so it moves with the crystal. During the warp there is no crystal yet, so only the base
+ * is outlined.
+ */
+const baseRim = outlineOf(base(true))
+const crystalRim = outlineOf(crystalLit)
 
 export function Pylon({ power, highlight }: { power: Power; highlight: boolean }) {
   const lit = power === 'on'
   return (
     <g data-pylon={power}>
-      {highlight && <PixelRects px={silhouette} />}
+      {highlight && <PixelRects px={baseRim} />}
       <PixelRects px={base(lit)} />
       {power === 'warping' ? (
         <g className="f-warp">
@@ -67,6 +85,7 @@ export function Pylon({ power, highlight }: { power: Power; highlight: boolean }
         </g>
       ) : (
         <g className={lit ? 'f-pylon-bob' : undefined}>
+          {highlight && <PixelRects px={crystalRim} />}
           {lit && <PixelRects px={halo} className="f-pylon-glow" />}
           <PixelRects px={lit ? crystalLit : crystalDark} />
         </g>

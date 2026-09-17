@@ -80,8 +80,6 @@ const baseboard: Px[] = [
 const floorDetails: Px[] = [
   // rug
   [132, 131, 168, 9, C.redDark], [132, 132, 168, 1, C.red], [132, 138, 168, 1, C.red],
-  // wall socket
-  [110, 116, 5, 6, C.creamDim], [111, 118, 1, 2, C.night], [113, 118, 1, 2, C.night],
 ]
 
 /** Daylight through the window, thrown across the floor. */
@@ -185,8 +183,9 @@ const tower: Px[] = [
 ]
 
 /**
- * The lead running from the pylon under the desk to the tower. The pylon under the socket at
- * x 110–115 now powers the tower, in place of the power strip that used to sit there.
+ * The lead running from the pylon under the desk to the tower. The pylon powers the room in place of
+ * the power strip and the wall socket that fed it; the socket went too, because above the pylon it
+ * read as a face.
  */
 const cables: Px[] = [
   // The tower's lead, from the pylon across the floor, dipping on the way.

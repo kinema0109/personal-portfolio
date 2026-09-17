@@ -43,7 +43,8 @@ export function useWalker(active: boolean, timing: WalkerTiming): number | null 
       handles.forEach(clearTimeout)
       setWalk(null)
     }
-  }, [active, timing])
+    // The timing's numbers, not the object: a caller passing a fresh literal must not reschedule.
+  }, [active, timing.first[0], timing.first[1], timing.every[0], timing.every[1], timing.walkMs])
 
   return walk
 }

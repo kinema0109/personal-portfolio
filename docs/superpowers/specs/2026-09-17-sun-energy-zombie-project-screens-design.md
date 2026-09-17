@@ -64,9 +64,10 @@ Speed follows the current energy, so Thọ slows down as it drains:
 ## 2. Zombie at night
 
 - Only at night, walking past the window.
-- **Timing:**
-  - The first zombie comes a random 10–20 s after night begins (on load or on switching to night).
-  - After that, one comes every random 40–90 s.
+- **Timing** (owner: short, because an HR visitor spends little time in the room):
+  - The first zombie comes a random 3–5 s after night begins (on load or on switching to night).
+  - After that, one comes every random 15–25 s.
+- Something to see by day as well is wanted, but deferred to a later spec.
 - **Look:** a small Plants vs. Zombies basic zombie drawn in code: brown coat, red tie, grey-green skin, arms held forward.
 - **Walk:** it shambles in whole-pixel steps from right to left along the foot of the skyline inside the window, and takes about 8 s to cross.
 - It is clipped to the window glass (26, 22, 74 × 70), so it never shows outside the window.
@@ -119,7 +120,7 @@ Checks follow the existing `scripts/verify-*.mjs` pattern: Playwright with Edge,
   - with a fixed clock advanced 21 s, the tier drops by one and the glow is lower;
   - the build bar appears with energy and hides at 0;
   - the typing animation duration matches the tier.
-- `scripts/verify-zombie.mjs`: with the clock controlled and night forced, a zombie appears within 20 s, walks from right to left, and stays inside the window; by day no zombie appears.
+- `scripts/verify-zombie.mjs`: with the clock controlled and night forced, a zombie appears within 6 s, walks from right to left, and stays inside the window; by day no zombie appears.
 - `scripts/verify-project-screens.mjs`: opening each project's panel shows that project's diagram (`data-screen="project:<id>"`); the related story nodes show theirs; other places keep their section screen.
 - Existing checks still pass: `verify-sunflower`, `verify-sunshroom`, `verify-hover`, `verify-daylight`, `verify-interactions`, `verify-room`, `verify-album`, `verify-fan`.
 - Screenshots of the glow at three levels, of a zombie mid-walk, and of all 7 project screens, inspected directly.

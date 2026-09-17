@@ -213,6 +213,10 @@ export interface LocaleContent {
     sun: string
     sunshroom: string
     sunshroomAsleep: string
+    /** The pylon under the desk: its button while on and while off, and Thọ's caption when power goes. */
+    pylonOff: string
+    pylonOn: string
+    pylonLine: string
     sceneDescription: string
     artNotice: string
     artNoticeDetail: string

@@ -314,6 +314,33 @@ p {
 .f-slime-land { animation: slime-land 0.7s linear infinite; }
 .f-slime-air { opacity: 0; animation: slime-air 0.7s linear infinite; }
 
+/* Pylon: the lit crystal bobs a pixel and glows; warping in pulses a floor ring, then draws the
+   crystal's wireframe top half first and bottom half second, over WARP_MS. */
+@keyframes pylon-bob { 0%, 49.99% { transform: translateY(0); } 50%, 100% { transform: translateY(-1px); } }
+@keyframes warp-appear { from { opacity: 0; } to { opacity: 1; } }
+@keyframes warp-ring { 0%, 49.99% { opacity: 1; } 50%, 100% { opacity: 0.35; } }
+.f-pylon-bob { animation: pylon-bob 1.8s linear infinite; }
+.f-pylon-glow { opacity: 0.18; }
+.f-warp-ring { animation: warp-ring 0.3s linear infinite; }
+.f-warp-top { opacity: 0; animation: warp-appear 1ms linear 0.4s both; }
+.f-warp-bottom { opacity: 0; animation: warp-appear 1ms linear 0.9s both; }
+
+/* Thọ's caption when the power goes, above his head in the room. */
+.pylon-line {
+  position: absolute;
+  z-index: 1;
+  margin: 0;
+  transform: translate(-50%, -110%);
+  padding: 2px 8px;
+  white-space: nowrap;
+  font-family: var(--font-label);
+  font-size: 0.8rem;
+  color: var(--cream);
+  background: var(--night);
+  border: 2px solid #3fa7ff;
+  pointer-events: none;
+}
+
 /* Sun-shroom. Awake, it rocks on whole pixels and blinks now and then; asleep, it holds still under
    rising Zs. Everything steps, like the rest of the room. Reduced motion turns all of it off, which
    leaves one still Z over the sleeping plant. */

@@ -5,6 +5,7 @@ import { DialogueBox } from './components/DialogueBox'
 import { GalleryPanel } from './components/GalleryPanel'
 import { ProjectDetail } from './components/ProjectDetail'
 import { Scene } from './components/Scene'
+import { WARP_MS, type Power } from './art/Pylon'
 import { CONTENT } from './content'
 import { galleryItems } from './content/gallery'
 import { site } from './content/site'
@@ -56,6 +57,26 @@ export default function App() {
   const blip = useBlip(soundOn)
   const { phase, toggle: togglePhase } = usePhase()
   const [gallerySeen, setGallerySeen] = useState(readGallerySeen)
+  // The pylon under the desk is the room's power. Off, the visual novel steps aside and only the room
+  // is left; warping it back in takes a moment before power, and the story, return.
+  const [power, setPower] = useState<Power>('on')
+  const powered = power === 'on'
+  const warpTimer = useRef(0)
+  useEffect(() => () => window.clearTimeout(warpTimer.current), [])
+  const togglePower = useCallback(() => {
+    if (power === 'warping') return
+    if (power === 'on') {
+      setPower('off')
+      return
+    }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setPower('on')
+      return
+    }
+    setPower('warping')
+    window.clearTimeout(warpTimer.current)
+    warpTimer.current = window.setTimeout(() => setPower('on'), WARP_MS)
+  }, [power])
 
   const appRef = useRef<HTMLDivElement>(null)
   const topRef = useRef<HTMLElement>(null)
@@ -73,7 +94,7 @@ export default function App() {
   // Text length changes with the language, so the free region is re-measured on a switch too.
   const region = useFreeRegion(
     { app: appRef, top: topRef, dialogue: dialogueRef, doc: docRef, menu: menuRef },
-    [key, locale],
+    [key, locale, powered],
   )
 
   const act = useCallback(
@@ -116,6 +137,7 @@ export default function App() {
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (document.querySelector('dialog[open]')) return
+      if (!powered) return
       if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return
       if (e.key === 'Escape') {
         act({ type: 'back' })
@@ -136,7 +158,7 @@ export default function App() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [act, go, view.choices, hasNext])
+  }, [act, go, view.choices, hasNext, powered])
 
   return (
     <div className="app" ref={appRef}>
@@ -152,6 +174,8 @@ export default function App() {
         panelOpen={view.panel !== null && view.panel.kind !== 'gallery'}
         sparkle={!gallerySeen}
         onAdvance={hasNext ? () => act({ type: 'next' }) : null}
+        power={power}
+        onPower={togglePower}
       />
 
       <header className="topbar" ref={topRef}>
@@ -203,7 +227,8 @@ export default function App() {
         </div>
       </header>
 
-      {here.kind === 'gallery' && <GalleryPanel onClose={() => act({ type: 'back' })} />}
+      {powered && here.kind === 'gallery' && <GalleryPanel onClose={() => act({ type: 'back' })} />}
+      {powered && (
       <div className={`hud${view.panel && view.panel.kind !== 'gallery' ? ' has-panel' : ''}`}>
         {/* Whatever is on top — a picker or a panel — owns the screen while it is up, so clicking
             anywhere off it closes it rather than falling through to the room behind. */}
@@ -238,6 +263,7 @@ export default function App() {
           onHome={() => act({ type: 'home' })}
         />
       </div>
+      )}
     </div>
   )
 }

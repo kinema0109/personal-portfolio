@@ -10,6 +10,7 @@ import { Sun, Sunflower, type SunSize } from './Sunflower'
 import { SunShroom, type ShroomState } from './SunShroom'
 import { WINDOW_GLASS_CLIP, Zombie } from './Zombie'
 import { Slime } from './Slime'
+import { Pylon, type Power } from './Pylon'
 import { ProjectScreen } from './ProjectScreens'
 import { HALO, PICK_RIM, outlineOf, type Highlight } from './outline'
 import { REFRESHED_SPRITES } from './refreshedSprites'
@@ -162,7 +163,7 @@ const drawerPx: Px[] = [
 /**
  * The desktop tower, under the screen it drives: the PC sits at x 192–244, so the case stands at
  * x 208–222 rather than on the far side of the chair where it used to be. Its lead runs along the
- * floor to a power strip by the wall socket at x 110–115, which is also what ties the two halves of
+ * floor to the pylon under the desk at x 103–117, which is also what ties the two halves of
  * the desk's underside together.
  */
 const tower: Px[] = [
@@ -184,17 +185,12 @@ const tower: Px[] = [
 ]
 
 /**
- * The power strip on the floor under the socket, and the leads running to it. The socket at x 110–115
- * was already on that wall; this is what it now feeds.
+ * The lead running from the pylon under the desk to the tower. The pylon under the socket at
+ * x 110–115 now powers the tower, in place of the power strip that used to sit there.
  */
 const cables: Px[] = [
-  // Down the wall from the socket to the strip.
-  [112, 122, 1, 21, '#15171d'],
-  // The strip itself, with its own pilot light.
-  [106, 143, 16, 3, '#2b2f38'], [106, 143, 16, 1, '#3c414d'],
-  [108, 144, 1, 1, '#6fb3a6'],
-  // The tower's lead, crossing the floor and dipping on the way.
-  [122, 144, 40, 1, '#15171d'], [161, 144, 1, 2, '#15171d'], [162, 145, 44, 1, '#15171d'],
+  // The tower's lead, from the pylon across the floor, dipping on the way.
+  [118, 144, 44, 1, '#15171d'], [161, 144, 1, 2, '#15171d'], [162, 145, 44, 1, '#15171d'],
   [205, 141, 1, 5, '#15171d'],
 ]
 
@@ -623,6 +619,8 @@ interface ApartmentSceneProps {
   zombie: number | null
   /** Id of the slime hopping past the window in progress, or null. Day or night. */
   slime: number | null
+  /** The room's power. Unless it is on, the PC, its lights, the fan and the ceiling bulb are off. */
+  power: Power
   screen: ScreenMode
   speaking: boolean
   /** Glint on the album. */
@@ -655,8 +653,9 @@ export interface DroppedSun {
   origin: { x: number; y: number }
 }
 
-export function ApartmentScene({ viewBox, phase, zombie, slime, screen, speaking, sparkle, suns, shroom, charge, energy, fanSpeed, highlight }: ApartmentSceneProps) {
+export function ApartmentScene({ viewBox, phase, zombie, slime, power, screen, speaking, sparkle, suns, shroom, charge, energy, fanSpeed, highlight }: ApartmentSceneProps) {
   const night = phase === 'night'
+  const powered = power === 'on'
   const tier = tierOf(energy.seconds)
   const top = glowTop(energy.seconds)
   const neckTop = Math.max(top, GLOW_NECK.below)
@@ -713,10 +712,10 @@ export function ApartmentScene({ viewBox, phase, zombie, slime, screen, speaking
       <PixelRects px={floorDetails} />
       <PixelRects px={windowLight} />
       <ellipse cx={207} cy={143} rx={115} ry={6} fill="#0e1826" opacity={0.6} />
-      <path d="M154 -8H215L283 104H107Z" fill="#e7b568" opacity={0.055} />
+      {powered && <path d="M154 -8H215L283 104H107Z" fill="#e7b568" opacity={0.055} />}
       <path d="M184 -36V-5" stroke="#17212d" strokeWidth={2} />
       <path d="M180 -5H188L196 2H172Z" fill="#142330" />
-      <rect x={176} y={2} width={16} height={1} fill="#f2d29a" />
+      <rect x={176} y={2} width={16} height={1} fill={powered ? '#f2d29a' : '#3a3a44'} />
       <PixelRects px={windowFrame} />
       <g data-window={phase}>
         {night ? (
@@ -747,17 +746,22 @@ export function ApartmentScene({ viewBox, phase, zombie, slime, screen, speaking
       <PixelRects px={desk} />
       <PixelRects px={drawerPx} />
       <PixelRects px={cables} />
+      <Pylon power={power} highlight={highlight === 'pylon'} />
       <PixelRects px={paintCase} />
       <PixelRects px={tower} />
-      <PixelRects px={towerGlowA} className="f-rgb-a" />
-      <PixelRects px={towerGlowB} className="f-rgb-b" />
+      {powered && (
+        <>
+          <PixelRects px={towerGlowA} className="f-rgb-a" />
+          <PixelRects px={towerGlowB} className="f-rgb-b" />
+        </>
+      )}
       {highlight === 'pc' && <PixelRects px={OUTLINES.pc} />}
       <PixelRects px={pcFrame} />
-      <g data-screen={screen}>
-        <Screen mode={screen} />
+      <g data-screen={powered ? screen : 'off'}>
+        {powered ? <Screen mode={screen} /> : <PixelRects px={[[198, 74, 40, 26, '#0b0e16']]} />}
       </g>
       {/* The build Thọ is running: it fills at the pace of his energy and flashes OK when done. */}
-      {(energy.build > 0 || energy.okFor > 0) && (
+      {powered && (energy.build > 0 || energy.okFor > 0) && (
         <g className="f-build" data-build={Math.round(energy.build * 100)}>
           <rect x={198} y={99} width={Math.max(1, Math.round(40 * energy.build))} height={1} fill={C.ochre} />
           {energy.okFor > 0 && <PixelRects px={OK_BADGE} />}
@@ -787,8 +791,9 @@ export function ApartmentScene({ viewBox, phase, zombie, slime, screen, speaking
           <PixelRects px={developerArm} />
         </g>
       )}
-      <PixelRects px={handA} className={speaking ? undefined : 'f-type-a'} />
-      {!speaking && <PixelRects px={handB} className="f-type-b" />}
+      {/* Hands rest while Thọ speaks, and when the power is off there is nothing to type on. */}
+      <PixelRects px={handA} className={speaking || !powered ? undefined : 'f-type-a'} />
+      {!speaking && powered && <PixelRects px={handB} className="f-type-b" />}
 
       <PixelRects px={chair} />
       <PixelRects px={deskItems} />
@@ -798,7 +803,7 @@ export function ApartmentScene({ viewBox, phase, zombie, slime, screen, speaking
       {highlight === 'album' && <PixelRects px={outlineOf(albumPx)} />}
       <PixelRects px={albumPx} />
       {sparkle && <PixelRects px={glintPx} className="f-glint" />}
-      <g transform="translate(-174 2)" className={`fan fan-${fanSpeed}`} data-fan={fanSpeed}>
+      <g transform="translate(-174 2)" className={`fan fan-${powered ? fanSpeed : 'off'}`} data-fan={powered ? fanSpeed : 'off'}>
         <PixelRects px={fanBladesA} className="f-fan-a" />
         <PixelRects px={fanBladesB} className="f-fan-b" />
         <rect x={276} y={80} width={3} height={3} fill={C.cream} />

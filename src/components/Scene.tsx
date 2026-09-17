@@ -28,6 +28,7 @@ import { usePhase } from '../daylight/PhaseProvider'
 import { useZombie } from '../hooks/useZombie'
 import { useWalker } from '../hooks/useWalker'
 import { SLIME_TIMING } from '../art/Slime'
+import { PYLON_BOX, PYLON_LINE_MS, type Power } from '../art/Pylon'
 import './shelf.css'
 
 /**
@@ -52,6 +53,10 @@ interface SceneProps {
   sparkle: boolean
   /** Advancing the story by clicking Thọ; null when the current step is the last one. */
   onAdvance: (() => void) | null
+  /** The room's power, from the pylon under the desk. */
+  power: Power
+  /** Powers the pylon down, or warps it back in. */
+  onPower: () => void
 }
 
 /** Spines that name themselves on hover, focus or tap: the games in the cabinet and the books over the desk. */
@@ -77,11 +82,23 @@ const PANEL_GLIDE_WINDOW_MS = 400
 const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2)
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, onAdvance }: SceneProps) {
+export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, onAdvance, power, onPower }: SceneProps) {
   const ui = useLocale().content.text.ui
   const { phase } = usePhase()
   const zombie = useZombie(phase)
   const slime = useWalker(true, SLIME_TIMING)
+  const powered = power === 'on'
+  // Thọ asks for pylons for a moment each time the power goes.
+  const [pylonLine, setPylonLine] = useState(false)
+  useEffect(() => {
+    if (power !== 'off') {
+      setPylonLine(false)
+      return
+    }
+    setPylonLine(true)
+    const t = window.setTimeout(() => setPylonLine(false), PYLON_LINE_MS)
+    return () => window.clearTimeout(t)
+  }, [power])
   const layerRef = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight })
   const [suns, setSuns] = useState<readonly DroppedSun[]>([])
@@ -301,6 +318,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
             phase={phase}
             zombie={zombie}
             slime={slime}
+            power={power}
             screen={screen}
             speaking={speaker === 'tho'}
             sparkle={sparkle}
@@ -329,7 +347,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
         </button>
       ))}
 
-      {onAdvance && isOffered(toScreen(SPEAKER_BOX)) && (
+      {powered && onAdvance && isOffered(toScreen(SPEAKER_BOX)) && (
         <button
           type="button"
           className="hotspot"
@@ -384,7 +402,29 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
         />
       ))}
 
-      {hotspots.map(({ id, style }) => (
+      {isOffered(toScreen(PYLON_BOX)) && (
+        <button
+          type="button"
+          className="hotspot"
+          style={toScreen(PYLON_BOX)}
+          onClick={onPower}
+          aria-disabled={power === 'warping'}
+          {...points('pylon')}
+          aria-label={power === 'on' ? ui.pylonOff : ui.pylonOn}
+        />
+      )}
+
+      {pylonLine && (
+        <p
+          className="pylon-line"
+          role="status"
+          style={{ left: toScreen(SPEAKER_BOX).left + toScreen(SPEAKER_BOX).width / 2, top: toScreen(SPEAKER_BOX).top }}
+        >
+          {ui.pylonLine}
+        </p>
+      )}
+
+      {powered && hotspots.map(({ id, style }) => (
         <button key={id} type="button" className="hotspot" style={style} onClick={() => onHotspot(id)} {...points(id)}>
           <span className="hotspot-label">{ui.hotspots[id]}</span>
         </button>

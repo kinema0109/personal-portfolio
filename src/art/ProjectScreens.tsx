@@ -7,8 +7,8 @@ import { C, type Px } from './palette'
  * The desk PC's screen while a project is on screen: a tiny architecture diagram built only from
  * what the CV says about that project (src/content/i18n/en.ts, src/content/projects.ts).
  *
- * The screen is 40 × 26 scene units at (198, 74). Diagrams use local coordinates 0–39 × 0–24; the
- * bottom row (24 → y 98 is the last used, y 99) stays free for the energy build bar.
+ * The screen is 40 × 26 scene units at (198, 74). Diagrams use local coordinates 0–39 × 0–24, which is
+ * y 74–98; y 99 stays free for the energy build bar.
  */
 
 const SCREEN = { x: 198, y: 74 } as const
@@ -49,9 +49,9 @@ function icon(kind: Icon, x: number, y: number, color: string = C.cream): Px[] {
       return [[x + 1, y, 3, 5, C.mist], [x, y + 1, 5, 3, C.mist], [x + 2, y + 2, 1, 1, BG]]
     case 'coin': // 4 × 4
       return [[x + 1, y, 2, 4, C.gold], [x, y + 1, 4, 2, C.gold], [x + 1, y + 1, 1, 1, C.goldLight]]
-    case 'cart': // 7 × 5
-      return [[x, y, 1, 1, C.cream], [x + 1, y + 1, 6, 2, C.cream], [x + 1, y + 3, 5, 1, C.cream],
-        [x + 2, y + 4, 1, 1, C.mist], [x + 5, y + 4, 1, 1, C.mist]]
+    case 'cart': // 7 × 5: handle, tapering basket, two wheels
+      return [[x, y, 2, 1, C.cream], [x + 1, y + 1, 6, 1, C.cream], [x + 2, y + 2, 5, 1, C.cream],
+        [x + 2, y + 3, 4, 1, C.cream], [x + 2, y + 4, 1, 1, C.mist], [x + 5, y + 4, 1, 1, C.mist]]
     case 'wave': // 7 × 3
       return [[x, y + 1, 1, 1, C.tealLight], [x + 1, y, 1, 1, C.tealLight], [x + 2, y + 1, 1, 1, C.tealLight],
         [x + 3, y + 2, 1, 1, C.tealLight], [x + 4, y + 1, 1, 1, C.tealLight], [x + 5, y, 1, 1, C.tealLight],
@@ -86,7 +86,7 @@ export const DIAGRAMS: Record<ProjectId, Diagram> = {
   ca2t: {
     parts: [['person', 1, 4, C.red], ['person', 1, 14, C.tealLight], ['lock', 8, 9], ['web', 16, 9],
       ['server', 26, 9], ['db', 33, 10, PG]],
-    links: [h(4, 6, 3), v(6, 6, 5), h(4, 16, 3), v(6, 12, 4), h(6, 12, 2), h(13, 12, 3), h(24, 12, 2), h(31, 12, 2)],
+    links: [h(4, 6, 3), v(6, 6, 6), h(4, 16, 3), v(6, 12, 4), h(6, 12, 2), h(13, 12, 3), h(24, 12, 2), h(31, 12, 2)],
   },
   // WooCommerce → webhooks → NestJS → MongoDB → React dashboard.
   theavotree: {
@@ -103,10 +103,10 @@ export const DIAGRAMS: Record<ProjectId, Diagram> = {
     parts: [['web', 3, 9], ['wave', 12, 10], ['db', 23, 9, PG], ['triangle', 32, 11]],
     links: [h(11, 11, 1), h(19, 11, 4)],
   },
-  // React CMS → Java → virtual store → Android and iOS; built by Jenkins.
+  // React CMS → Java → virtual store, synced to both Android and iOS; built by Jenkins.
   'ikara-admin': {
-    parts: [['web', 1, 5], ['server', 11, 4], ['coin', 19, 6], ['phone', 26, 4], ['phone', 33, 4], ['gear', 11, 15]],
-    links: [h(9, 7, 2), h(16, 7, 3), h(23, 7, 3), h(30, 7, 3), v(13, 11, 4)],
+    parts: [['web', 1, 5], ['server', 11, 4], ['coin', 19, 6], ['phone', 27, 2], ['phone', 27, 11], ['gear', 11, 15]],
+    links: [h(9, 7, 2), h(16, 7, 3), h(23, 7, 2), v(25, 5, 10), h(26, 5, 1), h(26, 14, 1), v(13, 11, 4)],
   },
   // Flutter/Swift apps → Express and Firebase with JWT → MongoDB.
   yokara: {
@@ -125,7 +125,8 @@ export function ProjectScreen({ id }: { id: ProjectId }) {
       <PixelRects px={[[SCREEN.x, SCREEN.y, 40, 26, BG]]} />
       <PixelRects px={lines.map(toScreen)} />
       <PixelRects px={diagram.parts.flatMap(([kind, x, y, color]) => icon(kind, x, y, color)).map(toScreen)} />
-      {diagram.links.map((l, i) => (
+      {/* A dot visits each pixel of a line in turn, one step per pixel; a one-pixel link has no room to move. */}
+      {diagram.links.map((l, i) => l.len < 2 ? null : (
         <rect
           key={i}
           className="f-data"
@@ -135,8 +136,9 @@ export function ProjectScreen({ id }: { id: ProjectId }) {
           height={1}
           fill={DOT}
           style={{
-            '--data-dx': `${l.dir === 'h' ? l.len - 1 : 0}px`,
-            '--data-dy': `${l.dir === 'v' ? l.len - 1 : 0}px`,
+            '--data-dx': `${l.dir === 'h' ? l.len : 0}px`,
+            '--data-dy': `${l.dir === 'v' ? l.len : 0}px`,
+            animationTimingFunction: `steps(${l.len}, end)`,
             animationDelay: `${(i % 3) * 0.3}s`,
           } as CSSProperties}
         />

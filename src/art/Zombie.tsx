@@ -28,11 +28,11 @@ const COAT = '#6b4a33'
 const COAT_DARK = '#4f3524'
 const SHIRT = '#d9d2c0'
 const TIE = '#b8322c'
-const PANTS = '#4a4e5c'
+const PANTS = '#6a6f80'
 
 /** Top-left of the sprite's head block, before it starts walking. */
 const X = 103
-const Y = 78
+const Y = 79
 
 const at = (px: readonly Px[]): Px[] => px.map(([x, y, w, h, fill]) => [X + x, Y + y, w, h, fill] as Px)
 
@@ -59,7 +59,7 @@ const stepB = at([
 export function Zombie() {
   return (
     <g clipPath={`url(#${WINDOW_GLASS_CLIP})`}>
-      <g className="f-zombie-walk" data-zombie>
+      <g className="f-zombie-walk" data-zombie style={{ animationDuration: `${ZOMBIE_WALK_MS}ms` }}>
         <PixelRects px={body} />
         <PixelRects px={stepA} className="f-zombie-a" />
         <PixelRects px={stepB} className="f-zombie-b" />

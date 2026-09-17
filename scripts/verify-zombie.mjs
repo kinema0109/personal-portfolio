@@ -20,6 +20,8 @@ async function openAt(time) {
   const page = await context.newPage()
   page.on('pageerror', (e) => errors.push(e.message))
   await page.clock.install({ time: new Date(time) })
+  // Hold the clock until the check moves it, so a slow page load cannot eat into the 3–5 s window.
+  await page.clock.pauseAt(new Date(time))
   await page.goto(url)
   return { context, page }
 }

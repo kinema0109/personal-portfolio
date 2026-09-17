@@ -36,7 +36,7 @@ npm run preview    # serve dist/ on http://localhost:4173
 | Branch 2: How I work | How Thọ uses AI-assisted tools, then three deep dives: moving production MongoDB from Atlas to 6 self-hosted GCP VMs (CBPO), the real-time webhook listener (TheAvoTree), role-based access control (CA2T) |
 | Branch 3: Outside work | Gaming background, then the album on the desk |
 | Gallery | Pixel-art album that **only** opens by clicking the photo album on the desk (no menu or dialogue choice leads there). One picture at a time with no titles or captions; Prev/Next or arrow keys to browse, Esc or Close to leave |
-| Explore the room | There are no shortcut buttons: click the **laptop** for projects, the **album** for the gallery and the **desk drawer** (a CV sheet peeks out) for the CV. The sword frames and display cabinet are personal references and do not open; each boxed Fire Emblem game on the bottom shelf shows its name on hover or tap. Hotspots show a label on hover/focus and are hidden while covered by the UI |
+| Explore the room | There are no shortcut buttons: click the **PC** for projects, the **album** for the gallery and the **desk drawer** (a CV sheet peeks out) for the CV. The sword frames and display cabinet are personal references and do not open; each boxed Fire Emblem game on the bottom shelf shows its name on hover or tap. Hotspots show a label on hover/focus and are hidden while covered by the UI |
 | Always available | Top bar: name (goes home) and sound toggle (off by default). Dialogue box: **Back**, **Home** |
 
 Controls: click or tap anything; click the dialogue text (or **Next ▼**) to advance. Keyboard: `Enter`/`Space` advance the dialogue (or activate the focused button), `Tab` to move, `1`–`9` to pick a choice, `Esc` to go back (one dialogue step, then one place).
@@ -50,7 +50,7 @@ Layout (fullscreen, the page never scrolls):
 - **Desktop / tablet**: fixed-height dialogue box along the bottom with a portrait, the speaker name and Back/Home controls; choices appear in a menu above it after the last line. Project, CV and gallery panels open as a card on the right, and the room shifts left.
 - **Phone (portrait)**: the dialogue sits at the bottom, choices stack, and panels sit above the dialogue.
 - **Phone (landscape)**: the panel gets its own column next to the dialogue.
-- The scene reacts to the conversation: the laptop shows code, a diagram, a small game or documents depending on the branch, and a speech bubble appears while Thọ is speaking.
+- The scene reacts to the conversation: the PC screen shows code, a diagram, a small game or documents depending on the branch, and the architecture of whichever project is on screen, and a speech bubble appears while Thọ is speaking.
 
 Motion (all stepped, to match the pixel art):
 - **Reveal**: dialogue lines step in one after another, then the choices. Panels slide in with their sections staggered. It finishes in under half a second and never blocks clicks.

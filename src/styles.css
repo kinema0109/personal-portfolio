@@ -223,6 +223,7 @@ p {
   from { transform: translate(0, 0); }
   to { transform: translate(var(--data-dx, 0), var(--data-dy, 0)); }
 }
+/* Each dot sets its own steps() inline, one per pixel of its line. */
 .f-data { animation: data-flow 1.2s steps(4, end) infinite; }
 
 /* Portrait mouth flaps a few times while a new line appears, then rests closed. */

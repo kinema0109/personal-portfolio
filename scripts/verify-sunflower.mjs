@@ -43,9 +43,12 @@ try {
   assert.ok(highest < path[0].y - 15, 'the sun rises before it falls')
   assert.ok(path.at(-1).y > path[0].y + 15, 'the sun ends up below where it started')
 
-  // One sun per landing spot, and no more.
+  // One sun per landing spot, and no more. Ten quick clicks also breach the Qliphoth counter on the
+  // fourth and suppress it on the next five (see verify-qliphoth.mjs), which renames the button in
+  // between, so this loop finds the flower by either name. The breach's own suns must respect the cap.
+  const anyFlower = page.getByRole('button', { name: /^(Shake|Suppress) the sunflower$/ })
   for (let i = 0; i < 10; i++) {
-    await flower.click()
+    await anyFlower.click()
     await page.waitForTimeout(80)
   }
   const capped = await suns().count()

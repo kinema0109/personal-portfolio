@@ -1,6 +1,6 @@
 # Project case studies
 
-Status: approved by owner (2026-09-18). The draft lines below still need the owner's read.
+Status: approved by owner (2026-09-18), draft lines included.
 
 ## Goal
 

@@ -42,7 +42,7 @@ export function buildStory(
   const cbpoEnd: readonly Choice[] = [anotherCbpo, details('cbpo', 'CBPO'), askOther]
   /** A case study's steps: the first may cite a public source; the wording is still Thọ's to confirm. */
   const caseSteps = (lines: readonly DialogueLines[], source: string, firstSource = source) =>
-    lines.map((l, i) => tho(l, i === 0 ? firstSource : source, 'draft')) as [DialogueStep, ...DialogueStep[]]
+    lines.map((l, i) => tho(l, i === 0 ? firstSource : source)) as [DialogueStep, ...DialogueStep[]]
 
   const nodes: readonly StoryNode[] = [
     {

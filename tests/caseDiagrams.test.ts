@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { CASES, CASE_IDS } from '../src/content/caseDiagrams.ts'
 
-const STEPS = { cbpo: 2, 'cbpo-migration': 5, 'cbpo-mcp': 4, 'cbpo-cicd': 4, 'cbpo-shipping': 4, avotree: 5, singlekey: 4, yokara: 4 }
+const STEPS = { cbpo: 2, 'cbpo-migration': 5, 'cbpo-mcp': 4, 'cbpo-cicd': 4, 'cbpo-shipping': 4, avotree: 5, singlekey: 4, yokara: 4, suzu: 4 }
 
 test('every case has a diagram and one focus list per step', () => {
   assert.deepEqual([...CASE_IDS].sort(), Object.keys(STEPS).sort())

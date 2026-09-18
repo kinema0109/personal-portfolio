@@ -56,6 +56,7 @@ export const PROJECTS: readonly ProjectInfo[] = [
     end: '03/2025',
     featured: false,
     technologies: ['JavaScript', 'Next.js', 'TypeScript', 'Supabase', 'PostgreSQL', 'WebSockets', 'Vercel'],
+    relatedNode: 'suzu',
   },
   {
     id: 'ikara-admin',

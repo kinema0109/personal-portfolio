@@ -110,6 +110,11 @@ export function buildStory(
       choices: [details('yokara', 'Yokara'), askOther],
     },
     {
+      id: 'suzu',
+      steps: caseSteps(s.suzu, 'CV · Suzu.net'),
+      choices: [details('suzu', 'Suzu.net'), askOther],
+    },
+    {
       id: 'how-roles',
       steps: s['how-roles'].map((lines) => tho(lines, 'CV · CA2T')) as [DialogueStep, ...DialogueStep[]],
       choices: [details('ca2t', 'CA2T'), askOther],

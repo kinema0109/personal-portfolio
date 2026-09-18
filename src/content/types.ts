@@ -40,6 +40,7 @@ export type NodeId =
   | 'avotree'
   | 'singlekey'
   | 'yokara'
+  | 'suzu'
   | 'outside'
 
 export type ProjectId =
@@ -163,6 +164,7 @@ export interface LocaleContent {
     avotree: readonly [Lines, Lines, Lines, Lines, Lines]
     singlekey: readonly [Lines, Lines, Lines, Lines]
     yokara: readonly [Lines, Lines, Lines, Lines]
+    suzu: readonly [Lines, Lines, Lines, Lines]
     /** One step: the room is left to be explored rather than narrated. */
     outside: readonly [Lines]
   }

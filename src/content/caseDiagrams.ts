@@ -10,7 +10,7 @@ import type { ProjectId } from './types'
  * or when both of its blocks are.
  */
 
-export const CASE_IDS = ['cbpo', 'cbpo-migration', 'cbpo-mcp', 'cbpo-cicd', 'cbpo-shipping', 'avotree', 'singlekey', 'yokara'] as const
+export const CASE_IDS = ['cbpo', 'cbpo-migration', 'cbpo-mcp', 'cbpo-cicd', 'cbpo-shipping', 'avotree', 'singlekey', 'yokara', 'suzu'] as const
 export type CaseId = (typeof CASE_IDS)[number]
 
 export interface Block { id: string; icon: Icon; color?: string; label: string; sub?: string; col: number; row: number }
@@ -22,6 +22,7 @@ export interface CaseStudy {
   focus: readonly (readonly string[])[]
 }
 
+const PG = '#5b8dd6'
 const MONGO = '#5fb760'
 const REDIS = '#d6524a'
 const FIREBASE = '#f2a33a'
@@ -213,5 +214,27 @@ export const CASES: Record<CaseId, CaseStudy> = {
       ],
     },
     focus: [['app'], ['functions', 'db', 'ledger'], ['sicbo', 'job', 'batches', 'db'], ['auth', 'functions', 'db', 'app']],
+  },
+  suzu: {
+    projectId: 'suzu',
+    diagram: {
+      description: 'Creators and fans use a Next.js app deployed on Vercel, which signs them in with Supabase Auth and delivers messages and notifications live over Supabase Realtime, backed by PostgreSQL where a Smart Feed ranks posts.',
+      blocks: [
+        { id: 'user', icon: 'person', color: C_TEAL, label: 'Creators & fans', col: 0, row: 1 },
+        { id: 'next', icon: 'web', label: 'Next.js', sub: 'on Vercel', col: 1, row: 1 },
+        { id: 'vercel', icon: 'triangle', label: 'Vercel CI/CD', col: 1, row: 2 },
+        { id: 'auth', icon: 'lock', label: 'Supabase Auth', col: 2, row: 0 },
+        { id: 'realtime', icon: 'wave', label: 'Realtime', sub: 'WebSockets', col: 2, row: 1 },
+        { id: 'pg', icon: 'db', color: PG, label: 'PostgreSQL', sub: 'Smart Feed', col: 3, row: 1 },
+      ],
+      edges: [
+        { id: 'e-visit', from: 'user', to: 'next' },
+        { id: 'e-deploy', from: 'vercel', to: 'next', label: 'deploys' },
+        { id: 'e-auth', from: 'next', to: 'auth' },
+        { id: 'e-live', from: 'next', to: 'realtime' },
+        { id: 'e-rows', from: 'realtime', to: 'pg' },
+      ],
+    },
+    focus: [['user', 'next'], ['auth', 'realtime', 'next', 'e-live'], ['pg', 'realtime'], ['next', 'vercel']],
   },
 }

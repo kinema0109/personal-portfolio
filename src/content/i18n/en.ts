@@ -121,6 +121,18 @@ export const en: LocaleContent = {
       ],
       ['It all runs on Firebase: its database, Cloud Functions for the backend and Firebase Auth for sign-in. I was one of about 20 people on the team.'],
     ],
+    suzu: [
+      ['Suzu.net is a social network for creators, artists and their fans, built on Supabase and Vercel.'],
+      [
+        'Sign-in runs on Supabase Auth, and messages and notifications arrive live over Supabase Realtime.',
+        'Integrating Realtime cut messaging latency by 40%.',
+      ],
+      ['A "Smart Feed" ranks posts by engagement, written as PostgreSQL functions inside the database.'],
+      [
+        'Lazy loading and image optimisation lifted Core Web Vitals from "Needs Improvement" to "Good".',
+        'CI/CD on Vercel cut deployment time by half.',
+      ],
+    ],
     'how-roles': [
       [
         'CA2T is a learning management system for corporate training, built with React, Python/Django and PostgreSQL.',
@@ -262,6 +274,7 @@ export const en: LocaleContent = {
     avotree: { title: 'TheAvoTree: orders without a slow WordPress', chips: ['~2,000 orders / day', '2 of 6 developers', 'WooCommerce mirrored in MongoDB'] },
     singlekey: { title: 'SingleKey: the Rent Guarantee flow', chips: ['~20% per winning test', '2 months', 'team of 6'] },
     yokara: { title: "Yokara: money that can't be wrong", chips: ['2M+ users', '10,000 online at once', '~50 players / room'] },
+    suzu: { title: 'Suzu.net: live on Supabase and Vercel', chips: ['−40% messaging latency', 'Core Web Vitals: Good', '−50% deploy time'] },
   },
 
   cv: {

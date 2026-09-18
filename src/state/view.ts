@@ -41,6 +41,7 @@ const SECTION_BY_NODE: Record<NodeId, Section> = {
   avotree: 'how',
   singlekey: 'how',
   yokara: 'how',
+  suzu: 'how',
   'how-roles': 'how',
   outside: 'outside',
 }

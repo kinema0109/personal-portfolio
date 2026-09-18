@@ -27,6 +27,7 @@ import { useLocale } from '../i18n/LocaleProvider'
 import { usePhase } from '../daylight/PhaseProvider'
 import { useZombie } from '../hooks/useZombie'
 import { useWalker } from '../hooks/useWalker'
+import { useQliphoth } from '../hooks/useQliphoth'
 import { SLIME_TIMING } from '../art/Slime'
 import { PYLON_BOX, PYLON_LINE_MS, type Power } from '../art/Pylon'
 import './shelf.css'
@@ -185,6 +186,13 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
       })
       return [...current, { id, x: spot.x, y: spot.y, state: 'idle', plant, size, origin }]
     })
+
+  // The Sunflower is a contained Abnormality: eager clicks lower its Qliphoth counter, and at zero it
+  // breaches and keeps tossing suns until it is suppressed. It needs no power, so it ignores the pylon.
+  const { qliphoth, click: poke } = useQliphoth(() => dropSun('sunflower', 'normal', SUNFLOWER_TOSS))
+  const shakeFlower = () => {
+    if (poke()) dropSun('sunflower', 'normal', SUNFLOWER_TOSS)
+  }
 
   // A sleepy shake plays once per click. Forget the count when the phase changes, or going back to
   // day would replay the last shake with nobody clicking.
@@ -353,6 +361,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
             energy={energy}
             fanSpeed={fanSpeed}
             highlight={highlight}
+            qliphoth={qliphoth}
           />
         </div>
       </figure>
@@ -400,9 +409,9 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
           type="button"
           className="hotspot"
           style={toScreen(SUNFLOWER_BOX)}
-          onClick={() => dropSun('sunflower', 'normal', SUNFLOWER_TOSS)}
+          onClick={shakeFlower}
           {...points('flower')}
-          aria-label={ui.sunflower}
+          aria-label={qliphoth.breach ? ui.sunflowerSuppress : ui.sunflower}
         />
       )}
 

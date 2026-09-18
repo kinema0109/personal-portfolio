@@ -239,6 +239,16 @@ p {
 }
 .f-bob { animation: flower-bob 2s linear infinite; }
 
+/* Qliphoth breach: the whole plant rattles one pixel to each side, a pixel at a time, on top of the head's own bob.
+   Reduced motion turns it off; the red pips and the suns still say it has breached. */
+@keyframes breach-shake {
+  0%, 24.99% { transform: translateX(0); }
+  25%, 49.99% { transform: translateX(-1px); }
+  50%, 74.99% { transform: translateX(0); }
+  75%, 100% { transform: translateX(1px); }
+}
+.f-breach { animation: breach-shake 240ms linear infinite; }
+
 /* A dropped sun is tossed out of the flower's head, arcs up over the plant and falls to the floor,
    the way a sunflower spits one out in Plants vs. Zombies. The three offsets come from the sun
    itself, since each one lands somewhere different. */

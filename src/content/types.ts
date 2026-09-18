@@ -210,6 +210,8 @@ export interface LocaleContent {
     advance: string
     fan: string
     sunflower: string
+    /** The Sunflower's button while its Qliphoth counter has breached. */
+    sunflowerSuppress: string
     sun: string
     sunshroom: string
     sunshroomAsleep: string

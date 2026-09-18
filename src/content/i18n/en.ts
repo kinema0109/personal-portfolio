@@ -248,6 +248,7 @@ export const en: LocaleContent = {
     advance: 'Keep listening',
     fan: 'Desk fan',
     sunflower: 'Shake the sunflower',
+    sunflowerSuppress: 'Suppress the sunflower',
     sun: 'Collect the sun',
     sunshroom: 'Shake the Sun-shroom',
     sunshroomAsleep: 'The Sun-shroom is asleep',

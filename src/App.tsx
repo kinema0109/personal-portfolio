@@ -3,6 +3,7 @@ import { ChoiceMenu } from './components/ChoiceMenu'
 import { CaseStudyPanel } from './components/CaseStudyPanel'
 import { CvPanel } from './components/CvPanel'
 import { DialogueBox } from './components/DialogueBox'
+import { NavControls } from './components/NavControls'
 import { GalleryPanel } from './components/GalleryPanel'
 import { ProjectDetail } from './components/ProjectDetail'
 import { Scene } from './components/Scene'
@@ -262,6 +263,15 @@ export default function App() {
             tabIndex={-1}
             aria-label={ui.details}
           >
+            {/* Back and Home live on the panel while it is up, where the reader is looking. With the
+                power off they follow Esc: Back still closes a panel, but the story cannot be moved. */}
+            <NavControls
+              className="doc-nav"
+              canGoBack={backAllowed && (powered || view.panel.kind !== 'case')}
+              homeDisabled={!powered}
+              onBack={() => act({ type: 'back' })}
+              onHome={() => act({ type: 'home' })}
+            />
             <Panel panel={view.panel} onOpenProject={openProject} />
           </aside>
         )}
@@ -282,6 +292,7 @@ export default function App() {
           onNext={() => act({ type: 'next' })}
           onBack={() => act({ type: 'back' })}
           onHome={() => act({ type: 'home' })}
+          showControls={!view.panel || view.panel.kind === 'gallery'}
           disabled={!powered}
         />
       </div>

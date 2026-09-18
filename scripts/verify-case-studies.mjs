@@ -123,13 +123,13 @@ try {
   await clickAlbum()
   assert.equal(await page.locator('dialog[open]').count(), 1, 'once out of the story, the album opens')
 
-  // A reader who opened a story by mistake gets out at once: Back and Home sit above the backdrop,
+  // A reader who opened a story by mistake gets out at once: Back and Home sit on the panel, above the backdrop,
   // and Home leaves the story in one click.
   await openApproach('TheAvoTree')
   await next()
   await page.waitForTimeout(300)
   for (const name of ['Back', 'Home']) {
-    const covered = await page.locator('.controls').getByRole('button', { name, exact: true }).evaluate((b) => {
+    const covered = await page.locator('.doc .doc-nav').getByRole('button', { name, exact: true }).evaluate((b) => {
       const r = b.getBoundingClientRect()
       return !b.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2))
     })

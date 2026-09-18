@@ -3,6 +3,7 @@ import { hasPortrait, Portrait } from '../art/Portrait'
 import { useStableTextHeight } from '../hooks/useStableTextHeight'
 import { useLocale } from '../i18n/LocaleProvider'
 import type { View } from '../state/view'
+import { NavControls } from './NavControls'
 import { StatusTag } from './StatusTag'
 
 interface DialogueBoxProps {
@@ -15,6 +16,8 @@ interface DialogueBoxProps {
   onNext: () => void
   onBack: () => void
   onHome: () => void
+  /** False while a panel is open: Back and Home then sit on the panel instead. */
+  showControls?: boolean
   /** With the room's power off the box stays on screen, dimmed, and nothing in it responds. */
   disabled?: boolean
 }
@@ -23,7 +26,7 @@ interface DialogueBoxProps {
  * Fixed-size textbox: name row, portrait slot, text area sized to the longest step, and a reserved
  * advance slot. Nothing inside changes size between steps; choices live in ChoiceMenu.
  */
-export function DialogueBox({ view, revealKey, canGoBack, boxRef, linesRef, onNext, onBack, onHome, disabled = false }: DialogueBoxProps) {
+export function DialogueBox({ view, revealKey, canGoBack, boxRef, linesRef, onNext, onBack, onHome, showControls = true, disabled = false }: DialogueBoxProps) {
   const { text, allLines } = useLocale().content
   const ui = text.ui
   const { step, stepIndex, stepCount } = view
@@ -74,29 +77,14 @@ export function DialogueBox({ view, revealKey, canGoBack, boxRef, linesRef, onNe
         </div>
       </div>
 
-      <div className="controls" role="group" aria-label={ui.dialogueNav}>
-        <button
-          type="button"
-          className="btn"
-          onClick={onBack}
-          disabled={!canGoBack}
-          aria-label={ui.back}
-          aria-keyshortcuts="Escape"
-        >
-          <span aria-hidden="true">←</span>
-          <span className="btn-label"> {ui.back}</span>
-        </button>
-        <button
-          type="button"
-          className="btn"
-          onClick={onHome}
-          disabled={!canGoBack && view.section === 'home'}
-          aria-label={ui.home}
-        >
-          <span aria-hidden="true">⌂</span>
-          <span className="btn-label"> {ui.home}</span>
-        </button>
-      </div>
+      {showControls && (
+        <NavControls
+          canGoBack={canGoBack}
+          homeDisabled={!canGoBack && view.section === 'home'}
+          onBack={onBack}
+          onHome={onHome}
+        />
+      )}
     </section>
   )
 }

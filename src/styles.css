@@ -1445,6 +1445,34 @@ p {
 .controls .btn:hover:not(:disabled) {
   color: var(--cream);
 }
+/* Back and Home are icons only, so they never take width from the text beside them. */
+.controls .btn-icon {
+  flex: none;
+  justify-content: center;
+  width: 28px;
+  min-height: 28px;
+  padding: 0;
+  font-size: 0.95rem;
+}
+/* On an open panel they sit in its top-right corner, floated so the title wraps around them, and
+   stay there while the panel scrolls. */
+.doc-nav {
+  float: right;
+  position: sticky;
+  top: 6px;
+  z-index: 2;
+  margin: 6px 6px 0 8px;
+  padding: 2px;
+  background: var(--paper);
+  border: 2px solid var(--night);
+}
+.doc-nav .btn {
+  color: var(--ink);
+}
+.doc-nav .btn:is(:hover, :focus-visible):not(:disabled) {
+  border-color: var(--red-dark);
+  color: var(--red-dark);
+}
 
 /* The collection preserves full-size originals independently of room framing. */
 /* Skills: grouped, each carrying the projects that used it. Deliberately no bars or ratings. */
@@ -1540,7 +1568,6 @@ p {
   .controls .btn { flex: none; min-height: 28px; padding-inline: 8px; }
 }
 @media (max-width: 419px) {
-  .btn-label { display: none; }
   .tag-source { display: none; }
 }
 
@@ -1580,8 +1607,7 @@ p {
 }
 @media (max-height: 500px) {
   .controls { align-self: start; }
-  /* The dialogue only gets half the width next to a panel: icon-only controls. */
-  .hud.has-panel .btn-label,
+  /* The dialogue only gets half the width next to a panel. */
   .hud.has-panel .tag-source { display: none; }
   /* Collection: list and picture side by side so the picture is visible without scrolling. */
   .collection { max-height: calc(100dvh - 16px); width: calc(100vw - 16px); }

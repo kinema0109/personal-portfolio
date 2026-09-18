@@ -1,5 +1,6 @@
 import type { ScreenMode } from '../art/ApartmentScene'
 import type { Content } from '../content'
+import { CASES, CASE_IDS, type CaseId } from '../content/caseDiagrams'
 import { galleryItems } from '../content/gallery'
 import { PROJECTS } from '../content/projects'
 import type { Choice, DialogueStep, NodeId, ProjectId } from '../content/types'
@@ -9,6 +10,7 @@ export type PanelView =
   | { kind: 'project'; projectId: ProjectId }
   | { kind: 'cv' }
   | { kind: 'gallery' }
+  | { kind: 'case'; caseId: CaseId; step: number }
 
 type Section = 'home' | 'projects' | 'how' | 'outside' | 'cv' | 'gallery'
 
@@ -65,6 +67,7 @@ export function buildView(loc: Location, content: Content): View {
 /** A project on screen shows its own diagram; everywhere else the section decides. */
 function screenFor(loc: Location, base: Omit<View, 'screen'>): ScreenMode {
   if (base.panel?.kind === 'project') return `project:${base.panel.projectId}`
+  if (base.panel?.kind === 'case') return `project:${CASES[base.panel.caseId].projectId}`
   if (loc.kind === 'node') {
     const project = PROJECT_BY_NODE.get(loc.id)
     if (project) return `project:${project}`
@@ -86,7 +89,9 @@ function buildBase(loc: Location, content: Content): Omit<View, 'screen'> {
         // what the reader came for, in which case making them read first is just an obstacle.
         choices: node.picker || stepIndex === node.steps.length - 1 ? node.choices : [],
         picker: node.picker === true,
-        panel: null,
+        panel: (CASE_IDS as readonly string[]).includes(node.id)
+          ? { kind: 'case', caseId: node.id as CaseId, step: stepIndex }
+          : null,
         section: SECTION_BY_NODE[node.id],
       }
     }

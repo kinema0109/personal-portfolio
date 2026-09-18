@@ -792,6 +792,16 @@ p {
   font-size: 1.15rem;
   line-height: 1.25;
 }
+/* Case studies: a dark pixel diagram on the paper panel. Focus is carried by opacity, stepped. */
+.case-diagram { display: block; width: 100%; height: auto; margin-block: 8px; shape-rendering: crispEdges; border: 2px solid var(--night); background: #1b2336; }
+.case-block, .case-edge { opacity: 0.35; transition: opacity 200ms steps(3, end); }
+.case-block.is-lit, .case-edge.is-lit { opacity: 1; }
+.case-label { font: 700 5px var(--font-label); fill: var(--cream); }
+.case-sub { font: 4.2px var(--font-label); fill: var(--mist); }
+.case-edge-label { font: 4px var(--font-label); fill: var(--gold, #edc567); }
+.case-chips { margin-top: 4px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
 .meta {
   font-size: 0.78rem;
   color: var(--ink-soft);
@@ -1168,6 +1178,12 @@ p {
   }
   .hud.has-panel .dialogue {
     grid-column: 1 / -1;
+  }
+}
+/* A case study's diagram is the point of its panel, so on wide screens the panel grows to show it large. */
+@media (min-width: 1200px) {
+  .hud.has-case {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 520px);
   }
 }
 

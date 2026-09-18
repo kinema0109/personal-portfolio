@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { ChoiceMenu } from './components/ChoiceMenu'
+import { CaseStudyPanel } from './components/CaseStudyPanel'
 import { CvPanel } from './components/CvPanel'
 import { DialogueBox } from './components/DialogueBox'
 import { GalleryPanel } from './components/GalleryPanel'
@@ -121,7 +122,8 @@ export default function App() {
   // Move focus to the new dialogue so keyboard and screen-reader users follow along.
   // Keyed on what is open rather than on `view.panel`, which is a new object on every render and would
   // pull focus back into an open panel whenever App re-renders.
-  const panelKey = view.panel
+  // A case study only illustrates the dialogue, so focus stays on its lines.
+  const panelKey = view.panel && view.panel.kind !== 'case'
     ? view.panel.kind === 'project'
       ? `project:${view.panel.projectId}`
       : view.panel.kind
@@ -235,11 +237,12 @@ export default function App() {
       </header>
 
       {here.kind === 'gallery' && <GalleryPanel onClose={() => act({ type: 'back' })} />}
-      <div className={`hud${view.panel && view.panel.kind !== 'gallery' ? ' has-panel' : ''}`}>
+      <div className={`hud${view.panel && view.panel.kind !== 'gallery' ? ' has-panel' : ''}${view.panel?.kind === 'case' ? ' has-case' : ''}`}>
         {/* Whatever is on top — a picker or a panel — owns the screen while it is up, so clicking
             anywhere off it closes it rather than falling through to the room behind. A picker is part
-            of the story, so with the power off it stops closing this way; a panel still does. */}
-        {((view.picker && powered) || view.panel !== null) && backAllowed && (
+            of the story, so with the power off it stops closing this way; a panel still does. A case
+            study's diagram only illustrates the dialogue, so it is not on top and the room stays usable. */}
+        {((view.picker && powered) || (view.panel !== null && view.panel.kind !== 'case')) && backAllowed && (
           <button
             type="button"
             className="dismiss-backdrop"
@@ -248,7 +251,14 @@ export default function App() {
           />
         )}
         {view.panel && view.panel.kind !== 'gallery' && (
-          <aside className="doc" ref={docRef} key={key} tabIndex={-1} aria-label={ui.details}>
+          // A case study's diagram stays mounted across its steps, so only the lit parts change.
+          <aside
+            className="doc"
+            ref={docRef}
+            key={view.panel.kind === 'case' ? `case:${view.panel.caseId}` : key}
+            tabIndex={-1}
+            aria-label={ui.details}
+          >
             <Panel panel={view.panel} onOpenProject={openProject} />
           </aside>
         )}
@@ -285,5 +295,7 @@ function Panel({ panel, onOpenProject }: { panel: PanelView; onOpenProject: (id:
       return <CvPanel onOpenProject={onOpenProject} />
     case 'gallery':
       return null
+    case 'case':
+      return <CaseStudyPanel caseId={panel.caseId} step={panel.step} />
   }
 }

@@ -241,8 +241,11 @@ export default function App() {
         {/* Whatever is on top — a picker or a panel — owns the screen while it is up, so clicking
             anywhere off it closes it rather than falling through to the room behind. A picker is part
             of the story, so with the power off it stops closing this way; a panel still does. A case
-            study's diagram only illustrates the dialogue, so it is not on top and the room stays usable. */}
-        {((view.picker && powered) || (view.panel !== null && view.panel.kind !== 'case')) && backAllowed && (
+            study counts as on top too: a click off it works like Esc, stepping back until the reader is
+            out of the story, and only then does the room answer clicks again. */}
+        {((powered && (view.picker || view.panel?.kind === 'case')) ||
+          (view.panel !== null && view.panel.kind !== 'case')) &&
+          backAllowed && (
           <button
             type="button"
             className="dismiss-backdrop"

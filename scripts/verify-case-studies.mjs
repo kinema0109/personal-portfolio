@@ -102,8 +102,29 @@ try {
   assert.equal(await page.locator('.case-study').count(), 0, 'CA2T tells its deep dive without a case panel')
   assert.match(await page.locator('.lines').innerText(), /CA2T is a learning management system/, 'CA2T reaches the RBAC deep dive')
 
+  // While a story is told, a click on the room works like Esc: it steps back rather than opening the
+  // album, and the album answers only once the reader is out of the story.
+  await openApproach('TheAvoTree')
+  await next()
+  await page.waitForTimeout(300)
+  // The room reframes around whatever is open, so the album is found afresh before every click.
+  const clickAlbum = async () => {
+    const album = await page.locator('.hotspot', { hasText: 'Open Game Gallery' }).boundingBox()
+    await page.mouse.click(album.x + album.width / 2, album.y + album.height / 2)
+    await page.waitForTimeout(300)
+  }
+  const firstLine = CASES.avotree.focus[0]
+  await clickAlbum()
+  assert.equal(await page.locator('.gallery, dialog[open]').count(), 0, 'a click on the album mid-story does not open it')
+  const litBack = await page.locator('[data-block][data-focus]').evaluateAll((els) => els.map((e) => e.dataset.block))
+  assert.deepEqual(litBack.sort(), [...firstLine].sort(), 'a click on the room steps the story back one line')
+  for (let i = 0; i < 10 && (await page.locator('.dismiss-backdrop').count()) > 0; i++) await clickAlbum()
+  assert.equal(await page.locator('.case-study').count(), 0, 'clicking off keeps stepping back until out of the story')
+  await clickAlbum()
+  assert.equal(await page.locator('dialog[open]').count(), 1, 'once out of the story, the album opens')
+
   assert.deepEqual(errors, [])
-  console.log(`case studies: ${CASE_IDS.length} stories, every step lit as planned, CBPO picker and CA2T deep dive PASS`)
+  console.log(`case studies: ${CASE_IDS.length} stories, every step lit as planned, CBPO picker, CA2T deep dive and click-off PASS`)
 } finally {
   await browser.close()
 }

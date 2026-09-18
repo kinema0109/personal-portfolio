@@ -88,6 +88,20 @@ p {
   position: fixed;
   inset: 0;
   overflow: hidden;
+  /* The room and the dialogue are clicked through quickly, and a fast double click would select the
+     lines; a tap on a phone would flash blue. Neither is wanted in a game screen. */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+/* What a reader may want to copy — a project's details, the CV, contact links — stays selectable. */
+.paper {
+  user-select: text;
+  -webkit-user-select: text;
+}
+.paper :is(button, [role='button']) {
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* Internal overflow fallback on small screens: a thin scrollbar so hidden content stays discoverable. */

@@ -235,7 +235,7 @@ export const en: LocaleContent = {
     next: 'Next',
     hotspots: { pc: 'See projects', album: 'Open Game Gallery', drawer: 'Profile' },
     sceneDescription:
-      'Pixel art of a small apartment that follows the visitor’s own day and night. Thọ works at a desk with a PC, a photo album and a notebook, a desktop tower underneath it powered by a Protoss pylon that can be switched off, and a potted sunflower and a Sun-shroom on the floor by the window; the Sun-shroom sleeps by day. On the wall, Alhazard and Langrisser cross in one frame, Gran Centurio hangs in a tall frame beside it, and Armageddon rests on pegs below. The display cabinet holds the books behind the Limbus Company sinners and two plushes on the top shelf, a Skaven Grey Seer, an Alpha Legion miniature and a Master Ball on the lit middle shelf, and every boxed Fire Emblem game along the bottom. Click the PC, the album or the desk drawer to explore, or the plants for a sun.',
+      'Pixel art of a small apartment that follows the visitor’s own day and night. Thọ works at a desk with a PC, a photo album and a notebook, a desktop tower underneath it powered by a Protoss pylon that can be switched off, a potted sunflower and a Sun-shroom on the floor by the window, and a Dark Souls bonfire, a coiled sword in a mound of ash, burning on the window sill; the Sun-shroom sleeps by day. On the wall, Alhazard and Langrisser cross in one frame, Gran Centurio hangs in a tall frame beside it, and Armageddon rests on pegs below. The display cabinet holds the books behind the Limbus Company sinners and two plushes on the top shelf, a Skaven Grey Seer, an Alpha Legion miniature and a Master Ball on the lit middle shelf, and every boxed Fire Emblem game along the bottom. Click the PC, the album or the desk drawer to explore, the plants for a sun, or the bonfire to rest.',
     artNotice: 'Placeholder art',
     artNoticeDetail: ' · final art coming later',
     portrait: 'Developer portrait (placeholder)',
@@ -249,6 +249,8 @@ export const en: LocaleContent = {
     fan: 'Desk fan',
     sunflower: 'Shake the sunflower',
     sunflowerSuppress: 'Suppress the sunflower',
+    bonfire: 'Rest at the bonfire',
+    bonfireLit: 'BONFIRE LIT',
     sun: 'Collect the sun',
     sunshroom: 'Shake the Sun-shroom',
     sunshroomAsleep: 'The Sun-shroom is asleep',

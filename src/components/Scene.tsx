@@ -30,6 +30,7 @@ import { useWalker } from '../hooks/useWalker'
 import { useQliphoth } from '../hooks/useQliphoth'
 import { SLIME_TIMING } from '../art/Slime'
 import { PYLON_BOX, PYLON_LINE_MS, type Power } from '../art/Pylon'
+import { BONFIRE_BOX, BONFIRE_FLARE_MS, BONFIRE_LIT_MS } from '../art/Bonfire'
 import './shelf.css'
 
 /**
@@ -192,6 +193,26 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
   const { qliphoth, click: poke } = useQliphoth(() => dropSun('sunflower', 'normal', SUNFLOWER_TOSS))
   const shakeFlower = () => {
     if (poke()) dropSun('sunflower', 'normal', SUNFLOWER_TOSS)
+  }
+
+  // Dark Souls: resting at the bonfire flares its fire and says "BONFIRE LIT", and nothing else in the
+  // room changes. Each rest restarts both timers, so resting again mid-caption shows it in full.
+  const [rests, setRests] = useState(0)
+  const [flaring, setFlaring] = useState(false)
+  const [bonfireLit, setBonfireLit] = useState(false)
+  useEffect(() => {
+    if (rests === 0) return
+    const flare = window.setTimeout(() => setFlaring(false), BONFIRE_FLARE_MS)
+    const caption = window.setTimeout(() => setBonfireLit(false), BONFIRE_LIT_MS)
+    return () => {
+      window.clearTimeout(flare)
+      window.clearTimeout(caption)
+    }
+  }, [rests])
+  const rest = () => {
+    setFlaring(true)
+    setBonfireLit(true)
+    setRests((n) => n + 1)
   }
 
   // A sleepy shake plays once per click. Forget the count when the phase changes, or going back to
@@ -362,6 +383,7 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
             fanSpeed={fanSpeed}
             highlight={highlight}
             qliphoth={qliphoth}
+            bonfire={{ flare: flaring }}
           />
         </div>
       </figure>
@@ -415,6 +437,18 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
         />
       )}
 
+      {/* The bonfire needs no power, so it is offered with the pylon off like the plants. */}
+      {isOffered(toScreen(BONFIRE_BOX)) && (
+        <button
+          type="button"
+          className="hotspot"
+          style={toScreen(BONFIRE_BOX)}
+          onClick={rest}
+          {...points('bonfire')}
+          aria-label={ui.bonfire}
+        />
+      )}
+
       {isOffered(toScreen(SUNSHROOM_BOX)) && (
         <button
           type="button"
@@ -461,6 +495,20 @@ export function Scene({ screen, speaker, onHotspot, region, panelOpen, sparkle, 
         style={pylonLine ? lineStyle : undefined}
       >
         {pylonLine ? ui.pylonLine : ''}
+      </p>
+
+      {/* "BONFIRE LIT" over the middle of the uncovered room. Like the pylon line, one live region
+          stays mounted so the words are announced; the text inside remounts on every rest. */}
+      <p
+        className={`bonfire-line${bonfireLit ? '' : ' is-quiet'}`}
+        role="status"
+        style={bonfireLit ? { left: free.left + free.width / 2, top: free.top + free.height * 0.42 } : undefined}
+      >
+        {bonfireLit && (
+          <span key={rests} className="bonfire-lit">
+            {ui.bonfireLit}
+          </span>
+        )}
       </p>
 
       {/* Only the PC needs power; the album and the drawer still open with it off. */}

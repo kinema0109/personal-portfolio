@@ -212,6 +212,9 @@ export interface LocaleContent {
     sunflower: string
     /** The Sunflower's button while its Qliphoth counter has breached. */
     sunflowerSuppress: string
+    /** The bonfire on the window sill, and the caption resting at it shows. */
+    bonfire: string
+    bonfireLit: string
     sun: string
     sunshroom: string
     sunshroomAsleep: string

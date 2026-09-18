@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react'
 import type { ProjectId } from '../content/types'
 import { PixelRects } from './PixelRects'
 import { C, type Px } from './palette'
+import { ICON_BG as BG, MONGO, PG, REDIS, icon, type Icon } from './icons'
 
 /**
  * The desk PC's screen while a project is on screen: a tiny architecture diagram built only from
@@ -12,57 +13,8 @@ import { C, type Px } from './palette'
  */
 
 const SCREEN = { x: 198, y: 74 } as const
-const BG = '#1b2336'
 const LINE = C.slateLight
 const DOT = C.goldLight
-const PG = '#5b8dd6'
-const MONGO = '#5fb760'
-const REDIS = '#d6524a'
-
-type Icon =
-  | 'web' | 'server' | 'db' | 'cloud' | 'vm' | 'phone' | 'person' | 'lock' | 'chart' | 'gear' | 'coin'
-  | 'cart' | 'wave' | 'triangle' | 'blocks'
-
-/** Each icon drawn at local (x, y). `color` tints the icons that come in more than one colour. */
-function icon(kind: Icon, x: number, y: number, color: string = C.cream): Px[] {
-  switch (kind) {
-    case 'web': // 8 × 6 browser window
-      return [[x, y, 8, 6, C.cream], [x, y, 8, 1, C.ochre], [x + 1, y + 2, 6, 1, C.slate], [x + 1, y + 4, 4, 1, C.slate]]
-    case 'server': // 5 × 7
-      return [[x, y, 5, 7, C.mist], [x + 1, y + 1, 3, 1, C.slate], [x + 1, y + 3, 3, 1, C.slate], [x + 1, y + 5, 1, 1, MONGO]]
-    case 'db': // 5 × 6 cylinder
-      return [[x, y + 1, 5, 4, color], [x + 1, y, 3, 1, color], [x + 1, y + 5, 3, 1, color], [x + 1, y + 1, 3, 1, C.cream]]
-    case 'cloud': // 11 × 5
-      return [[x + 2, y, 4, 1, C.mist], [x + 1, y + 1, 8, 1, C.mist], [x, y + 2, 11, 3, C.mist]]
-    case 'vm': // 2 × 2
-      return [[x, y, 2, 2, C.ochre]]
-    case 'phone': // 4 × 7
-      return [[x, y, 4, 7, C.slateLight], [x + 1, y + 1, 2, 4, C.screen], [x + 1, y + 6, 2, 1, C.cream]]
-    case 'person': // 3 × 6
-      return [[x, y, 3, 2, C.skin], [x, y + 2, 3, 4, color]]
-    case 'lock': // 5 × 6
-      return [[x + 1, y, 3, 1, C.ochre], [x + 1, y + 1, 1, 1, C.ochre], [x + 3, y + 1, 1, 1, C.ochre],
-        [x, y + 2, 5, 4, C.ochre], [x + 2, y + 3, 1, 2, BG]]
-    case 'chart': // 7 × 6
-      return [[x, y, 1, 6, C.cream], [x, y + 5, 7, 1, C.cream],
-        [x + 2, y + 3, 1, 2, MONGO], [x + 4, y + 1, 1, 4, C.ochre], [x + 6, y + 2, 1, 3, PG]]
-    case 'gear': // 5 × 5
-      return [[x + 1, y, 3, 5, C.mist], [x, y + 1, 5, 3, C.mist], [x + 2, y + 2, 1, 1, BG]]
-    case 'coin': // 4 × 4
-      return [[x + 1, y, 2, 4, C.gold], [x, y + 1, 4, 2, C.gold], [x + 1, y + 1, 1, 1, C.goldLight]]
-    case 'cart': // 7 × 5: handle, tapering basket, two wheels
-      return [[x, y, 2, 1, C.cream], [x + 1, y + 1, 6, 1, C.cream], [x + 2, y + 2, 5, 1, C.cream],
-        [x + 2, y + 3, 4, 1, C.cream], [x + 2, y + 4, 1, 1, C.mist], [x + 5, y + 4, 1, 1, C.mist]]
-    case 'wave': // 7 × 3
-      return [[x, y + 1, 1, 1, C.tealLight], [x + 1, y, 1, 1, C.tealLight], [x + 2, y + 1, 1, 1, C.tealLight],
-        [x + 3, y + 2, 1, 1, C.tealLight], [x + 4, y + 1, 1, 1, C.tealLight], [x + 5, y, 1, 1, C.tealLight],
-        [x + 6, y + 1, 1, 1, C.tealLight]]
-    case 'triangle': // 5 × 3
-      return [[x + 2, y, 1, 1, C.cream], [x + 1, y + 1, 3, 1, C.cream], [x, y + 2, 5, 1, C.cream]]
-    case 'blocks': // 6 × 6 stacked components
-      return [[x, y, 6, 2, C.tealLight], [x, y + 2, 6, 2, C.ochre], [x, y + 4, 6, 2, C.mist]]
-  }
-}
 
 /** A straight connection; a data dot travels from its start to its end. */
 interface Link { x: number; y: number; len: number; dir: 'h' | 'v' }

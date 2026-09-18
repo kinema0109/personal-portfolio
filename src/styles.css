@@ -501,6 +501,12 @@ p {
 .hud > * {
   pointer-events: auto;
 }
+/* The dialogue, its choices and the panel sit above the dismiss backdrop, so Back, Home and Next stay
+   clickable while it is up; only the room behind is covered. */
+.hud > :not(.dismiss-backdrop) {
+  position: relative;
+  z-index: 1;
+}
 
 
 /* Covers the room while a picker or a panel is up, so clicking off it closes it instead of

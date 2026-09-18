@@ -1,6 +1,6 @@
 # Qliphoth counter on the Sunflower, and a bonfire on the window sill
 
-Status: approved by owner (2026-09-18), after trying the throwaway "Room Props Lab" prototype. Kept from that prototype: the Qliphoth counter (Lobotomy Corporation) and the bonfire (Dark Souls). Parked: the d20 (later), the HoMM calendar and the Arknights gacha (not right yet).
+Status: built and then reverted by owner (2026-09-18): "not right yet". Kept for the record. Originally approved after trying the throwaway "Room Props Lab" prototype. Kept from that prototype: the Qliphoth counter (Lobotomy Corporation) and the bonfire (Dark Souls). Parked: the d20 (later), the HoMM calendar and the Arknights gacha (not right yet).
 
 ## 1. Qliphoth counter (Lobotomy Corporation) on the Sunflower
 

@@ -12,9 +12,6 @@ import type { Px } from './palette'
  *
  * There is no sun counter and no score. Clicking the flower drops a sun, clicking a sun collects
  * it, and that is the whole of it — the owner asked for the reference, not the game.
- *
- * It is also a contained Abnormality from Lobotomy Corporation: clicked too eagerly, its Qliphoth
- * counter drops and it breaches (src/hooks/useQliphoth.ts). The pips over its head are drawn here.
  */
 
 const POT = '#946b50'
@@ -129,80 +126,22 @@ const outlineOf = (px: readonly Px[]): Px[] =>
 const bodyOutline = outlineOf([...pot, ...stem, ...leaves])
 const headOutline = outlineOf([...petals, ...face])
 
-/* ── Qliphoth counter ──────────────────────────────────────────── */
-
-const PIP_ON = '#c28b3c'
-const PIP_ON_LIT = '#e0a955'
-const PIP_BREACH = '#d8412f'
-const PIP_BREACH_LIT = '#ff7a5c'
-const PIP_OFF = '#4a3b2c'
-
-/** Pips are 4 units with a one-unit gap, centred over the face (x 39.5), clear of the petals at y 87. */
-const PIP_Y = 81
-const PIP_SIZE = 4
-const PIP_STEP = 5
-
-/**
- * One pip: an ink frame so it reads against the day sky and the night sky alike, and a 2 x 2 light
- * with one brighter pixel so a lit pip looks lit rather than just coloured.
- */
-const pip = (x: number, on: boolean, breach: boolean): Px[] => {
-  const fill = !on ? PIP_OFF : breach ? PIP_BREACH : PIP_ON
-  const px: Px[] = [
-    [x, PIP_Y, PIP_SIZE, PIP_SIZE, INK],
-    [x + 1, PIP_Y + 1, 2, 2, fill],
-  ]
-  if (on) px.push([x + 1, PIP_Y + 1, 1, 1, breach ? PIP_BREACH_LIT : PIP_ON_LIT])
-  return px
-}
-
-/** What the Sunflower draws of its Qliphoth counter; the rules live in useQliphoth. */
-export interface SunflowerQliphoth {
-  counter: number
-  breach: boolean
-  suppressed: number
-}
-
-/**
- * The counter over the head. Calm, it is three ochre pips, one per point left. In a breach it turns
- * into five red pips, the suppression still to do, and each suppression click puts one out.
- */
-function QliphothPips({ counter, breach, suppressed }: SunflowerQliphoth) {
-  const total = breach ? 5 : 3
-  const lit = breach ? total - suppressed : counter
-  const left = Math.round(39.5 - (total * PIP_STEP - 1) / 2)
-  return (
-    <g data-qliphoth-pips={total}>
-      {Array.from({ length: total }, (_, i) => (
-        <g key={i} data-pip={i < lit ? 'on' : 'off'}>
-          <PixelRects px={pip(left + i * PIP_STEP, i < lit, breach)} />
-        </g>
-      ))}
-    </g>
-  )
-}
-
 /**
  * The potted sunflower. Only the head bobs; the pot and leaves stay put, so the outline is split the
- * same way and the highlighted rim bobs with the head. In a breach the whole plant shakes, but the
- * pips hold still so the counter can still be read.
+ * same way and the highlighted rim bobs with the head.
  */
-export function Sunflower({ highlight, qliphoth }: { highlight: boolean; qliphoth: SunflowerQliphoth }) {
-  const { counter, breach } = qliphoth
+export function Sunflower({ highlight }: { highlight: boolean }) {
   return (
-    <g data-plant="sunflower" data-qliphoth={breach ? 'breach' : 'calm'} data-qliphoth-counter={counter}>
-      <g className={breach ? 'f-breach' : undefined}>
-        {highlight && <PixelRects px={bodyOutline} />}
-        <PixelRects px={pot} />
-        <PixelRects px={stem} />
-        <PixelRects px={leaves} />
-        <g className="f-bob">
-          {highlight && <PixelRects px={headOutline} />}
-          <PixelRects px={petals} />
-          <PixelRects px={face} />
-        </g>
+    <g data-plant="sunflower">
+      {highlight && <PixelRects px={bodyOutline} />}
+      <PixelRects px={pot} />
+      <PixelRects px={stem} />
+      <PixelRects px={leaves} />
+      <g className="f-bob">
+        {highlight && <PixelRects px={headOutline} />}
+        <PixelRects px={petals} />
+        <PixelRects px={face} />
       </g>
-      {(breach || counter < 3) && <QliphothPips {...qliphoth} />}
     </g>
   )
 }

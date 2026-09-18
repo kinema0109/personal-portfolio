@@ -239,16 +239,6 @@ p {
 }
 .f-bob { animation: flower-bob 2s linear infinite; }
 
-/* Qliphoth breach: the whole plant rattles one pixel to each side, a pixel at a time, on top of the head's own bob.
-   Reduced motion turns it off; the red pips and the suns still say it has breached. */
-@keyframes breach-shake {
-  0%, 24.99% { transform: translateX(0); }
-  25%, 49.99% { transform: translateX(-1px); }
-  50%, 74.99% { transform: translateX(0); }
-  75%, 100% { transform: translateX(1px); }
-}
-.f-breach { animation: breach-shake 240ms linear infinite; }
-
 /* A dropped sun is tossed out of the flower's head, arcs up over the plant and falls to the floor,
    the way a sunflower spits one out in Plants vs. Zombies. The three offsets come from the sun
    itself, since each one lands somewhere different. */
@@ -359,51 +349,6 @@ p {
   height: 1px;
   padding: 0;
   border: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-}
-
-/* Bonfire on the sill: its fire swaps two frames, and swaps them faster while it flares after a rest.
-   Reduced motion leaves the first frame lit and still. */
-.f-fire-a { animation: show-first-half 0.5s linear infinite; }
-.f-fire-b { opacity: 0; animation: show-second-half 0.5s linear infinite; }
-.f-flare-a { animation: show-first-half 0.24s linear infinite; }
-.f-flare-b { opacity: 0; animation: show-second-half 0.24s linear infinite; }
-
-/* "BONFIRE LIT", the way Dark Souls says it: gold capitals on a dark band that fades out at both
-   ends, faded in and out over BONFIRE_LIT_MS. Scene.tsx centres it on the uncovered part of the room.
-   Its resting opacity is 1, so under reduced motion it simply appears and goes. */
-@keyframes bonfire-lit {
-  0% { opacity: 0; }
-  20%, 76% { opacity: 1; }
-  100% { opacity: 0; }
-}
-.bonfire-line {
-  position: absolute;
-  z-index: 1;
-  margin: 0;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-/* The text is its own element, remounted on every rest, so resting again restarts the fade. */
-.bonfire-lit {
-  display: block;
-  padding: 10px 72px;
-  font-family: var(--font-label);
-  font-size: clamp(1.4rem, 4vw, 2.6rem);
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  white-space: nowrap;
-  color: #edc567;
-  /* Hard one-step shadows rather than a blur, so the letters keep pixel edges. */
-  text-shadow: 2px 2px 0 #3a2410, -1px -1px 0 #7a5418;
-  background: linear-gradient(90deg, transparent, rgb(8 6 4 / 0.78) 22%, rgb(8 6 4 / 0.78) 78%, transparent);
-  animation: bonfire-lit 2500ms linear both;
-}
-/* Between rests the live region stays mounted but takes no room and shows nothing. */
-.bonfire-line.is-quiet {
-  width: 1px;
-  height: 1px;
   overflow: hidden;
   clip-path: inset(50%);
 }

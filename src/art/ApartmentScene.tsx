@@ -6,12 +6,11 @@ import { LimbusBookShelf } from './BookShelf'
 import { MasterBall } from './Figures'
 import { Fumo } from './Fumo'
 import { ReferenceDisplay } from './ReferenceDisplay'
-import { Sun, Sunflower, type SunSize, type SunflowerQliphoth } from './Sunflower'
+import { Sun, Sunflower, type SunSize } from './Sunflower'
 import { SunShroom, type ShroomState } from './SunShroom'
 import { WINDOW_GLASS_CLIP, Zombie } from './Zombie'
 import { Slime } from './Slime'
 import { Pylon, type Power } from './Pylon'
-import { Bonfire } from './Bonfire'
 import { ProjectScreen } from './ProjectScreens'
 import { HALO, PICK_RIM, outlineOf, type Highlight } from './outline'
 import { REFRESHED_SPRITES } from './refreshedSprites'
@@ -635,10 +634,6 @@ interface ApartmentSceneProps {
   energy: Energy
   /** How fast the desk fan is turning, or whether it is off. */
   fanSpeed: FanSpeed
-  /** The Sunflower's Qliphoth counter: its pips, and the shake while it is breached. */
-  qliphoth: SunflowerQliphoth
-  /** The bonfire on the window sill, and whether it is flaring after a rest. */
-  bonfire: { flare: boolean }
   /** What the visitor is pointing at, so that object can outline itself rather than show a box. */
   highlight: Highlight
 }
@@ -657,7 +652,7 @@ export interface DroppedSun {
   origin: { x: number; y: number }
 }
 
-export function ApartmentScene({ viewBox, phase, zombie, slime, power, screen, speaking, sparkle, suns, shroom, charge, energy, fanSpeed, highlight, qliphoth, bonfire }: ApartmentSceneProps) {
+export function ApartmentScene({ viewBox, phase, zombie, slime, power, screen, speaking, sparkle, suns, shroom, charge, energy, fanSpeed, highlight }: ApartmentSceneProps) {
   const night = phase === 'night'
   const powered = power === 'on'
   const tier = tierOf(energy.seconds)
@@ -738,11 +733,10 @@ export function ApartmentScene({ viewBox, phase, zombie, slime, power, screen, s
         <PixelRects px={night ? nightMullions : dayMullions} />
       </g>
       <PixelRects px={windowFront} />
-      <Bonfire flare={bonfire.flare} highlight={highlight === 'bonfire'} />
 
       {/* Potted sunflower and Sun-shroom by the window. Their suns are drawn last and in one
           place, so a phase switch never remounts them and replays their toss. */}
-      <Sunflower highlight={highlight === 'flower'} qliphoth={qliphoth} />
+      <Sunflower highlight={highlight === 'flower'} />
       <SunShroom shroom={shroom} asleep={!night} highlight={highlight === 'shroom'} />
 
       <ReferenceDisplays highlight={highlight} />

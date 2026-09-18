@@ -65,7 +65,8 @@ export const PROJECTS: readonly ProjectInfo[] = [
     start: '12/2022',
     end: '03/2024',
     featured: false,
-    technologies: ['TypeScript', 'JavaScript', 'Java', 'React', 'Jenkins'],
+    technologies: ['TypeScript', 'JavaScript', 'Java', 'React', 'Firebase', 'Jenkins'],
+    relatedNode: 'ikara',
   },
   {
     id: 'yokara',

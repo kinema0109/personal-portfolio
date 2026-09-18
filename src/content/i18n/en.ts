@@ -133,6 +133,21 @@ export const en: LocaleContent = {
         'CI/CD on Vercel cut deployment time by half.',
       ],
     ],
+    ikara: [
+      [
+        "iKara is INMOBI's karaoke app, on the App Store since 2013 with over 111,000 ratings in Vietnam.",
+        'It runs on the same platform as Yokara.',
+      ],
+      [
+        'Behind both apps sits an admin CMS that runs their whole economy.',
+        'It is React over Java Servlets, signed into with Firebase Auth and built and deployed by Jenkins.',
+      ],
+      ['My part was the money: top-up packages, icoin prices and exchange rates, validated as they are entered so the figures stay 100% correct.'],
+      [
+        "Much of that money moves through Yokara's dice game, Sicbo, so I built the reports on how users spend icoin.",
+        'The apps pick up every store change over REST, on Android and iOS.',
+      ],
+    ],
     'how-roles': [
       [
         'CA2T is a learning management system for corporate training, built with React, Python/Django and PostgreSQL.',
@@ -243,7 +258,7 @@ export const en: LocaleContent = {
       ],
     },
     'ikara-admin': {
-      context: 'The admin and in-app economy system behind iKara, a karaoke app by InmobiVN.',
+      context: 'The admin and in-app economy system behind iKara and Yokara, karaoke apps by InmobiVN.',
       role: 'Full Stack Engineer',
       contributions: [
         'Java Servlet and React CMS managing data for 10,000+ users with 100% transaction integrity',
@@ -274,6 +289,7 @@ export const en: LocaleContent = {
     avotree: { title: 'TheAvoTree: orders without a slow WordPress', chips: ['~2,000 orders / day', '2 of 6 developers', 'WooCommerce mirrored in MongoDB'] },
     singlekey: { title: 'SingleKey: the Rent Guarantee flow', chips: ['~20% per winning test', '2 months', 'team of 6'] },
     yokara: { title: "Yokara: money that can't be wrong", chips: ['2M+ users', '10,000 online at once', '~50 players / room'] },
+    ikara: { title: 'iKara: the money behind two apps', chips: ['data for 10,000+ users', '100% transaction integrity', 'Jenkins CI/CD'] },
     suzu: { title: 'Suzu.net: live on Supabase and Vercel', chips: ['−40% messaging latency', 'Core Web Vitals: Good', '−50% deploy time'] },
   },
 

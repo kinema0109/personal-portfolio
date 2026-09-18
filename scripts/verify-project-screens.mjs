@@ -13,7 +13,7 @@ const PROJECTS = [
   ['cbpo', 'CBPO'], ['ca2t', 'CA2T'], ['theavotree', 'TheAvoTree'], ['singlekey', 'SingleKey'],
   ['suzu', 'Suzu.net'], ['ikara-admin', 'iKara Admin CMS'], ['yokara', 'Yokara'],
 ]
-const DEEP_DIVE = { cbpo: true, ca2t: true, theavotree: true, singlekey: true, yokara: true, suzu: true }
+const DEEP_DIVE = { cbpo: true, ca2t: true, theavotree: true, singlekey: true, yokara: true, suzu: true, 'ikara-admin': true }
 
 await mkdir('artifacts', { recursive: true })
 const browser = await chromium.launch({ channel: 'msedge', headless: true })

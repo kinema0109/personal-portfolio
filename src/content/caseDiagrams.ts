@@ -10,7 +10,7 @@ import type { ProjectId } from './types'
  * or when both of its blocks are.
  */
 
-export const CASE_IDS = ['cbpo', 'cbpo-migration', 'cbpo-mcp', 'cbpo-cicd', 'cbpo-shipping', 'avotree', 'singlekey', 'yokara', 'suzu'] as const
+export const CASE_IDS = ['cbpo', 'cbpo-migration', 'cbpo-mcp', 'cbpo-cicd', 'cbpo-shipping', 'avotree', 'singlekey', 'yokara', 'suzu', 'ikara'] as const
 export type CaseId = (typeof CASE_IDS)[number]
 
 export interface Block { id: string; icon: Icon; color?: string; label: string; sub?: string; col: number; row: number }
@@ -236,5 +236,31 @@ export const CASES: Record<CaseId, CaseStudy> = {
       ],
     },
     focus: [['user', 'next'], ['auth', 'realtime', 'next', 'e-live'], ['pg', 'realtime'], ['next', 'vercel']],
+  },
+  ikara: {
+    projectId: 'ikara-admin',
+    diagram: {
+      description: 'Admin staff use a React admin CMS, signed in with Firebase Auth and deployed by Jenkins, backed by Java Servlets that manage icoin top-ups, prices and exchange rates, report on icoin spending including the Sicbo game in Yokara, and keep the iKara and Yokara apps in sync over REST.',
+      blocks: [
+        { id: 'admin', icon: 'person', color: C_TEAL, label: 'Admin staff', col: 0, row: 1 },
+        { id: 'auth', icon: 'lock', label: 'Firebase Auth', col: 1, row: 0 },
+        { id: 'cms', icon: 'web', label: 'Admin CMS', sub: 'React', col: 1, row: 1 },
+        { id: 'jenkins', icon: 'gear', label: 'Jenkins', sub: 'build · deploy', col: 1, row: 2 },
+        { id: 'servlet', icon: 'server', label: 'Java Servlets', col: 2, row: 1 },
+        { id: 'store', icon: 'coin', label: 'icoin & top-ups', sub: 'prices · rates', col: 3, row: 0 },
+        { id: 'apps', icon: 'phone', label: 'iKara · Yokara', sub: 'Android · iOS', col: 3, row: 1 },
+        { id: 'reports', icon: 'chart', label: 'Spend reports', sub: 'incl. Sicbo', col: 3, row: 2 },
+      ],
+      edges: [
+        { id: 'e-use', from: 'admin', to: 'cms' },
+        { id: 'e-auth', from: 'auth', to: 'cms' },
+        { id: 'e-deploy', from: 'jenkins', to: 'cms', label: 'deploys' },
+        { id: 'e-api', from: 'cms', to: 'servlet' },
+        { id: 'e-store', from: 'servlet', to: 'store' },
+        { id: 'e-rest', from: 'servlet', to: 'apps', label: 'REST' },
+        { id: 'e-reports', from: 'servlet', to: 'reports' },
+      ],
+    },
+    focus: [['apps'], ['admin', 'cms', 'auth', 'jenkins', 'servlet'], ['store', 'servlet', 'cms'], ['reports', 'servlet', 'apps', 'e-rest']],
   },
 }

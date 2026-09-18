@@ -115,6 +115,11 @@ export function buildStory(
       choices: [details('suzu', 'Suzu.net'), askOther],
     },
     {
+      id: 'ikara',
+      steps: caseSteps(s.ikara, 'Thọ · iKara', 'Public · iKara'),
+      choices: [details('ikara-admin', 'iKara Admin CMS'), askOther],
+    },
+    {
       id: 'how-roles',
       steps: s['how-roles'].map((lines) => tho(lines, 'CV · CA2T')) as [DialogueStep, ...DialogueStep[]],
       choices: [details('ca2t', 'CA2T'), askOther],

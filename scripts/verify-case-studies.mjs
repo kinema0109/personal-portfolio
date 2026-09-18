@@ -24,6 +24,7 @@ const ROUTES = {
   singlekey: ['SingleKey', null],
   yokara: ['Yokara', null],
   suzu: ['Suzu.net', null],
+  ikara: ['iKara Admin CMS', null],
 }
 const CBPO_PICKS = Object.values(ROUTES).map(([, pick]) => pick).filter(Boolean)
 

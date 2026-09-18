@@ -41,6 +41,7 @@ export type NodeId =
   | 'singlekey'
   | 'yokara'
   | 'suzu'
+  | 'ikara'
   | 'outside'
 
 export type ProjectId =
@@ -165,6 +166,7 @@ export interface LocaleContent {
     singlekey: readonly [Lines, Lines, Lines, Lines]
     yokara: readonly [Lines, Lines, Lines, Lines]
     suzu: readonly [Lines, Lines, Lines, Lines]
+    ikara: readonly [Lines, Lines, Lines, Lines]
     /** One step: the room is left to be explored rather than narrated. */
     outside: readonly [Lines]
   }

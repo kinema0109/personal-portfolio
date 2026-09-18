@@ -2,7 +2,7 @@ import type { LocaleContent, Project, ProjectInfo } from './types'
 
 /**
  * Source: Thọ's CV (Full-Stack Developer edition, 2026). CBPO was rewritten from Thọ's 2026-09 project brief (Node/Hapi, MongoDB + Redis, Atlas migration, MCP).
- * The one-line context for Suzu.net, iKara Admin CMS and Yokara also uses
+ * The one-line context for Suzu.net and Yokara & iKara also uses
  * the products' public pages (suzu.net, the iKara App Store listing, inmobivn.com).
  * Do not add screenshots, quotes or demo links that are not supplied.
  * Context, role and contributions for each language live in src/content/i18n/*.ts.
@@ -59,23 +59,13 @@ export const PROJECTS: readonly ProjectInfo[] = [
     relatedNode: 'suzu',
   },
   {
-    id: 'ikara-admin',
-    name: 'iKara Admin CMS',
-    company: 'INMOBIVN',
-    start: '12/2022',
-    end: '03/2024',
-    featured: false,
-    technologies: ['TypeScript', 'JavaScript', 'Java', 'React', 'Firebase', 'Jenkins'],
-    relatedNode: 'ikara',
-  },
-  {
     id: 'yokara',
-    name: 'Yokara',
+    name: 'Yokara & iKara',
     company: 'INMOBIVN',
     start: '12/2022',
     end: '03/2024',
     featured: false,
-    technologies: ['TypeScript', 'JavaScript', 'Java', 'Firebase', 'Flutter', 'Swift'],
+    technologies: ['TypeScript', 'JavaScript', 'Java', 'React', 'Firebase', 'Jenkins', 'Flutter', 'Swift'],
     relatedNode: 'yokara',
   },
 ]

@@ -41,7 +41,6 @@ export type NodeId =
   | 'singlekey'
   | 'yokara'
   | 'suzu'
-  | 'ikara'
   | 'outside'
 
 export type ProjectId =
@@ -50,7 +49,6 @@ export type ProjectId =
   | 'theavotree'
   | 'singlekey'
   | 'suzu'
-  | 'ikara-admin'
   | 'yokara'
 
 /** Objects in the room that open a destination. */
@@ -164,9 +162,8 @@ export interface LocaleContent {
     'cbpo-shipping': readonly [Lines, Lines, Lines, Lines]
     avotree: readonly [Lines, Lines, Lines, Lines, Lines]
     singlekey: readonly [Lines, Lines, Lines, Lines]
-    yokara: readonly [Lines, Lines, Lines, Lines]
+    yokara: readonly [Lines, Lines, Lines, Lines, Lines, Lines]
     suzu: readonly [Lines, Lines, Lines, Lines]
-    ikara: readonly [Lines, Lines, Lines, Lines]
     /** One step: the room is left to be explored rather than narrated. */
     outside: readonly [Lines]
   }

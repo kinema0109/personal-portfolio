@@ -10,7 +10,7 @@ import type { ProjectId } from './types'
  * or when both of its blocks are.
  */
 
-export const CASE_IDS = ['cbpo', 'cbpo-migration', 'cbpo-mcp', 'cbpo-cicd', 'cbpo-shipping', 'avotree', 'singlekey', 'yokara', 'suzu', 'ikara'] as const
+export const CASE_IDS = ['cbpo', 'cbpo-migration', 'cbpo-mcp', 'cbpo-cicd', 'cbpo-shipping', 'avotree', 'singlekey', 'yokara', 'suzu'] as const
 export type CaseId = (typeof CASE_IDS)[number]
 
 export interface Block { id: string; icon: Icon; color?: string; label: string; sub?: string; col: number; row: number }
@@ -192,28 +192,39 @@ export const CASES: Record<CaseId, CaseStudy> = {
   yokara: {
     projectId: 'yokara',
     diagram: {
-      description: 'The Yokara app signs in with Firebase Auth and calls Cloud Functions, which keep balances in the Firebase database with a reconciled ledger; a round-end job settles each Sicbo room in batched transactions.',
+      description: 'Yokara and iKara sign in with Firebase Auth and call Cloud Functions over a Firebase database of balances and a reconciled ledger; a round-end job settles each Sicbo room in batched transactions; an admin CMS on Java Servlets, deployed by Jenkins, manages icoin top-ups, prices and rates and reports on spending.',
       blocks: [
-        { id: 'app', icon: 'phone', label: 'Yokara app', sub: 'iOS · Android', col: 0, row: 1 },
+        { id: 'app', icon: 'phone', label: 'Yokara · iKara', sub: 'iOS · Android', col: 0, row: 1 },
         { id: 'auth', icon: 'lock', label: 'Firebase Auth', col: 1, row: 0 },
         { id: 'functions', icon: 'server', label: 'Cloud Functions', col: 1, row: 1 },
-        { id: 'db', icon: 'db', color: FIREBASE, label: 'Firebase DB', sub: 'balances', col: 2, row: 1 },
-        { id: 'ledger', icon: 'doc', label: 'Ledger', sub: 'reconciled', col: 3, row: 1 },
+        { id: 'db', icon: 'db', color: FIREBASE, label: 'Firebase DB', sub: 'balances · ledger', col: 2, row: 1 },
         { id: 'sicbo', icon: 'dice', label: 'Sicbo room', sub: '~50 players', col: 0, row: 2 },
         { id: 'job', icon: 'clock', label: 'Round-end job', col: 1, row: 2 },
         { id: 'batches', icon: 'queue', label: 'Batches', sub: 'transactions', col: 2, row: 2 },
+        { id: 'cms', icon: 'web', label: 'Admin CMS', sub: 'Servlets · Jenkins', col: 2, row: 0 },
+        { id: 'store', icon: 'coin', label: 'icoin & top-ups', sub: 'prices · rates', col: 3, row: 0 },
+        { id: 'reports', icon: 'chart', label: 'Spend reports', sub: 'incl. Sicbo', col: 3, row: 1 },
       ],
       edges: [
         { id: 'e-auth', from: 'app', to: 'auth' },
         { id: 'e-call', from: 'app', to: 'functions' },
         { id: 'e-write', from: 'functions', to: 'db' },
-        { id: 'e-ledger', from: 'db', to: 'ledger' },
         { id: 'e-round', from: 'sicbo', to: 'job' },
         { id: 'e-batch', from: 'job', to: 'batches' },
         { id: 'e-settle', from: 'batches', to: 'db' },
+        { id: 'e-admin-auth', from: 'cms', to: 'auth' },
+        { id: 'e-store', from: 'cms', to: 'store' },
+        { id: 'e-reports', from: 'cms', to: 'reports' },
       ],
     },
-    focus: [['app'], ['functions', 'db', 'ledger'], ['sicbo', 'job', 'batches', 'db'], ['auth', 'functions', 'db', 'app']],
+    focus: [
+      ['app'],
+      ['auth', 'functions', 'db', 'app'],
+      ['db', 'functions', 'app'],
+      ['sicbo', 'job', 'batches', 'db'],
+      ['cms', 'auth'],
+      ['cms', 'store', 'reports'],
+    ],
   },
   suzu: {
     projectId: 'suzu',
@@ -236,31 +247,5 @@ export const CASES: Record<CaseId, CaseStudy> = {
       ],
     },
     focus: [['user', 'next'], ['auth', 'realtime', 'next', 'e-live'], ['pg', 'realtime'], ['next', 'vercel']],
-  },
-  ikara: {
-    projectId: 'ikara-admin',
-    diagram: {
-      description: 'Admin staff use a React admin CMS, signed in with Firebase Auth and deployed by Jenkins, backed by Java Servlets that manage icoin top-ups, prices and exchange rates, report on icoin spending including the Sicbo game in Yokara, and keep the iKara and Yokara apps in sync over REST.',
-      blocks: [
-        { id: 'admin', icon: 'person', color: C_TEAL, label: 'Admin staff', col: 0, row: 1 },
-        { id: 'auth', icon: 'lock', label: 'Firebase Auth', col: 1, row: 0 },
-        { id: 'cms', icon: 'web', label: 'Admin CMS', sub: 'React', col: 1, row: 1 },
-        { id: 'jenkins', icon: 'gear', label: 'Jenkins', sub: 'build · deploy', col: 1, row: 2 },
-        { id: 'servlet', icon: 'server', label: 'Java Servlets', col: 2, row: 1 },
-        { id: 'store', icon: 'coin', label: 'icoin & top-ups', sub: 'prices · rates', col: 3, row: 0 },
-        { id: 'apps', icon: 'phone', label: 'iKara · Yokara', sub: 'Android · iOS', col: 3, row: 1 },
-        { id: 'reports', icon: 'chart', label: 'Spend reports', sub: 'incl. Sicbo', col: 3, row: 2 },
-      ],
-      edges: [
-        { id: 'e-use', from: 'admin', to: 'cms' },
-        { id: 'e-auth', from: 'auth', to: 'cms' },
-        { id: 'e-deploy', from: 'jenkins', to: 'cms', label: 'deploys' },
-        { id: 'e-api', from: 'cms', to: 'servlet' },
-        { id: 'e-store', from: 'servlet', to: 'store' },
-        { id: 'e-rest', from: 'servlet', to: 'apps', label: 'REST' },
-        { id: 'e-reports', from: 'servlet', to: 'reports' },
-      ],
-    },
-    focus: [['apps'], ['admin', 'cms', 'auth', 'jenkins', 'servlet'], ['store', 'servlet', 'cms'], ['reports', 'servlet', 'apps', 'e-rest']],
   },
 }

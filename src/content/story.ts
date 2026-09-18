@@ -106,18 +106,13 @@ export function buildStory(
     },
     {
       id: 'yokara',
-      steps: caseSteps(s.yokara, 'Thọ · Yokara', 'Public · Yokara'),
-      choices: [details('yokara', 'Yokara'), askOther],
+      steps: caseSteps(s.yokara, 'Thọ · Yokara & iKara', 'Public · Yokara & iKara'),
+      choices: [details('yokara', 'Yokara & iKara'), askOther],
     },
     {
       id: 'suzu',
       steps: caseSteps(s.suzu, 'CV · Suzu.net'),
       choices: [details('suzu', 'Suzu.net'), askOther],
-    },
-    {
-      id: 'ikara',
-      steps: caseSteps(s.ikara, 'Thọ · iKara', 'Public · iKara'),
-      choices: [details('ikara-admin', 'iKara Admin CMS'), askOther],
     },
     {
       id: 'how-roles',

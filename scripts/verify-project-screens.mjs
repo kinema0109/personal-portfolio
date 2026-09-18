@@ -11,9 +11,9 @@ import { mkdir } from 'node:fs/promises'
 const url = process.argv[2] || process.env.ROOM_URL || 'http://127.0.0.1:5181'
 const PROJECTS = [
   ['cbpo', 'CBPO'], ['ca2t', 'CA2T'], ['theavotree', 'TheAvoTree'], ['singlekey', 'SingleKey'],
-  ['suzu', 'Suzu.net'], ['ikara-admin', 'iKara Admin CMS'], ['yokara', 'Yokara'],
+  ['suzu', 'Suzu.net'], ['yokara', 'Yokara & iKara'],
 ]
-const DEEP_DIVE = { cbpo: true, ca2t: true, theavotree: true, singlekey: true, yokara: true, suzu: true, 'ikara-admin': true }
+const DEEP_DIVE = { cbpo: true, ca2t: true, theavotree: true, singlekey: true, yokara: true, suzu: true }
 
 await mkdir('artifacts', { recursive: true })
 const browser = await chromium.launch({ channel: 'msedge', headless: true })

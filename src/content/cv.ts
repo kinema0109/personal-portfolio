@@ -5,7 +5,7 @@ export const cvSummary = {
   experience: [
     { company: 'HDWEBSOFT', start: '03/2025', end: null, projectIds: ['cbpo', 'ca2t', 'theavotree', 'singlekey'] },
     { company: 'SUZU GROUP', start: '03/2024', end: '03/2025', projectIds: ['suzu'] },
-    { company: 'INMOBIVN', start: '12/2022', end: '03/2024', projectIds: ['ikara-admin', 'yokara'] },
+    { company: 'INMOBIVN', start: '12/2022', end: '03/2024', projectIds: ['yokara'] },
   ] satisfies ReadonlyArray<{ company: string; start: string; end: string | null; projectIds: ProjectId[] }>,
   education: {
     start: '08/2018',

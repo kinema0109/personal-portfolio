@@ -22,9 +22,8 @@ const ROUTES = {
   'cbpo-shipping': ['CBPO', 'Carriers and label printing'],
   avotree: ['TheAvoTree', null],
   singlekey: ['SingleKey', null],
-  yokara: ['Yokara', null],
+  yokara: ['Yokara & iKara', null],
   suzu: ['Suzu.net', null],
-  ikara: ['iKara Admin CMS', null],
 }
 const CBPO_PICKS = Object.values(ROUTES).map(([, pick]) => pick).filter(Boolean)
 

@@ -32,7 +32,7 @@ npm run preview    # serve dist/ on http://localhost:4173
 | Where | What |
 | --- | --- |
 | Intro | Two-step introduction, then three questions: *What have you worked on?* · *How do you work?* · *What about outside work?* |
-| Branch 1: Work | Career summary and stack, 3 featured projects (CBPO, CA2T, TheAvoTree), archive of all 7 projects, and a detail page for each (context, role, contributions, technologies) |
+| Branch 1: Work | Career summary and stack, 3 featured projects (CBPO, CA2T, TheAvoTree), archive of all 6 projects, and a detail page for each (context, role, contributions, technologies) |
 | Branch 2: How I work | How Thọ uses AI-assisted tools, then case studies for CBPO (four stories), TheAvoTree, SingleKey and Yokara, each with a lit architecture diagram; CA2T's role-based access control deep dive |
 | Branch 3: Outside work | Gaming background, then the album on the desk |
 | Gallery | Pixel-art album that **only** opens by clicking the photo album on the desk (no menu or dialogue choice leads there). One picture at a time with no titles or captions; Prev/Next or arrow keys to browse, Esc or Close to leave |
@@ -91,7 +91,7 @@ Rules the data follows:
   - `ready`: fact from the CV (or from Thọ directly) or neutral framing text
   - `draft`: wording that **Thọ must confirm**. Shown with a red "Draft · needs Thọ to confirm" tag. (None at the moment.)
   - `placeholder`: real content not supplied yet
-- Project text comes from the CV (Full-Stack Developer edition), with the CBPO six-VM detail confirmed by Thọ directly. Older details that the current CV no longer lists (BuyBox/competitor tracking, Chart.js, Tailwind on CA2T and SingleKey, Django on SingleKey, BMAD, Flutter/Swift parity, iKara Android/iOS sync) were confirmed by Thọ to stay. The one-line context for Suzu.net, iKara Admin CMS and Yokara also uses the products' public pages (suzu.net, the iKara App Store listing, inmobivn.com).
+- Project text comes from the CV (Full-Stack Developer edition), with the CBPO six-VM detail confirmed by Thọ directly. Older details that the current CV no longer lists (BuyBox/competitor tracking, Chart.js, Tailwind on CA2T and SingleKey, Django on SingleKey, BMAD, Flutter/Swift parity, iKara Android/iOS sync) were confirmed by Thọ to stay. The one-line context for Suzu.net and Yokara & iKara also uses the products' public pages (suzu.net, the iKara App Store listing, inmobivn.com).
 - Contact `value: null` shows "Not provided yet".
 
 `review.showArtworkNotice` is already `false` (no "Placeholder art" notice or "Temp" portrait tag). Set `review.showContentStatus` to `false` in `site.ts` as well before the final release to hide draft/placeholder tags.

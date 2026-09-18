@@ -56,11 +56,6 @@ export const DIAGRAMS: Record<ProjectId, Diagram> = {
     parts: [['web', 3, 9], ['wave', 12, 10], ['db', 23, 9, PG], ['triangle', 32, 11]],
     links: [h(11, 11, 1), h(19, 11, 4)],
   },
-  // React CMS → Java → virtual store, synced to both Android and iOS; built by Jenkins.
-  'ikara-admin': {
-    parts: [['web', 1, 5], ['server', 11, 4], ['coin', 19, 6], ['phone', 27, 2], ['phone', 27, 11], ['gear', 11, 15]],
-    links: [h(9, 7, 2), h(16, 7, 3), h(23, 7, 2), v(25, 5, 10), h(26, 5, 1), h(26, 14, 1), v(13, 11, 4)],
-  },
   // Flutter/Swift apps → Firebase Cloud Functions, signed in with Firebase Auth → Firebase's database.
   yokara: {
     parts: [['phone', 8, 8], ['server', 17, 8], ['lock', 17, 16], ['db', 26, 9, FIREBASE]],

@@ -110,16 +110,24 @@ export const en: LocaleContent = {
       ['We tested everything with VWO, from the smallest button to each step and each word. A winning change usually lifted sign-ups by around 20%.'],
     ],
     yokara: [
-      ['Yokara is an online karaoke app by INMOBI in Vietnam, with over 2 million users, up to 10,000 of them online at once.'],
       [
-        'Its economy runs on virtual currency: top-ups, VIP, gifts in livestream rooms and rewards.',
+        "Yokara and iKara are INMOBI's karaoke apps. Yokara has over 2 million users; iKara has been on the App Store since 2013 with over 111,000 ratings in Vietnam.",
+        'They share one platform, with up to 10,000 people online at once.',
+      ],
+      ['Both run on Firebase: its database, Cloud Functions for the backend and Firebase Auth for sign-in. I was one of about 20 people on the team.'],
+      [
+        'Their economy runs on a virtual currency, icoin: top-ups, VIP, gifts in livestream rooms and rewards.',
         "Money can't be wrong, so every change is a transaction, a ledger records it, and the books are reconciled.",
       ],
       [
-        'Sicbo is a dice mini-game with rooms of up to about 50 players.',
+        'Much of that money moves through Sicbo, a dice mini-game with rooms of up to about 50 players.',
         'When a round ends, a job collects every bet, splits them into batches if there are many, and settles each balance in a transaction.',
       ],
-      ['It all runs on Firebase: its database, Cloud Functions for the backend and Firebase Auth for sign-in. I was one of about 20 people on the team.'],
+      ['Behind both apps sits an admin CMS that runs the whole economy: React over Java Servlets, signed into with Firebase Auth and deployed by Jenkins.'],
+      [
+        'My part there was the money: top-up packages, icoin prices and exchange rates, validated as they are entered, and the reports on how users spend icoin.',
+        'The apps pick up every store change over REST, on Android and iOS.',
+      ],
     ],
     suzu: [
       ['Suzu.net is a social network for creators, artists and their fans, built on Supabase and Vercel.'],
@@ -131,21 +139,6 @@ export const en: LocaleContent = {
       [
         'Lazy loading and image optimisation lifted Core Web Vitals from "Needs Improvement" to "Good".',
         'CI/CD on Vercel cut deployment time by half.',
-      ],
-    ],
-    ikara: [
-      [
-        "iKara is INMOBI's karaoke app, on the App Store since 2013 with over 111,000 ratings in Vietnam.",
-        'It runs on the same platform as Yokara.',
-      ],
-      [
-        'Behind both apps sits an admin CMS that runs their whole economy.',
-        'It is React over Java Servlets, signed into with Firebase Auth and built and deployed by Jenkins.',
-      ],
-      ['My part was the money: top-up packages, icoin prices and exchange rates, validated as they are entered so the figures stay 100% correct.'],
-      [
-        "Much of that money moves through Yokara's dice game, Sicbo, so I built the reports on how users spend icoin.",
-        'The apps pick up every store change over REST, on Android and iOS.',
       ],
     ],
     'how-roles': [
@@ -257,25 +250,16 @@ export const en: LocaleContent = {
         'Automated CI/CD pipelines on Vercel that cut deployment time by 50%',
       ],
     },
-    'ikara-admin': {
-      context: 'The admin and in-app economy system behind iKara and Yokara, karaoke apps by InmobiVN.',
-      role: 'Full Stack Engineer',
-      contributions: [
-        'Java Servlet and React CMS managing data for 10,000+ users with 100% transaction integrity',
-        'Virtual store, item and price validation workflows',
-        'Internal reporting tools, including virtual currency spending',
-        'REST APIs that keep store items in sync on Android and iOS',
-        'Jenkins build and deployment pipelines',
-      ],
-    },
     yokara: {
-      context: 'A social music and karaoke app by InmobiVN for singing, recording and sharing songs.',
+      context: "Yokara and iKara, INMOBI's karaoke apps for singing, recording and livestream rooms, on one platform with a shared virtual economy and the admin CMS that runs it.",
       role: 'Full Stack Engineer',
       contributions: [
-        'Backend on Firebase Cloud Functions, with Firebase Auth',
-        'Virtual-currency and in-app transaction backend with 100% financial accuracy',
+        'Virtual-currency and in-app transaction backend on Firebase with 100% financial accuracy',
         'Sicbo settlement: a round-end job collects every bet, batches them and settles balances in transactions',
-        'Feature parity with the Flutter and Swift mobile apps',
+        'Admin CMS (Java Servlets and React) managing top-ups, icoin prices and exchange rates for 10,000+ users',
+        'Reports on icoin spending, including the Sicbo game',
+        'REST APIs that keep store items in sync on Android and iOS; Jenkins build and deploy pipelines',
+        'Backend on Firebase Cloud Functions with Firebase Auth, at parity with the Flutter and Swift apps',
       ],
     },
   },
@@ -288,8 +272,7 @@ export const en: LocaleContent = {
     'cbpo-shipping': { title: 'Carriers and label printing', chips: ['UPS added', 'readable carrier errors', 'FNSKU labels', 'Jest in CI'] },
     avotree: { title: 'TheAvoTree: orders without a slow WordPress', chips: ['~2,000 orders / day', '2 of 6 developers', 'WooCommerce mirrored in MongoDB'] },
     singlekey: { title: 'SingleKey: the Rent Guarantee flow', chips: ['~20% per winning test', '2 months', 'team of 6'] },
-    yokara: { title: "Yokara: money that can't be wrong", chips: ['2M+ users', '10,000 online at once', '~50 players / room'] },
-    ikara: { title: 'iKara: the money behind two apps', chips: ['data for 10,000+ users', '100% transaction integrity', 'Jenkins CI/CD'] },
+    yokara: { title: "Yokara & iKara: money that can't be wrong", chips: ['2M+ users', '10,000 online at once', '~50 players / room', '100% transaction integrity'] },
     suzu: { title: 'Suzu.net: live on Supabase and Vercel', chips: ['−40% messaging latency', 'Core Web Vitals: Good', '−50% deploy time'] },
   },
 

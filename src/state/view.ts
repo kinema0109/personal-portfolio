@@ -42,7 +42,6 @@ const SECTION_BY_NODE: Record<NodeId, Section> = {
   singlekey: 'how',
   yokara: 'how',
   suzu: 'how',
-  ikara: 'how',
   'how-roles': 'how',
   outside: 'outside',
 }

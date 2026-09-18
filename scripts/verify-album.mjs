@@ -15,14 +15,14 @@ try {
       page.on('pageerror', e => errors.push(e.message))
       await page.addInitScript(l => localStorage.setItem('tho-vn:locale',l), locale)
       await page.goto('http://127.0.0.1:5181')
-      const opener = page.getByRole('button', {name:{vi:'Mở album',en:'Open Game Gallery',ja:'アルバムを開く'}[locale],exact:true})
+      const opener = page.getByRole('button', {name:{vi:'Mở album',en:'Games Gallery',ja:'アルバムを開く'}[locale],exact:true})
       const open = async () => {
         await opener.click()
         await page.locator('.album-viewer[open]').waitFor()
         assert.equal(await page.locator('.album-number').innerText(), counter(0))
       }
       await open()
-      assert.equal(await page.locator('#album-title').innerText(), 'Game Gallery')
+      assert.equal(await page.locator('#album-title').innerText(), 'Games Gallery')
       const source = await page.locator('.album-art img').getAttribute('src')
       await page.keyboard.press('ArrowLeft')
       assert.equal(await page.locator('.album-art img').getAttribute('src'),source)

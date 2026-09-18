@@ -82,7 +82,7 @@ try {
     assert.equal(await dialogue.evaluate((e) => getComputedStyle(e).opacity), '0.5', 'the dialogue box is dimmed')
     assert.equal(await page.getByRole('button', { name: 'See projects' }).count(), 0, 'the PC needs power')
     assert.equal(await page.getByRole('button', { name: 'Keep listening' }).count(), 0, 'Thọ cannot be clicked on')
-    assert.equal(await page.getByRole('button', { name: 'Open Game Gallery' }).count(), 1, 'the album still opens')
+    assert.equal(await page.getByRole('button', { name: 'Games Gallery' }).count(), 1, 'the album still opens')
     assert.equal(await page.getByRole('button', { name: 'Profile' }).count(), 1, 'the drawer still opens')
     assert.equal(await page.locator('[data-screen]').getAttribute('data-screen'), 'off', 'the PC screen is off')
     assert.equal(await page.locator('.f-rgb-a').count(), 0, 'the tower lights are off')
@@ -125,7 +125,7 @@ try {
     assert.deepEqual(await storyAt(page), before, 'closing the CV leaves the story where it was')
 
     // The album still opens the gallery, and closes.
-    await page.getByRole('button', { name: 'Open Game Gallery' }).click()
+    await page.getByRole('button', { name: 'Games Gallery' }).click()
     await page.locator('.album-viewer[open]').waitFor()
     await page.locator('.album-close').click()
     await page.locator('.album-viewer[open]').waitFor({ state: 'detached' })

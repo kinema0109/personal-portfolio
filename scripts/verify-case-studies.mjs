@@ -109,7 +109,7 @@ try {
   await page.waitForTimeout(300)
   // The room reframes around whatever is open, so the album is found afresh before every click.
   const clickAlbum = async () => {
-    const album = await page.locator('.hotspot', { hasText: 'Open Game Gallery' }).boundingBox()
+    const album = await page.locator('.hotspot', { hasText: 'Games Gallery' }).boundingBox()
     await page.mouse.click(album.x + album.width / 2, album.y + album.height / 2)
     await page.waitForTimeout(300)
   }

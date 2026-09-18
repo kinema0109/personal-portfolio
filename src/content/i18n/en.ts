@@ -6,7 +6,7 @@ export const en: LocaleContent = {
   // Kept in step with index.html, which is what link previews and search engines read.
   meta: {
     title: 'Hoàng Công Thọ — Full-Stack Engineer',
-    description: 'Full-Stack Engineer, three years in the JavaScript and TypeScript ecosystem: React and Next.js interfaces, NestJS APIs, SQL and NoSQL. CV and projects inside.',
+    description: 'Full-Stack Engineer, four years in the JavaScript and TypeScript ecosystem: React and Next.js interfaces, NestJS APIs, SQL and NoSQL. CV and projects inside.',
   },
   role: 'Full-Stack Engineer',
   present: 'present',
@@ -15,7 +15,7 @@ export const en: LocaleContent = {
   story: {
     intro: [
       [
-        "Hi, I'm Thọ, a Full-Stack Engineer with three years across the JavaScript and TypeScript ecosystem.",
+        "Hi, I'm Thọ, a Full-Stack Engineer with four years across the JavaScript and TypeScript ecosystem.",
         'I build fast React and Next.js interfaces and design NestJS APIs over SQL and NoSQL databases.',
         'I care about clean design patterns, testing and CI/CD.',
       ],
@@ -298,7 +298,7 @@ export const en: LocaleContent = {
     back: 'Back',
     home: 'Home',
     next: 'Next',
-    hotspots: { pc: 'See projects', album: 'Open Game Gallery', drawer: 'Profile' },
+    hotspots: { pc: 'See projects', album: 'Games Gallery', drawer: 'Profile' },
     sceneDescription:
       'Pixel art of a small apartment that follows the visitor’s own day and night. Thọ works at a desk with a PC, a photo album and a notebook, a desktop tower underneath it powered by a Protoss pylon that can be switched off, and a potted sunflower and a Sun-shroom on the floor by the window; the Sun-shroom sleeps by day. On the wall, Alhazard and Langrisser cross in one frame, Gran Centurio hangs in a tall frame beside it, and Armageddon rests on pegs below. The display cabinet holds the books behind the Limbus Company sinners and two plushes on the top shelf, a Skaven Grey Seer, an Alpha Legion miniature and a Master Ball on the lit middle shelf, and every boxed Fire Emblem game along the bottom. Click the PC, the album or the desk drawer to explore, or the plants for a sun.',
     artNotice: 'Placeholder art',
@@ -360,7 +360,7 @@ export const en: LocaleContent = {
       keyHint: '← → Browse · Esc Close gallery',
       loadError: 'The picture could not load. You can still browse or close the gallery.',
       eyebrow: 'Pixel art',
-      title: 'Game Gallery',
+      title: 'Games Gallery',
       noPictures: 'No pictures yet',
       prev: 'Prev',
       next: 'Next',

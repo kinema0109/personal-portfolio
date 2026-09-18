@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react'
 import type { ProjectId } from '../content/types'
 import { PixelRects } from './PixelRects'
 import { C, type Px } from './palette'
-import { ICON_BG as BG, MONGO, PG, REDIS, icon, type Icon } from './icons'
+import { FIREBASE, ICON_BG as BG, MONGO, PG, REDIS, icon, type Icon } from './icons'
 
 /**
  * The desk PC's screen while a project is on screen: a tiny architecture diagram built only from
@@ -61,9 +61,9 @@ export const DIAGRAMS: Record<ProjectId, Diagram> = {
     parts: [['web', 1, 5], ['server', 11, 4], ['coin', 19, 6], ['phone', 27, 2], ['phone', 27, 11], ['gear', 11, 15]],
     links: [h(9, 7, 2), h(16, 7, 3), h(23, 7, 2), v(25, 5, 10), h(26, 5, 1), h(26, 14, 1), v(13, 11, 4)],
   },
-  // Flutter/Swift apps → Express and Firebase with JWT → MongoDB.
+  // Flutter/Swift apps → Firebase Cloud Functions, signed in with Firebase Auth → Firebase's database.
   yokara: {
-    parts: [['phone', 8, 8], ['server', 17, 8], ['lock', 17, 16], ['db', 26, 9, MONGO]],
+    parts: [['phone', 8, 8], ['server', 17, 8], ['lock', 17, 16], ['db', 26, 9, FIREBASE]],
     links: [h(12, 11, 5), v(19, 15, 1), h(22, 11, 4)],
   },
 }

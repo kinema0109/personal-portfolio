@@ -31,9 +31,15 @@ export type NodeId =
   | 'intro'
   | 'work'
   | 'how'
-  | 'how-migration'
-  | 'how-events'
   | 'how-roles'
+  | 'cbpo'
+  | 'cbpo-migration'
+  | 'cbpo-mcp'
+  | 'cbpo-cicd'
+  | 'cbpo-shipping'
+  | 'avotree'
+  | 'singlekey'
+  | 'yokara'
   | 'outside'
 
 export type ProjectId =
@@ -148,9 +154,15 @@ export interface LocaleContent {
     /** Last work step; mentions how many projects are in the archive. */
     workOverview: (archived: number) => Lines
     how: readonly [Lines, Lines]
-    'how-migration': readonly [Lines, Lines, Lines, Lines]
-    'how-events': readonly [Lines, Lines, Lines, Lines]
     'how-roles': readonly [Lines, Lines, Lines, Lines]
+    cbpo: readonly [Lines, Lines]
+    'cbpo-migration': readonly [Lines, Lines, Lines, Lines, Lines]
+    'cbpo-mcp': readonly [Lines, Lines, Lines, Lines]
+    'cbpo-cicd': readonly [Lines, Lines, Lines, Lines]
+    'cbpo-shipping': readonly [Lines, Lines, Lines, Lines]
+    avotree: readonly [Lines, Lines, Lines, Lines, Lines]
+    singlekey: readonly [Lines, Lines, Lines, Lines]
+    yokara: readonly [Lines, Lines, Lines, Lines]
     /** One step: the room is left to be explored rather than narrated. */
     outside: readonly [Lines]
   }
@@ -169,6 +181,11 @@ export interface LocaleContent {
     askOther: string
     approach: string
     seeFeatured: string
+    cbpoMigration: string
+    cbpoMcp: string
+    cbpoCicd: string
+    cbpoShipping: string
+    anotherCbpo: string
   }
 
   /** Dialogue generated for panels and the archive. */
@@ -181,6 +198,9 @@ export interface LocaleContent {
   }
 
   projects: Record<ProjectId, ProjectText>
+
+  /** Case studies: a title per story and the result chips shown on its last step. */
+  cases: Record<import('./caseDiagrams').CaseId, { title: string; chips: readonly string[] }>
 
   cv: {
     school: string
@@ -257,6 +277,7 @@ export interface LocaleContent {
       notProvided: string
       contactLabels: Record<ContactId, string>
     }
+    case: { eyebrow: string; now: string }
     gallery: {
       finish: string
       lastPage: string

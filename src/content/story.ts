@@ -38,6 +38,11 @@ export function buildStory(
   }))
   const details = (id: ProjectId, name: string): Choice => ({ label: c.seeDetails(name), target: { kind: 'project', id } })
   const askOther: Choice = { label: c.askOther, target: { kind: 'node', id: 'how' } }
+  const anotherCbpo: Choice = { label: c.anotherCbpo, target: { kind: 'node', id: 'cbpo' } }
+  const cbpoEnd: readonly Choice[] = [anotherCbpo, details('cbpo', 'CBPO'), askOther]
+  /** A case study's steps: the first may cite a public source; the wording is still Thọ's to confirm. */
+  const caseSteps = (lines: readonly DialogueLines[], source: string, firstSource = source) =>
+    lines.map((l, i) => tho(l, i === 0 ? firstSource : source, 'draft')) as [DialogueStep, ...DialogueStep[]]
 
   const nodes: readonly StoryNode[] = [
     {
@@ -68,25 +73,41 @@ export function buildStory(
       id: 'how',
       steps: [tho(s.how[0], 'CV'), tho(s.how[1])],
       choices: [
-        { label: c.migration, hint: 'CBPO', target: { kind: 'node', id: 'how-migration' } },
-        { label: c.events, hint: 'TheAvoTree', target: { kind: 'node', id: 'how-events' } },
+        { label: c.migration, hint: 'CBPO', target: { kind: 'node', id: 'cbpo-migration' } },
+        { label: c.events, hint: 'TheAvoTree', target: { kind: 'node', id: 'avotree' } },
         { label: c.roles, hint: 'CA2T', target: { kind: 'node', id: 'how-roles' } },
       ],
     },
+
+    // Case studies. Each step lights part of the diagram in src/content/caseDiagrams.ts.
     {
-      id: 'how-migration',
-      steps: [
-        tho(s['how-migration'][0], 'CV · CBPO'),
-        tho(s['how-migration'][1], 'CV · CBPO'),
-        tho(s['how-migration'][2], 'Thọ · CBPO'),
-        tho(s['how-migration'][3], 'CV · CBPO'),
+      id: 'cbpo',
+      steps: caseSteps(s.cbpo, 'Thọ · CBPO'),
+      choices: [
+        { label: c.cbpoMigration, target: { kind: 'node', id: 'cbpo-migration' } },
+        { label: c.cbpoMcp, target: { kind: 'node', id: 'cbpo-mcp' } },
+        { label: c.cbpoCicd, target: { kind: 'node', id: 'cbpo-cicd' } },
+        { label: c.cbpoShipping, target: { kind: 'node', id: 'cbpo-shipping' } },
       ],
-      choices: [details('cbpo', 'CBPO'), askOther],
+    },
+    { id: 'cbpo-migration', steps: caseSteps(s['cbpo-migration'], 'Thọ · CBPO'), choices: cbpoEnd },
+    { id: 'cbpo-mcp', steps: caseSteps(s['cbpo-mcp'], 'Thọ · CBPO'), choices: cbpoEnd },
+    { id: 'cbpo-cicd', steps: caseSteps(s['cbpo-cicd'], 'Thọ · CBPO'), choices: cbpoEnd },
+    { id: 'cbpo-shipping', steps: caseSteps(s['cbpo-shipping'], 'Thọ · CBPO'), choices: cbpoEnd },
+    {
+      id: 'avotree',
+      steps: caseSteps(s.avotree, 'Thọ · TheAvoTree', 'Public · TheAvoTree'),
+      choices: [details('theavotree', 'TheAvoTree'), askOther],
     },
     {
-      id: 'how-events',
-      steps: s['how-events'].map((lines) => tho(lines, 'CV · TheAvoTree')) as [DialogueStep, ...DialogueStep[]],
-      choices: [details('theavotree', 'TheAvoTree'), askOther],
+      id: 'singlekey',
+      steps: caseSteps(s.singlekey, 'Thọ · SingleKey', 'Public · SingleKey'),
+      choices: [details('singlekey', 'SingleKey'), askOther],
+    },
+    {
+      id: 'yokara',
+      steps: caseSteps(s.yokara, 'Thọ · Yokara', 'Public · Yokara'),
+      choices: [details('yokara', 'Yokara'), askOther],
     },
     {
       id: 'how-roles',

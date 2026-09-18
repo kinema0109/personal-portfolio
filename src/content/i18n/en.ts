@@ -46,44 +46,80 @@ export const en: LocaleContent = {
       ],
       [
         'I can also go deeper into three pieces of work.',
-        'Pick one: moving production MongoDB from Atlas to self-hosted GCP, a real-time webhook pipeline, or role-based access control.',
+        'Pick one: moving production MongoDB from Atlas to self-hosted GCP, taking orders off a slow WordPress, or role-based access control.',
       ],
     ],
-    'how-migration': [
+    cbpo: [
       [
-        'CBPO is a multi-service e-commerce data and logistics platform for Amazon sellers, built with Node.js (Express), TypeScript (Hapi) and a Vue.js micro-frontend portal on GCP.',
-        'It pulls in marketplace data from Amazon SP-API and Shopify, including BuyBox and competitor tracking, manages FBA shipments and shipping labels, and watches brand pricing with MAP Watcher.',
+        'CBPO is a multi-service platform for Amazon sellers. It pulls marketplace data from Amazon SP-API and Shopify, manages FBA shipments and shipping labels, and watches brand pricing with MAP Watcher.',
+        'It runs on Node.js (Express), TypeScript (Hapi) and a Vue micro-frontend portal on GCP.',
       ],
       [
-        'Its data lives in MongoDB, with Redis alongside it.',
-        'That is 5 production MongoDB clusters, from 100GB up to 1.6TB each.',
-      ],
-      [
-        'My biggest piece there was moving production MongoDB off MongoDB Atlas.',
-        'I provisioned 6 Compute Engine VMs on GCP as MongoDB replica sets, then migrated all 5 clusters onto them.',
-      ],
-      [
-        'To keep the platform online, I used mongosync continuous replication and a near-zero-downtime cutover, and led capacity planning as the vCPU quota grew from 24 to 78 cores.',
-        'The move removed the dependence on costly M50/M60 managed Atlas tiers.',
+        'Its data lives in MongoDB with Redis beside it: 5 production clusters, from 100GB to 1.6TB each.',
+        "I've worked across most of it. Which part do you want to hear about?",
       ],
     ],
-    'how-events': [
+    'cbpo-migration': [
+      ['The 5 clusters ran on MongoDB Atlas, on costly managed M50/M60 tiers.', 'The plan was to run MongoDB ourselves on GCP instead.'],
+      ['First, capacity: I led the planning as our GCP vCPU quota grew from 24 to 78 cores.'],
+      ['I provisioned 6 Compute Engine VMs and set them up as MongoDB replica sets.'],
+      ['mongosync then kept each cluster continuously replicated from Atlas to its new replica set, while the platform kept running on Atlas.'],
       [
-        'TheAvoTree is a large e-commerce platform that bridges WordPress/WooCommerce with a modern JavaScript management system.',
-        'I built the bridge full-stack: a NestJS API over MongoDB, and a React admin dashboard.',
+        'Once a cluster was in sync, we cut over with near-zero downtime.',
+        'All 5 clusters moved, and the platform no longer depends on M50/M60 Atlas tiers.',
+      ],
+    ],
+    'cbpo-mcp': [
+      ["AI agents are good at questions like 'how did this product sell last week?', but they couldn't see CBPO's data."],
+      ['I built a Model Context Protocol server inside the central TypeScript API: about 1,400 lines.'],
+      ['It exposes 6 authenticated tools over products, orders, financial events, sales and sync status.'],
+      ['So an agent can query marketplace data directly and get the same answers the portal gets.'],
+    ],
+    'cbpo-cicd': [
+      ['Production deployments came from several separate branches across 3 services.'],
+      ['I merged them into one GitLab CI pipeline that deploys with Helm, with values per environment.'],
+      ['Automated deploy checks run before a release goes out, for all 3 services.'],
+      ['I also set up AGENTS.md and AI code review in merge requests, to speed delivery up without lowering the bar.'],
+    ],
+    'cbpo-shipping': [
+      ['Sellers ship with several carriers and compare rates before buying a label.'],
+      ['I added UPS to the rate comparison.'],
+      ['EasyPost v2 returned raw API errors, so I re-architected the integration with a version mediator and an error-mapping layer. Users now see what to fix.'],
+      ["I also delivered 2D-barcode and FNSKU label printing across Vue and Express, with UPC resolution, skip rules and print history, and brought Jest unit tests into the frontend's CI."],
+    ],
+    avotree: [
+      [
+        'TheAvoTree delivers orchard-fresh avocados around New Zealand on subscription, from a WordPress/WooCommerce shop.',
+        'Its WordPress dashboard had become so heavy and slow that it held up shipping.',
+      ],
+      ['With one other developer, in a team of 6, I built a separate management system: a NestJS API over MongoDB, with a React dashboard.'],
+      ['The hard part was the data. WooCommerce carries subscriptions and a great deal of metadata, and the MongoDB schema had to mirror it faithfully.'],
+      [
+        "Orders matter too much to trust to webhooks alone. A scheduled job pulls them through a queue with retries and checks WordPress's responses against the dashboard.",
+        'Webhooks carry the less critical changes, like statuses and users.',
+      ],
+      ['Staff now do nearly everything from the new dashboard, at around 2,000 orders a day.'],
+    ],
+    singlekey: [
+      [
+        'SingleKey is a Canadian rental-tech company: tenant screening, rent collection and a Rent Guarantee.',
+        'Since buying its competitor Naborly in 2022, it has served around 60,000 landlords.',
+      ],
+      ['For two months, in a team of 6, I worked on the Rent Guarantee flow: uploading documents and running credit checks.'],
+      ['The pages are built static with Next.js and talk to a Django backend over REST.'],
+      ['We tested everything with VWO, from the smallest button to each step and each word. A winning change usually lifted sign-ups by around 20%.'],
+    ],
+    yokara: [
+      ['Yokara is an online karaoke app by INMOBI in Vietnam, with over 2 million users, up to 10,000 of them online at once.'],
+      [
+        'Its economy runs on virtual currency: top-ups, VIP, gifts in livestream rooms and rewards.',
+        "Money can't be wrong, so every change is a transaction, a ledger records it, and the books are reconciled.",
       ],
       [
-        "I designed a high-performance MongoDB schema that mirrors WooCommerce's complex data structure.",
-        'That keeps the data consistent across both platforms.',
+        'Sicbo is a dice mini-game with rooms of up to about 50 players.',
+        'When a round ends, a job collects every bet, splits them into batches if there are many, and settles each balance in a transaction.',
       ],
-      [
-        'Orders and inventory updates arrive as WooCommerce webhooks.',
-        'I built a secure, real-time webhook listener that processes thousands of events a day with zero data loss.',
-      ],
-      [
-        'On top of that data sits the React admin dashboard for sales, user behavior and content performance.',
-        'I also covered the core business logic with unit and integration tests.',
-      ],
+      ['It all runs on Firebase: its database, Cloud Functions for the backend and Firebase Auth for sign-in. I was one of about 20 people on the team.'],
     ],
     'how-roles': [
       [
@@ -110,11 +146,16 @@ export const en: LocaleContent = {
     archiveMore: (count) => `${count} more projects`,
     archiveAll: 'Every project in the CV',
     migration: 'MongoDB: Atlas → self-hosted GCP',
-    events: 'Real-time webhooks',
+    events: 'Orders without a slow WordPress',
     roles: 'Role-based access control',
     seeDetails: (project) => `See ${project} details`,
     askOther: 'Ask about something else',
     approach: 'How did you approach it?',
+    cbpoMigration: 'Moving MongoDB off Atlas',
+    cbpoMcp: 'An MCP server for AI agents',
+    cbpoCicd: 'One deploy pipeline',
+    cbpoShipping: 'Carriers and label printing',
+    anotherCbpo: 'Another part of CBPO',
     seeFeatured: 'See featured projects',
   },
 
@@ -164,7 +205,7 @@ export const en: LocaleContent = {
       contributions: [
         'Full-stack WooCommerce bridge: NestJS API and React admin dashboard',
         'High-performance MongoDB schema that mirrors the WooCommerce data structure',
-        'Real-time webhook listener processing thousands of events daily with zero data loss',
+        'Orders pulled by a scheduled job through a queue with retries, cross-checked against the dashboard; webhooks for statuses and users',
         'Unit and integration tests for core business logic',
       ],
     },
@@ -173,7 +214,7 @@ export const en: LocaleContent = {
       role: 'Full Stack Engineer',
       contributions: [
         'High-conversion landing pages in Next.js and TypeScript',
-        'Reusable React component libraries that cut new-feature development time by 30%',
+        'A reusable React and Tailwind component library for the application flow',
         'VWO A/B tests that lifted sign-ups',
         'Turned product requirements into technical specifications',
       ],
@@ -204,12 +245,23 @@ export const en: LocaleContent = {
       context: 'A social music and karaoke app by InmobiVN for singing, recording and sharing songs.',
       role: 'Full Stack Engineer',
       contributions: [
-        'REST APIs with Express and Firebase Functions, secured by JWT',
+        'Backend on Firebase Cloud Functions, with Firebase Auth',
         'Virtual-currency and in-app transaction backend with 100% financial accuracy',
-        'Optimized MongoDB queries for a high-concurrency real-time mini-game',
+        'Sicbo settlement: a round-end job collects every bet, batches them and settles balances in transactions',
         'Feature parity with the Flutter and Swift mobile apps',
       ],
     },
+  },
+
+  cases: {
+    cbpo: { title: 'CBPO at a glance', chips: [] },
+    'cbpo-migration': { title: 'Moving MongoDB off Atlas', chips: ['5 clusters', '100GB–1.6TB each', 'vCPU 24 → 78', 'near-zero downtime'] },
+    'cbpo-mcp': { title: 'An MCP server for AI agents', chips: ['6 tools', '~1,400 LOC', 'authenticated'] },
+    'cbpo-cicd': { title: 'One deploy pipeline', chips: ['3 services', '1 pipeline', 'GitLab CI + Helm'] },
+    'cbpo-shipping': { title: 'Carriers and label printing', chips: ['UPS added', 'readable carrier errors', 'FNSKU labels', 'Jest in CI'] },
+    avotree: { title: 'TheAvoTree: orders without a slow WordPress', chips: ['~2,000 orders / day', '2 of 6 developers', 'WooCommerce mirrored in MongoDB'] },
+    singlekey: { title: 'SingleKey: the Rent Guarantee flow', chips: ['~20% per winning test', '2 months', 'team of 6'] },
+    yokara: { title: "Yokara: money that can't be wrong", chips: ['2M+ users', '10,000 online at once', '~50 players / room'] },
   },
 
   cv: {
@@ -289,6 +341,7 @@ export const en: LocaleContent = {
       notProvided: 'Not provided yet',
       contactLabels: { email: 'Email', github: 'GitHub', linkedin: 'LinkedIn' },
     },
+    case: { eyebrow: 'Case study', now: 'Now showing:' },
     gallery: {
       finish: 'Finish',
       lastPage: 'You have reached the last picture.',

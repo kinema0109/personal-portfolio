@@ -16,7 +16,7 @@ export const PROJECTS: readonly ProjectInfo[] = [
     end: null,
     featured: true,
     technologies: ['Node.js', 'Express', 'TypeScript', 'Hapi', 'Vue.js', 'Vuex', 'MongoDB', 'Redis', 'GCP', 'GitLab CI', 'Helm', 'Jest', 'MCP'],
-    relatedNode: 'how-migration',
+    relatedNode: 'cbpo',
   },
   {
     id: 'ca2t',
@@ -36,7 +36,7 @@ export const PROJECTS: readonly ProjectInfo[] = [
     end: null,
     featured: true,
     technologies: ['Schema design', 'Testing', 'TypeScript', 'JavaScript', 'NestJS', 'React', 'MongoDB', 'WooCommerce webhooks', 'Chart.js'],
-    relatedNode: 'how-events',
+    relatedNode: 'avotree',
   },
   {
     id: 'singlekey',
@@ -46,6 +46,7 @@ export const PROJECTS: readonly ProjectInfo[] = [
     end: null,
     featured: false,
     technologies: ['JavaScript', 'Next.js', 'TypeScript', 'React', 'Django', 'Tailwind', 'VWO'],
+    relatedNode: 'singlekey',
   },
   {
     id: 'suzu',
@@ -72,7 +73,8 @@ export const PROJECTS: readonly ProjectInfo[] = [
     start: '12/2022',
     end: '03/2024',
     featured: false,
-    technologies: ['Query optimization', 'TypeScript', 'JavaScript', 'Express', 'Firebase', 'MongoDB', 'JWT', 'Flutter', 'Swift'],
+    technologies: ['TypeScript', 'JavaScript', 'Java', 'Firebase', 'Flutter', 'Swift'],
+    relatedNode: 'yokara',
   },
 ]
 

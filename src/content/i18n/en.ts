@@ -51,20 +51,20 @@ export const en: LocaleContent = {
     ],
     'how-migration': [
       [
-        'CBPO is an e-commerce data orchestration and logistics platform, built as Python/Django and Vue.js microservices on GCP.',
-        'It centralizes order processing, pulls in Amazon marketplace data like BuyBox and competitor tracking, protects brand pricing and optimizes shipping.',
+        'CBPO is a multi-service e-commerce data and logistics platform for Amazon sellers, built with Node.js (Express), TypeScript (Hapi) and a Vue.js micro-frontend portal on GCP.',
+        'It pulls in marketplace data from Amazon SP-API and Shopify, including BuyBox and competitor tracking, manages FBA shipments and shipping labels, and watches brand pricing with MAP Watcher.',
       ],
       [
-        'Its data tier is hybrid.',
-        'PostgreSQL holds relational order transactions, and MongoDB holds high-velocity marketplace metrics and analytics logs.',
+        'Its data lives in MongoDB, with Redis alongside it.',
+        'That is 5 production MongoDB clusters, from 100GB up to 1.6TB each.',
       ],
       [
         'My biggest piece there was moving production MongoDB off MongoDB Atlas.',
-        'I built a self-hosted, Docker-orchestrated setup of six VMs on GCP, then migrated several 1.5TB MongoDB clusters onto it with zero downtime.',
+        'I provisioned 6 Compute Engine VMs on GCP as MongoDB replica sets, then migrated all 5 clusters onto them.',
       ],
       [
-        'To keep the platform online, I designed a zero-downtime replication and parallel restore pipeline with Docker Compose.',
-        "The move also cut the platform's dependence on third-party licensing.",
+        'To keep the platform online, I used mongosync continuous replication and a near-zero-downtime cutover, and led capacity planning as the vCPU quota grew from 24 to 78 cores.',
+        'The move removed the dependence on costly M50/M60 managed Atlas tiers.',
       ],
     ],
     'how-events': [
@@ -137,14 +137,15 @@ export const en: LocaleContent = {
   projects: {
     cbpo: {
       context:
-        'An e-commerce data orchestration and logistics platform: order processing, Amazon marketplace data, brand pricing and shipping workflows.',
+        'A multi-service e-commerce data and logistics platform for Amazon sellers: marketplace data ingestion (Amazon SP-API, Shopify), FBA shipments and shipping labels, pricing monitoring (MAP Watcher) and a Vue micro-frontend portal.',
       role: 'Full Stack Engineer',
       contributions: [
-        'Scalable microservices with Python/Django and Vue.js on GCP',
-        'Hybrid data tier: PostgreSQL for order transactions, MongoDB for marketplace metrics',
-        'Built a self-hosted, Docker-orchestrated MongoDB environment of 6 VMs on GCP',
-        'Zero-downtime migration of several 1.5TB MongoDB clusters from MongoDB Atlas to that environment',
-        'AI-assisted feature delivery, reviewed to production quality',
+        'Migrated 5 production MongoDB clusters (100GB–1.6TB) off MongoDB Atlas onto 6 self-hosted GCP VMs with mongosync and a near-zero-downtime cutover; led capacity planning (vCPU quota 24 → 78 cores)',
+        'Built a Model Context Protocol (MCP) server in the TypeScript API (~1,400 LOC) with 6 authenticated tools, so AI agents can query marketplace data directly',
+        'Merged several production deploy branches into one GitLab CI + Helm pipeline across 3 services',
+        'Added UPS rate comparison and re-architected the EasyPost v2 integration, so users get actionable validation messages instead of raw API errors',
+        'Delivered 2D-barcode and FNSKU label printing across Vue and Express, and introduced Jest unit tests to the frontend CI',
+        'Set up AGENTS.md and AI code review in merge requests to speed up delivery without lowering code quality',
       ],
     },
     ca2t: {

@@ -33,7 +33,7 @@ npm run preview    # serve dist/ on http://localhost:4173
 | --- | --- |
 | Intro | Two-step introduction, then three questions: *What have you worked on?* · *How do you work?* · *What about outside work?* |
 | Branch 1: Work | Career summary and stack, 3 featured projects (CBPO, CA2T, TheAvoTree), archive of all 7 projects, and a detail page for each (context, role, contributions, technologies) |
-| Branch 2: How I work | How Thọ uses AI-assisted tools, then three deep dives: moving production MongoDB from Atlas to 6 self-hosted GCP VMs (CBPO), the real-time webhook listener (TheAvoTree), role-based access control (CA2T) |
+| Branch 2: How I work | How Thọ uses AI-assisted tools, then three deep dives: moving 5 production MongoDB clusters from Atlas to 6 self-hosted GCP VMs (CBPO), the real-time webhook listener (TheAvoTree), role-based access control (CA2T) |
 | Branch 3: Outside work | Gaming background, then the album on the desk |
 | Gallery | Pixel-art album that **only** opens by clicking the photo album on the desk (no menu or dialogue choice leads there). One picture at a time with no titles or captions; Prev/Next or arrow keys to browse, Esc or Close to leave |
 | Explore the room | There are no shortcut buttons: click the **PC** for projects, the **album** for the gallery and the **desk drawer** (a CV sheet peeks out) for the CV. The sword frames and display cabinet are personal references and do not open; each boxed Fire Emblem game on the bottom shelf shows its name on hover or tap. Hotspots show a label on hover/focus and are hidden while covered by the UI |

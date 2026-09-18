@@ -17,6 +17,7 @@ const LINE = C.slateLight
 const DOT = C.goldLight
 const PG = '#5b8dd6'
 const MONGO = '#5fb760'
+const REDIS = '#d6524a'
 
 type Icon =
   | 'web' | 'server' | 'db' | 'cloud' | 'vm' | 'phone' | 'person' | 'lock' | 'chart' | 'gear' | 'coin'
@@ -76,9 +77,9 @@ const v = (x: number, y: number, len: number): Link => ({ x, y, len, dir: 'v' })
 
 /** One diagram per project. Every element is in that project's CV entry. */
 export const DIAGRAMS: Record<ProjectId, Diagram> = {
-  // Vue web → Django API → PostgreSQL (orders) and MongoDB (marketplace metrics) → 6 VMs on GCP.
+  // Vue web → Express/Hapi API → Redis and MongoDB → MongoDB replica sets on 6 GCP VMs.
   cbpo: {
-    parts: [['web', 1, 8], ['server', 12, 7], ['db', 20, 5, PG], ['db', 20, 12, MONGO], ['cloud', 27, 4],
+    parts: [['web', 1, 8], ['server', 12, 7], ['db', 20, 5, REDIS], ['db', 20, 12, MONGO], ['cloud', 27, 4],
       ['vm', 28, 11], ['vm', 31, 11], ['vm', 34, 11], ['vm', 28, 14], ['vm', 31, 14], ['vm', 34, 14]],
     links: [h(9, 10, 3), h(17, 8, 3), h(17, 13, 3), h(25, 14, 3)],
   },

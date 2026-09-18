@@ -1,7 +1,7 @@
 import type { LocaleContent, Project, ProjectInfo } from './types'
 
 /**
- * Source: Thọ's CV (Full-Stack Developer edition, 2026). The six-VM detail for CBPO comes from Thọ directly.
+ * Source: Thọ's CV (Full-Stack Developer edition, 2026). CBPO was rewritten from Thọ's 2026-09 project brief (Node/Hapi, MongoDB + Redis, Atlas migration, MCP).
  * The one-line context for Suzu.net, iKara Admin CMS and Yokara also uses
  * the products' public pages (suzu.net, the iKara App Store listing, inmobivn.com).
  * Do not add screenshots, quotes or demo links that are not supplied.
@@ -15,7 +15,7 @@ export const PROJECTS: readonly ProjectInfo[] = [
     start: '03/2025',
     end: null,
     featured: true,
-    technologies: ['Microservices', 'TypeScript', 'JavaScript', 'Vue.js', 'Python', 'Django', 'PostgreSQL', 'MongoDB', 'GCP', 'Docker'],
+    technologies: ['Node.js', 'Express', 'TypeScript', 'Hapi', 'Vue.js', 'Vuex', 'MongoDB', 'Redis', 'GCP', 'GitLab CI', 'Helm', 'Jest', 'MCP'],
     relatedNode: 'how-migration',
   },
   {
